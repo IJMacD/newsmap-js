@@ -1,0 +1,112 @@
+.App {
+}
+
+.App-header {
+  background-color: #222;
+  height: 48px;
+  padding: 1px;
+  color: white;
+  text-align: center;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.App-cat-list {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.App-cat-list p {
+  padding: 4px;
+  font-weight: bold;
+}
+
+.App-cat-list li {
+  flex: 1 0 150px;
+}
+
+.App-article-list {
+  padding: 0;
+  list-style: none;
+}
+
+.article {
+  color: white;
+  background-color: #222;
+  padding: 4px;
+  margin: 2px;
+  display: block;
+  text-decoration: none;
+}
+
+.article:hover {
+  opacity: 0.8;
+}
+
+.article.world { background-color: #950f10; }
+.article.world.old { background-color: #750909; }
+.article.world.older { background-color: #410b0b; }
+
+.article.general { background-color: #950f10; }
+.article.general.old { background-color: #750909; }
+.article.general.older { background-color: #410b0b; }
+
+.article.business { background-color: #493b93; }
+.article.business.old { background-color: #423384; }
+.article.business.older { background-color: #2c235a; }
+
+.article.technology { background-color: #4b882b; }
+.article.technology.old { background-color: #39671f; }
+.article.technology.older { background-color: #254214; }
+
+.article.gaming { background-color: #4b882b; }
+.article.gaming.old { background-color: #39671f; }
+.article.gaming.older { background-color: #254214; }
+
+.article.sport { background-color: #8a8b03; }
+.article.sport.old { background-color: #7d7f02; }
+.article.sport.older { background-color: #666600; }
+
+.article.sports { background-color: #8a8b03; }
+.article.sports.old { background-color: #7d7f02; }
+.article.sports.older { background-color: #666600; }
+
+.article.entertainment { background-color: #009999; }
+.article.entertainment.old { background-color: #027273; }
+.article.entertainment.older { background-color: #044a4c; }
+
+.article.music { background-color: #009999; }
+.article.music.old { background-color: #027273; }
+.article.music.older { background-color: #044a4c; }
+
+.article.science { background-color: #942b63; }
+.article.science.old { background-color: #641e42; }
+.article.science.older { background-color: #431d32; }
+
+.article.science-and-nature { background-color: #942b63; }
+.article.science-and-nature.old { background-color: #641e42; }
+.article.science-and-nature.older { background-color: #431d32; }
+
+.article.health { background-color: #942b63; }
+.article.health.old { background-color: #641e42; }
+.article.health.older { background-color: #431d32; }
+
+.article.health-and-medical { background-color: #942b63; }
+.article.health-and-medical.old { background-color: #641e42; }
+.article.health-and-medical.older { background-color: #431d32; }
+
+.article.nation { background-color: #cf8313; }
+.article.nation.old { background-color: #9a5900; }
+.article.nation.older { background-color: #532800; }
+
+.article.politics { background-color: #cf8313; }
+.article.politics.old { background-color: #9a5900; }
+.article.politics.older { background-color: #532800; }
