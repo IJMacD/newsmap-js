@@ -1,5 +1,5 @@
 // const api_host = "https://news.google.com";
-const proxy_host = "http://localhost:8000";
+const proxy_host = `http://${window.location.hostname}:8000`;
 
 /**
  * 
@@ -50,7 +50,7 @@ export function getNews (options) {
             return {
                 articles: items,
             };
-        }, err => console.error(err));
+        });
 }
 
 /**

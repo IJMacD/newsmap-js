@@ -1,4 +1,12 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
 .App {
+  height: 100%;
+  overflow: hidden;
 }
 
 .App-header {
@@ -11,6 +19,7 @@
 
 .App-title {
   font-size: 1.5em;
+  margin-top: 10px;
 }
 
 .App-intro {
@@ -22,20 +31,29 @@
   list-style: none;
   display: flex;
   flex-wrap: wrap;
+  margin: 0;
+  height: calc(100% - 52px);
 }
 
-.App-cat-list p {
+.App-cat-list > li {
+}
+
+.App-cat-list > li > p {
   padding: 4px;
   font-weight: bold;
-}
-
-.App-cat-list li {
-  flex: 1 0 150px;
+  display: none;
 }
 
 .App-article-list {
   padding: 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.App-article-list > li {
+  overflow: hidden;
 }
 
 .article {
@@ -45,6 +63,8 @@
   margin: 2px;
   display: block;
   text-decoration: none;
+  font-size: 7pt;
+  height: 100%;
 }
 
 .article:hover {
