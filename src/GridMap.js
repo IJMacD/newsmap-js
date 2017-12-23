@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Article from './Article';
+
 import './GridMap.css';
 
 export default function (props) {
@@ -11,11 +13,7 @@ export default function (props) {
                 <li key={category.id} style={{flex: category.weight}}>
                   <ol className="GridMap-article-list">
                     {
-                      category.articles.map((article,i) => {
-                        const timeDelta = Date.now() - (new Date(article.publishedAt));
-                        const age = timeDelta < (10 * 60 * 1000) ? "" : (timeDelta < (60 * 60 * 1000) ? "old" : "older");
-                        return <li key={article.id} style={{ flex: article.sources.length }}><a href={article.url} className={`article ${category.id} ${age}`} target="_blank">{article.title} ({article.sources.length})</a></li>
-                      })
+                      category.articles.map((article,i) => <Article key={article.id} item={article} category={category} style={{ flex: article.sources.length }} />)
                     }
                   </ol>
                 </li>

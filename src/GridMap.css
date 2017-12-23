@@ -23,7 +23,3 @@
   flex-direction: column;
   height: 100%;
 }
-
-.GridMap-article-list > li {
-  overflow: hidden;
-}

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Article from './Article';
+
 import './TreeMap.css';
 
 export default class TreeMap extends Component {
@@ -25,24 +27,7 @@ export default class TreeMap extends Component {
               <li key={category.id} style={dimensions[i]}>
                 <ol className="TreeMap-article-list">
                   {
-                    category.articles.map((article,i) => {
-                      const timeDelta = Date.now() - (new Date(article.publishedAt));
-                      const age = timeDelta < (10 * 60 * 1000) ? "" : (timeDelta < (60 * 60 * 1000) ? "old" : "older");
-                      const fontSize = (articleDimensions[i].height + articleDimensions[i].width) * 0.06;
-                      return (
-                        <li key={article.id} style={articleDimensions[i]}>
-                          <a
-                            href={article.url}
-                            className={`article ${category.id} ${age}`}
-                            target="_blank"
-                            title={article.title}
-                            style={{ fontSize }}
-                          >
-                            {article.title}
-                          </a>
-                        </li>
-                      );
-                    })
+                    category.articles.map((article,i) => <Article key={article.id} item={article} category={category} style={{ ...articleDimensions[i], position: "absolute" }} />)
                   }
                 </ol>
               </li>

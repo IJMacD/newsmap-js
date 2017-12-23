@@ -15,12 +15,14 @@ export function getNews (options) {
                 .map(itemEl => {
                     const title = itemEl.getElementsByTagName("title")[0].innerHTML;
                     const url = itemEl.getElementsByTagName("link")[0].innerHTML;
-                    const id = url;
+                    const id = itemEl.getElementsByTagName("guid")[0].innerHTML;
                     const publishedAt = new Date(itemEl.getElementsByTagName("pubDate")[0].innerHTML).toISOString();
 
                     let desc = itemEl.getElementsByTagName("description")[0].innerHTML;
                     desc = desc.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
                     const descDoc = (new DOMParser()).parseFromString(desc, "text/html");
+                    const imageEl = descDoc.getElementsByTagName("img")[0];
+                    const imageURL = imageEl && imageEl.attributes.getNamedItem("src").textContent;
 
                     const sources = Array.from(descDoc.getElementsByTagName("li"))
                         .map(liEl => {
@@ -44,6 +46,7 @@ export function getNews (options) {
                         url,
                         publishedAt,
                         sources,
+                        imageURL,
                     }
                 });
 

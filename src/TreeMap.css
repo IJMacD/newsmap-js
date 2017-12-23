@@ -9,7 +9,6 @@
 
 .TreeMap-cat-list > li {
   position: absolute;
-  transition: all 0.5s;
 }
 
 .TreeMap-cat-list > li > p {
@@ -22,10 +21,4 @@
   padding: 0;
   list-style: none;
   height: 100%;
-}
-
-.TreeMap-article-list > li {
-  overflow: hidden;
-  position: absolute;
-  transition: all 0.5s;
 }
