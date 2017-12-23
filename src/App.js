@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import GridMap from './GridMap';
+import TreeMap from './TreeMap';
 import { getNews } from './GoogleNewsRSS';
 import './App.css';
 
@@ -8,10 +10,17 @@ class App extends Component {
 
     this.state = {
       categories: [],
+      mode: "tree",
     };
   }
 
   componentDidMount () {
+    this.loadAllCategories();
+
+    this.timeout = setInterval(() => this.loadAllCategories(), 10 * 60 * 1000);
+  }
+
+  loadAllCategories () {
 
     const cats = [ "world", "nation", "business", "technology", "entertainment", "sports", "science", "health" ];
     cats.forEach(category => {
@@ -20,10 +29,10 @@ class App extends Component {
 
         articles = articles.sort((a,b) => b.sources.length - a.sources.length);
 
-        const weight = articles.map(a => a.sources.length).reduce((a,b) => a+b, 0);
+        const weight = articles.map(a => Math.pow(Math.E, a.sources.length)).reduce((a,b) => a+b, 0);
         const newCat = { id: category, name: category, articles, weight };
 
-        let categories = [ ...oldState.categories, newCat ];
+        let categories = [ ...oldState.categories.filter(c => c.name !== category), newCat ];
 
         categories = categories.sort((a,b) => b.weight - a.weight);
 
@@ -33,31 +42,13 @@ class App extends Component {
   }
 
   render() {
+    const Map = this.state.mode === "tree" ? TreeMap : GridMap;
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">JS NewsMap</h1>
+          <h1 className="App-title">NewsMap.JS</h1>
         </header>
-        <ul className="App-cat-list">
-          {
-            this.state.categories.map(category => {
-              return (
-                <li key={category.id} style={{flex: category.weight}}>
-                  <p>{category.name} ({category.weight})</p>
-                  <ul className="App-article-list">
-                    {
-                      category.articles.map((article,i) => {
-                        const timeDelta = Date.now() - (new Date(article.publishedAt));
-                        const age = timeDelta < (10 * 60 * 1000) ? "" : (timeDelta < (60 * 60 * 1000) ? "old" : "older");
-                        return <li key={article.id} style={{ flex: article.sources.length }}><a href={article.url} className={`article ${category.id} ${age}`} target="_blank">{article.title} ({article.sources.length})</a></li>
-                      })
-                    }
-                  </ul>
-                </li>
-              );
-            })
-          }
-        </ul>
+        <Map items={this.state.categories} />
       </div>
     );
   }

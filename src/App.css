@@ -26,36 +26,6 @@ body,
   font-size: large;
 }
 
-.App-cat-list {
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-  height: calc(100% - 52px);
-}
-
-.App-cat-list > li {
-}
-
-.App-cat-list > li > p {
-  padding: 4px;
-  font-weight: bold;
-  display: none;
-}
-
-.App-article-list {
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.App-article-list > li {
-  overflow: hidden;
-}
-
 .article {
   color: white;
   background-color: #222;
