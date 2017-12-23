@@ -1,5 +1,8 @@
-// const api_host = "https://news.google.com";
-const proxy_host = `http://${window.location.hostname}:8000`;
+let API_ROOT = `//${window.location.host}/api/`;
+
+if (process.env.NODE_ENV !== "production") {
+    API_ROOT = `http://${window.location.hostname}:8000`;
+}
 
 /**
  * 
@@ -9,7 +12,7 @@ const proxy_host = `http://${window.location.hostname}:8000`;
 export function getNews (options) {
     const capCase = options.category.toUpperCase();
     const titleCase = ucfirst(options.category);
-    return xmlFetch(`${proxy_host}/news/rss/headlines/section/topic/${capCase}.en_uk/${titleCase}?ned=uk&hl=en-GB&gl=GB`)
+    return xmlFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.en_uk/${titleCase}?ned=uk&hl=en-GB&gl=GB`)
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
