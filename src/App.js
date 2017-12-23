@@ -11,13 +11,27 @@ class App extends Component {
     this.state = {
       categories: [],
       mode: "tree",
-    };
+    }; 
+
+    this.onResize = this.onResize.bind(this);
   }
+
+  onResize () {
+    this.forceUpdate();
+  }  
 
   componentDidMount () {
     this.loadAllCategories();
 
     this.timeout = setInterval(() => this.loadAllCategories(), 10 * 60 * 1000);
+
+    window.addEventListener("resize", this.onResize);
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.timeout);
+
+    window.removeEventListener("resize", this.onResize);
   }
 
   loadAllCategories () {
