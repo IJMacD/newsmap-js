@@ -1,8 +1,4 @@
-let API_ROOT = `//${window.location.host}/api/`;
-
-if (process.env.NODE_ENV !== "production") {
-    API_ROOT = `http://${window.location.hostname}:8000`;
-}
+const API_ROOT = `//${window.location.host}/api`;
 
 /**
  * 
