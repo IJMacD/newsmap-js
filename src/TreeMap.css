@@ -2,13 +2,14 @@
   padding: 0;
   list-style: none;
   margin: 0;
-  height: calc(100% - 52px);
+  height: calc(100% - 50px);
   width: 100%;
   position: relative;
 }
 
 .TreeMap-cat-list > li {
   position: absolute;
+  transition: all 2s;
 }
 
 .TreeMap-cat-list > li > p {

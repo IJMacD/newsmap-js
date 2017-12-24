@@ -7,7 +7,7 @@ import './TreeMap.css';
 export default class TreeMap extends Component {
 
   render () {
-    let rootWidth = 768, rootHeight = 1024 - 52;
+    let rootWidth = 768, rootHeight = 1024 - 50;
     if (this.ref) {
       rootWidth = this.ref.clientWidth;
       rootHeight = this.ref.clientHeight;
@@ -42,19 +42,19 @@ export default class TreeMap extends Component {
 function getArticleValues (articles) {
   return articles.map(a => a.sources.length).map(x => Math.pow(Math.E, x));
 }
-  
+
 function sum(a, b) {
   return a + b;
 }
 
 /**
- * 
- * @param {Array<number>} values 
+ *
+ * @param {Array<number>} values
  * @param {{width: number, height: number}} dimensions
  */
 function layoutTreeMap (values, { width, height }) {
   const dimensions = [];
-  
+
   const ratio = height / width;
   const totalValue = values.reduce(sum, 0);
 
@@ -154,7 +154,7 @@ function layoutTreeMap (values, { width, height }) {
 
     return Math.max(w_2*r_min/s_2, s_2/(w_2*r_max));
   }
-  
+
   function sum(a, b) {
     return a + b;
   }
