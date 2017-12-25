@@ -21,9 +21,11 @@ class App extends Component {
   constructor () {
     super();
 
+    const savedCats = localStorage["selectedCategories"];
+
     this.state = {
       categories: [],
-      selectedCategories: availableCategories,
+      selectedCategories: (savedCats && JSON.parse(savedCats)) || availableCategories,
       mode: "tree",
     };
 
@@ -36,20 +38,24 @@ class App extends Component {
   }
 
   onCategoryChange (e) {
-    const { selectedCategories } = this.state;
+    let { selectedCategories } = this.state;
     const { checked, value } = e.target;
 
     if (e.nativeEvent.altKey) {
       if (selectedCategories.length === 1 && selectedCategories[0] === value) {
-        this.setState({ selectedCategories: availableCategories });
+        selectedCategories = availableCategories;
       } else {
-        this.setState({ selectedCategories: [ value ] });
+        selectedCategories = [ value ];
       }
     } else if (checked) {
-      this.setState({ selectedCategories: [ ...selectedCategories, value ] });
+      selectedCategories = [ ...selectedCategories, value ];
     } else {
-      this.setState({ selectedCategories: selectedCategories.filter(c => c !== value ) });
+      selectedCategories = selectedCategories.filter(c => c !== value );
     }
+
+    localStorage["selectedCategories"] = JSON.stringify(selectedCategories);
+
+    this.setState({ selectedCategories });
   }
 
   componentDidMount () {
@@ -109,7 +115,11 @@ class App extends Component {
           <div className="App-category-chooser">
           {
             availableCategories.map(cat => (
-              <label className="App-category-key" style={{ backgroundColor: colours[cat][0] }}>
+              <label
+                key={cat}
+                className="App-category-key"
+                style={{ backgroundColor: colours[cat][0] }}
+              >
                 <input
                   type="checkbox"
                   checked={selectedCategories.includes(cat)}
@@ -134,13 +144,4 @@ export default App;
  */
 function ucfirst (string) {
     return string.substr(0, 1).toUpperCase() + string.substr(1);
-}
-
-/**
- *
- * @param {Array} array
- * @param {*} item
- */
-function includes (array, item) {
-  return array.some(x => item === x);
 }
