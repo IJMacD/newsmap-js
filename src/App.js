@@ -127,9 +127,9 @@ class App extends Component {
               </select>
             </h1>
             <p className="App-intro">
-              Data from <a href="https://news.google.com" target="_blank">Google News</a>.
-              Inspried by <a href="http://newsmap.jp" target="_blank">newsmap.jp</a>.
-              Fork me on <a href="https://github.com/ijmacd/newsmap-js" target="_blank">GitHub</a>.
+              Data from <a href="https://news.google.com">Google News</a>.
+              Inspried by <a href="http://newsmap.jp">newsmap.jp</a>.
+              Fork me on <a href="https://github.com/ijmacd/newsmap-js">GitHub</a>.
             </p>
           </div>
           <div className="App-category-chooser">

@@ -8,7 +8,8 @@ const showImages = false;
 
 export default function Article ({ item, category, style }) {
   const timeDelta = Date.now() - (new Date(item.publishedAt)).valueOf();
-  const fontSize = (style.height + style.width) * 0.06;
+  // Magic numbers calculated in: https://docs.google.com/spreadsheets/d/1Oht-quZFTpJQN-6aavqzmTVerkHPI46jbx3Sx0nUrEo/edit?usp=sharing
+  const fontSize = 0.9874774687 * Math.pow(style.height * style.width, 0.5349172175) * Math.pow(item.title.length, -0.5462199166);
 
   if (showImages) {
     style.backgroundImage = `url(${item.imageURL})`;
@@ -21,7 +22,6 @@ export default function Article ({ item, category, style }) {
       <a
         href={item.url}
         className="article"
-        target="_blank"
         title={item.title}
         style={{ backgroundColor, fontSize }}
       >
