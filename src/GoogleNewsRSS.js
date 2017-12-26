@@ -1,14 +1,26 @@
+import editions from './editions.json';
+
 const API_ROOT = `//${window.location.host}/api`;
 
 /**
- * 
- * @param {object} options 
- * @param {string} options.category 
+ *
+ * @param {object} options
+ * @param {string} options.category
+ * @param {string} options.edition
  */
 export function getNews (options) {
     const capCase = options.category.toUpperCase();
     const titleCase = ucfirst(options.category);
-    return xmlFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.en_uk/${titleCase}?ned=uk&hl=en-GB&gl=GB`)
+    const ed = options.edition;
+    const edition = findEdition(ed);
+
+    if (!edition) {
+        throw Error("Invalid Edition");
+    }
+
+    const gl = edition.gl;
+    const hl = edition.hl;
+    return xmlFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.${ed}/${titleCase}?ned=${ed}&gl=${gl}&hl=${hl}`)
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
@@ -56,8 +68,8 @@ export function getNews (options) {
 }
 
 /**
- * 
- * @param {string} string 
+ *
+ * @param {string} string
  */
 function ucfirst (string) {
     return string.substr(0, 1).toUpperCase() + string.substr(1);
@@ -88,8 +100,8 @@ function xmlFetch (url) {
 }
 
 /**
- * 
- * @param {string} string 
+ *
+ * @param {string} string
  */
 function urlize (string) {
     return string
@@ -97,4 +109,12 @@ function urlize (string) {
         .replace(/[ .]/g, "-")
         .replace(/-+/g, "-")
         .replace(/[^a-z0-9-]/gi, "");
+}
+
+function findEdition (edition) {
+    for(let i = 0; i < editions.length; i++) {
+        if (editions[i].value === edition) {
+            return editions[i];
+        }
+    }
 }

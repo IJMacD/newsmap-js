@@ -3,6 +3,7 @@ import GridMap from './GridMap';
 import TreeMap from './TreeMap';
 import { getNews } from './GoogleNewsRSS';
 import colours from './colours';
+import editions from './editions.json';
 
 import './App.css';
 
@@ -26,11 +27,13 @@ class App extends Component {
     this.state = {
       categories: [],
       selectedCategories: (savedCats && JSON.parse(savedCats)) || availableCategories,
+      edition: localStorage["edition"] || "uk",
       mode: "tree",
     };
 
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
+    this.handleEditionChange = this.handleEditionChange.bind(this);
   }
 
   onResize () {
@@ -58,10 +61,20 @@ class App extends Component {
     this.setState({ selectedCategories });
   }
 
-  componentDidMount () {
-    this.loadAllCategories();
+  handleEditionChange (e) {
+    const { value } = e.target;
 
-    this.timeout = setInterval(() => this.loadAllCategories(), 10 * 60 * 1000);
+    localStorage["edition"] = value;
+
+    this.setState({ edition: value, categories: [] });
+
+    this.loadAllCategories(value);
+  }
+
+  componentDidMount () {
+    this.loadAllCategories(this.state.edition);
+
+    this.timeout = setInterval(() => this.loadAllCategories(this.state.edition), 10 * 60 * 1000);
 
     window.addEventListener("resize", this.onResize);
   }
@@ -72,12 +85,12 @@ class App extends Component {
     window.removeEventListener("resize", this.onResize);
   }
 
-  loadAllCategories () {
+  loadAllCategories (edition) {
 
     const cats = availableCategories;
 
     cats.forEach(category => {
-      getNews({ category }).then(data => this.setState(oldState => {
+      getNews({ category, edition }).then(data => this.setState(oldState => {
         let { articles } = data;
 
         articles = articles.sort((a,b) => b.sources.length - a.sources.length);
@@ -96,7 +109,7 @@ class App extends Component {
 
   render() {
     const Map = this.state.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories } = this.state;
+    const { selectedCategories, edition } = this.state;
 
     const categories = this.state.categories.filter(c => selectedCategories.includes(c.id));
 
@@ -105,7 +118,14 @@ class App extends Component {
         <Map items={categories} />
         <header className="App-header">
           <div style={{ flex: 1 }}>
-            <h1 className="App-title">NewsMap.JS</h1>
+            <h1 className="App-title">
+              NewsMap.JS
+              <select value={edition} style={{ marginLeft: 4 }} onChange={this.handleEditionChange}>
+                {
+                  editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
+                }
+              </select>
+            </h1>
             <p className="App-intro">
               Data from <a href="https://news.google.com" target="_blank">Google News</a>.
               Inspried by <a href="http://newsmap.jp" target="_blank">newsmap.jp</a>.
