@@ -23,11 +23,12 @@ export default class TreeMap extends Component {
           this.props.items.map((category, i) => {
             const articleValues = getArticleValues(category.articles);
             const articleDimensions = layoutTreeMap(articleValues, dimensions[i]);
+
             return (
               <li key={category.id} style={dimensions[i]}>
                 <ol className="TreeMap-article-list">
                   {
-                    category.articles.map((article,i) => <Article key={article.id} item={article} category={category} style={{ ...articleDimensions[i], position: "absolute" }} />)
+                    category.articles.map((article,i) => <Article key={article.id} item={article} category={category} showImages={this.props.showImages} style={{ ...articleDimensions[i], position: "absolute" }} />)
                   }
                 </ol>
               </li>

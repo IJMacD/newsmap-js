@@ -29,6 +29,7 @@ class App extends Component {
       selectedCategories: (savedCats && JSON.parse(savedCats)) || availableCategories,
       edition: localStorage["edition"] || "uk",
       mode: "tree",
+      showImages: false,
     };
 
     this.onResize = this.onResize.bind(this);
@@ -109,13 +110,13 @@ class App extends Component {
 
   render() {
     const Map = this.state.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories, edition } = this.state;
+    const { selectedCategories, edition, showImages } = this.state;
 
     const categories = this.state.categories.filter(c => selectedCategories.includes(c.id));
 
     return (
       <div className="App">
-        <Map items={categories} />
+        <Map items={categories} showImages={showImages} />
         <header className="App-header">
           <div style={{ flex: 1 }}>
             <h1 className="App-title">

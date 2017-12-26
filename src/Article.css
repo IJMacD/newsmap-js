@@ -38,6 +38,7 @@
 .Article-image .article {
   opacity: 0.9;
   margin: 0;
+  transition: background-color 1s;
 }
 
 .article:hover {
@@ -45,11 +46,11 @@
 }
 
 .Article-image .article:hover {
-  background: none !important;
+  background-color: transparent !important;
   opacity: 1;
   text-shadow:
-        0.07em 0 0.07em black,
-        0 0.07em 0.07em black,
-        -0.07em 0 0.07em black,
-        0 -0.07em 0.07em black;
+        0.07em 0 0.14em black,
+        0 0.07em 0.14em black,
+        -0.07em 0 0.14em black,
+        0 -0.07em 0.14em black;
 }

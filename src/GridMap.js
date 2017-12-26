@@ -13,7 +13,7 @@ export default function (props) {
                 <li key={category.id} style={{flex: category.weight}}>
                   <ol className="GridMap-article-list">
                     {
-                      category.articles.map((article,i) => <Article key={article.id} item={article} category={category} style={{ flex: article.sources.length }} />)
+                      category.articles.map((article,i) => <Article key={article.id} item={article} category={category} showImages={props.showImages} style={{ flex: article.sources.length }} />)
                     }
                   </ol>
                 </li>
