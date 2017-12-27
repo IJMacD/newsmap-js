@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import GridMap from './GridMap';
 import TreeMap from './TreeMap';
 import { getNews } from './GoogleNewsRSS';
+import { ucfirst } from './util';
+
 import colours from './colours';
 import editions from './editions.json';
 
@@ -22,14 +24,17 @@ class App extends Component {
   constructor () {
     super();
 
-    const savedCats = localStorage["selectedCategories"];
-
-    this.state = {
+    const defaultState = {
       categories: [],
-      selectedCategories: (savedCats && JSON.parse(savedCats)) || availableCategories,
-      edition: localStorage["edition"] || "uk",
+      selectedCategories: availableCategories,
+      edition: "uk",
       mode: "tree",
       showImages: false,
+    };
+
+    this.state = {
+      ...defaultState,
+      ...getSavedState(),
     };
 
     this.onResize = this.onResize.bind(this);
@@ -58,7 +63,7 @@ class App extends Component {
       selectedCategories = selectedCategories.filter(c => c !== value );
     }
 
-    localStorage["selectedCategories"] = JSON.stringify(selectedCategories);
+    saveState({ selectedCategories });
 
     this.setState({ selectedCategories });
   }
@@ -66,7 +71,7 @@ class App extends Component {
   handleEditionChange (e) {
     const { value } = e.target;
 
-    localStorage["edition"] = value;
+    saveState({ edition: value });
 
     this.setState({ edition: value, categories: [] });
 
@@ -74,7 +79,10 @@ class App extends Component {
   }
 
   handleImageChange (e) {
-    this.setState({ showImages: e.target.checked });
+    const newState = { showImages: e.target.checked };
+
+    saveState(newState);
+    this.setState(newState);
   }
 
   componentDidMount () {
@@ -124,14 +132,14 @@ class App extends Component {
         <Map items={categories} showImages={showImages} />
         <header className="App-header">
           <div style={{ flex: 1 }}>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline" }}>
               <h1 className="App-title">NewsMap.JS</h1>
-              <select value={edition} style={{ marginLeft: 4 }} onChange={this.handleEditionChange}>
+              <select value={edition} style={{ marginLeft: 10 }} onChange={this.handleEditionChange}>
                 {
                   editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
                 }
               </select>
-              <label>
+              <label style={{ marginLeft: 7 }}>
                 <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
                 Images
               </label>
@@ -168,10 +176,10 @@ class App extends Component {
 
 export default App;
 
-/**
- *
- * @param {string} string
- */
-function ucfirst (string) {
-    return string.substr(0, 1).toUpperCase() + string.substr(1);
+function getSavedState () {
+  return typeof localStorage["state"] !== "undefined" ? JSON.parse(localStorage["state"]) : {};
+}
+
+function saveState (state) {
+  localStorage["state"] = JSON.stringify({ ...getSavedState(), ...state });
 }

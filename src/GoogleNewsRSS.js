@@ -1,3 +1,5 @@
+import { ucfirst, urlize } from './util';
+
 import editions from './editions.json';
 
 const API_ROOT = `//${window.location.host}/api`;
@@ -67,14 +69,6 @@ export function getNews (options) {
         });
 }
 
-/**
- *
- * @param {string} string
- */
-function ucfirst (string) {
-    return string.substr(0, 1).toUpperCase() + string.substr(1);
-}
-
 function xmlFetch (url) {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -97,18 +91,6 @@ function xmlFetch (url) {
 
         xhr.send(null);
     });
-}
-
-/**
- *
- * @param {string} string
- */
-function urlize (string) {
-    return string
-        .toLowerCase()
-        .replace(/[ .]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/[^a-z0-9-]/gi, "");
 }
 
 function findEdition (edition) {
