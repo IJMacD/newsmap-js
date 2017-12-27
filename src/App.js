@@ -35,6 +35,7 @@ class App extends Component {
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
+    this.handleImageChange = this.handleImageChange.bind(this);
   }
 
   onResize () {
@@ -70,6 +71,10 @@ class App extends Component {
     this.setState({ edition: value, categories: [] });
 
     this.loadAllCategories(value);
+  }
+
+  handleImageChange (e) {
+    this.setState({ showImages: e.target.checked });
   }
 
   componentDidMount () {
@@ -119,14 +124,18 @@ class App extends Component {
         <Map items={categories} showImages={showImages} />
         <header className="App-header">
           <div style={{ flex: 1 }}>
-            <h1 className="App-title">
-              NewsMap.JS
+            <div style={{ display: "flex" }}>
+              <h1 className="App-title">NewsMap.JS</h1>
               <select value={edition} style={{ marginLeft: 4 }} onChange={this.handleEditionChange}>
                 {
                   editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
                 }
               </select>
-            </h1>
+              <label>
+                <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
+                Images
+              </label>
+            </div>
             <p className="App-intro">
               Data from <a href="https://news.google.com">Google News</a>.
               Inspried by <a href="http://newsmap.jp">newsmap.jp</a>.
