@@ -26,13 +26,12 @@ export function getNews (options) {
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
-                    const title = itemEl.getElementsByTagName("title")[0].innerHTML;
+                    const title = decodeHtml(itemEl.getElementsByTagName("title")[0].innerHTML);
                     const url = itemEl.getElementsByTagName("link")[0].innerHTML;
                     const id = itemEl.getElementsByTagName("guid")[0].innerHTML;
                     const publishedAt = new Date(itemEl.getElementsByTagName("pubDate")[0].innerHTML).toISOString();
 
-                    let desc = itemEl.getElementsByTagName("description")[0].innerHTML;
-                    desc = desc.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                    const desc = decodeHtml(itemEl.getElementsByTagName("description")[0].innerHTML);
                     const descDoc = (new DOMParser()).parseFromString(desc, "text/html");
                     const imageEl = descDoc.getElementsByTagName("img")[0];
                     const imageURL = imageEl && imageEl.attributes.getNamedItem("src").textContent;
@@ -99,4 +98,28 @@ function findEdition (edition) {
             return editions[i];
         }
     }
+}
+
+function escapeHtml (str) {
+    var map =
+    {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return str.replace(/[&<>"']/g, m => map[m]);
+}
+
+function decodeHtml (str) {
+    var map =
+    {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#039;': "'"
+    };
+    return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, m => map[m]);
 }
