@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import Article from './Article';
-
 import './TreeMap.css';
 
 export default class TreeMap extends Component {
@@ -28,7 +26,19 @@ export default class TreeMap extends Component {
               <li key={category.id} style={dimensions[i]}>
                 <ol className="TreeMap-article-list">
                   {
-                    category.articles.map((article,i) => <Article key={article.id} item={article} category={category} showImages={this.props.showImages} style={{ ...articleDimensions[i], position: "absolute" }} />)
+                    category.articles.map((article,i) => {
+                      const childProps = {
+                        key: article.id,
+                        item: article,
+                        category,
+                        style: {
+                          ...articleDimensions[i],
+                          position: "absolute",
+                        },
+                      };
+
+                      return this.props.itemRender(childProps);
+                    })
                   }
                 </ol>
               </li>

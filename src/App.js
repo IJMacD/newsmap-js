@@ -3,6 +3,7 @@ import GridMap from './GridMap';
 import TreeMap from './TreeMap';
 import { getNews } from './GoogleNewsRSS';
 import { ucfirst } from './util';
+import Article from './Article';
 
 import colours from './colours';
 import editions from './editions.json';
@@ -85,6 +86,34 @@ class App extends Component {
     this.setState(newState);
   }
 
+  handleItemClick (e, item) {
+    if (e.altKey) {
+      e.preventDefault();
+
+      let i, done = false;
+      for (i = 0; i < item.sources.length; i++) {
+        const s = item.sources[i];
+        if (s.originalTitle === item.title) {
+          if (i < item.sources.length - 1) {
+            item.title = item.sources[i+1].originalTitle;
+            item.url = item.sources[i+1].originalURL;
+            done = true;
+          }
+          break;
+        }
+      }
+
+      if (!done) {
+        item.title = item.sources[0].originalTitle;
+        item.url = item.sources[0].originalURL;
+      }
+
+      this.forceUpdate();
+
+      return;
+    }
+  }
+
   componentDidMount () {
     this.loadAllCategories(this.state.edition);
 
@@ -129,7 +158,16 @@ class App extends Component {
 
     return (
       <div className="App">
-        <Map items={categories} showImages={showImages} />
+        <Map
+          items={categories}
+          itemRender={props => (
+            <Article
+              showImages={showImages}
+              onClick={e => this.handleItemClick(e, props.item)}
+              { ...props }
+            />
+          )}
+        />
         <header className="App-header">
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline" }}>

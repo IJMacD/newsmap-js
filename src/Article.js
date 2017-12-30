@@ -5,7 +5,7 @@ import colours from './colours';
 import './Article.css';
 
 
-export default function Article ({ item, category, showImages, style }) {
+export default function Article ({ item, category, showImages, style, onClick }) {
   const timeDelta = Date.now() - (new Date(item.publishedAt)).valueOf();
   let fontSize;
 
@@ -27,6 +27,7 @@ export default function Article ({ item, category, showImages, style }) {
         className="article"
         title={item.title}
         style={{ backgroundColor, fontSize }}
+        onClick={onClick}
       >
         {item.title}
       </a>
