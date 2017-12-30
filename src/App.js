@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import NoSleep from 'nosleep.js';
+
 import GridMap from './GridMap';
 import TreeMap from './TreeMap';
 import { getNews } from './GoogleNewsRSS';
@@ -30,6 +32,8 @@ class App extends Component {
       edition: "uk",
       mode: "tree",
       showImages: false,
+      noSleep: false,
+      noSleepPrepared: false,
     };
 
     this.state = {
@@ -37,10 +41,22 @@ class App extends Component {
       ...getSavedState(),
     };
 
+    this.noSleep = new NoSleep();
+
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
+    this.prepareNoSleep = this.prepareNoSleep.bind(this);
+
+    document.addEventListener('click', this.prepareNoSleep, false);
+  }
+
+  prepareNoSleep () {
+    this.noSleep.enable();
+    this.noSleep.disable();
+    document.removeEventListener('click', this.prepareNoSleep, false);
+    this.setState({ noSleepPrepared: true });
   }
 
   onResize () {
@@ -123,7 +139,7 @@ class App extends Component {
 
   render() {
     const Map = this.state.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories, edition, showImages } = this.state;
+    const { selectedCategories, edition, showImages, noSleep, noSleepPrepared } = this.state;
 
     const categories = this.state.categories.filter(c => selectedCategories.includes(c.id));
 
@@ -143,6 +159,12 @@ class App extends Component {
                 <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
                 Images
               </label>
+              { noSleepPrepared &&
+                <label style={{ marginLeft: 7 }}>
+                  <input type="checkbox" checked={noSleep} onChange={() => this.setState({ noSleep: !noSleep })} />
+                  No Sleep
+                </label>
+              }
             </div>
             <p className="App-intro">
               Data from <a href="https://news.google.com">Google News</a>.
