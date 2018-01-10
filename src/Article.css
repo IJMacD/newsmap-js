@@ -3,11 +3,6 @@
   transition: all 2s ease-out;
 }
 
-.Article-li:hover {
-  background-color: white;
-  transition: background-color 0s;
-}
-
 .Article-image {
   background-size: cover;
   background-position: 50%;
@@ -41,10 +36,6 @@
   transition: background-color 1s;
 }
 
-.article:hover {
-  opacity: 0.8;
-}
-
 .Article-image .article:hover {
   background-color: transparent !important;
   opacity: 1;
@@ -53,4 +44,12 @@
         0 0.07em 0.14em black,
         -0.07em 0 0.14em black,
         0 -0.07em 0.14em black;
+}
+
+.article:hover::after {
+  content: attr(data-source);
+  height: auto;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2%;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.6);
 }

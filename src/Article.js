@@ -25,7 +25,8 @@ export default function Article ({ item, category, showImages, style, onClick })
       <a
         href={item.url}
         className="article"
-        title={item.title}
+        title={`${item.sources[0].name}: ${item.title}`}
+        data-source={item.sources[0].name}
         style={{ backgroundColor, fontSize }}
         onClick={onClick}
       >

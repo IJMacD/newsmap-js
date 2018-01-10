@@ -90,23 +90,10 @@ class App extends Component {
     if (e.altKey) {
       e.preventDefault();
 
-      let i, done = false;
-      for (i = 0; i < item.sources.length; i++) {
-        const s = item.sources[i];
-        if (s.originalTitle === item.title) {
-          if (i < item.sources.length - 1) {
-            item.title = item.sources[i+1].originalTitle;
-            item.url = item.sources[i+1].originalURL;
-            done = true;
-          }
-          break;
-        }
-      }
+      item.sources.push(item.sources.shift());
 
-      if (!done) {
-        item.title = item.sources[0].originalTitle;
-        item.url = item.sources[0].originalURL;
-      }
+      item.title = item.sources[0].originalTitle;
+      item.url = item.sources[0].originalURL;
 
       this.forceUpdate();
 
@@ -145,7 +132,7 @@ class App extends Component {
 
         categories = categories.sort((a,b) => b.weight - a.weight);
 
-        return { ...oldState, categories };
+        return { categories };
       }), err => console.log(err))
     });
   }
