@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import runtimeEnv from '@mars/heroku-js-runtime-env';
+import registerServiceWorker from './registerServiceWorker';
 
 import App from './App';
 import './index.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
+
+registerServiceWorker();
 
 const env = runtimeEnv();
 
