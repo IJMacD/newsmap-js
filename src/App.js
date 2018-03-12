@@ -21,9 +21,21 @@ const availableCategories = [
   "health"
 ];
 
+/**
+ * @typedef AppState
+ * @prop {any[]} categories
+ * @prop {string[]} selectedCategories
+ * @prop {string} edition
+ * @prop {"tree"|"grid"} mode
+ * @prop {boolean} showImages
+ */
+
+/**
+ * @augments Component<{}, AppState>
+ */
 class App extends Component {
-  constructor () {
-    super();
+  constructor (props) {
+    super(props);
 
     const defaultState = {
       categories: [],
@@ -33,6 +45,7 @@ class App extends Component {
       showImages: false,
     };
 
+    /** @type {AppState} */
     this.state = {
       ...defaultState,
       ...getSavedState(),
@@ -77,9 +90,10 @@ class App extends Component {
     this.setState({ edition: value, categories: [] });
 
     this.loadAllCategories(value);
-    
+
     if (window.ga) {
-      window.ga('send', 'event', "News Edition", 'change', value);
+      // Send analytics for new edition
+      window.ga('send', 'pageview', { "dimension1": value });
     }
   }
 
@@ -107,6 +121,10 @@ class App extends Component {
 
   componentDidMount () {
     this.loadAllCategories(this.state.edition);
+
+    if (window.ga) {
+      window.ga('send', 'pageview', { "dimension1": this.state.edition });
+    }
 
     this.timeout = setInterval(() => this.loadAllCategories(this.state.edition), 10 * 60 * 1000);
 

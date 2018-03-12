@@ -14,7 +14,6 @@ if (env.REACT_APP_GA_TRACKING) {
   ga.l = +new Date();
   window.ga = ga;
   ga('create', env.REACT_APP_GA_TRACKING, 'auto');
-  ga('send', 'pageview');
 
   const a = document.createElement('script');
   a.async = true;
