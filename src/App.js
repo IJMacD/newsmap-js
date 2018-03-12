@@ -77,6 +77,10 @@ class App extends Component {
     this.setState({ edition: value, categories: [] });
 
     this.loadAllCategories(value);
+    
+    if (window.ga) {
+      window.ga('send', 'event', "News Edition", 'change', value);
+    }
   }
 
   handleImageChange (e) {
