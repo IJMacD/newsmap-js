@@ -24,6 +24,11 @@ body,
   margin: 10px 0 0 10px;
 }
 
+.App-title a {
+  color: #FFF;
+  text-decoration: none;
+}
+
 .App-intro {
   font-size: small;
   margin: 0 10px;

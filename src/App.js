@@ -180,7 +180,7 @@ class App extends Component {
         <header className="App-header">
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline" }}>
-              <h1 className="App-title">NewsMap.JS</h1>
+              <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
               <select value={edition} style={{ marginLeft: 10 }} onChange={this.handleEditionChange}>
                 {
                   editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
