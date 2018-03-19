@@ -80,6 +80,8 @@ function xmlFetch (url) {
             if (xhr.readyState === xhr.DONE) {
                 if (xhr.status === 200) {
                     resolve(xhr.responseXML);
+                } else if (xhr.status === 0) {
+                    reject("CORS Error");
                 } else {
                     reject(xhr.statusText);
                 }

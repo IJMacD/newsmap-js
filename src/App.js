@@ -166,7 +166,13 @@ class App extends Component {
         categories = categories.sort((a,b) => b.weight - a.weight);
 
         return { categories };
-      }), err => console.log(err))
+      }), err => {
+        if (err === "CORS Error" && !this.embarrassed) {
+          this.embarrassed = true;
+          alert("Well this is embarrassing.\n\nI'll be honest - Google News RSS servers don't exactly play nicely with NewsMap.JS. More accurately they just don't consider CORS which would let us load the news directly. Instead I need to proxy the requests through the NewsMap.JS servers and I'm too cheap to implement the proxying properly.\n\nMy advice is to try a different news edition in the options.");
+        }
+        console.log(err);
+      });
     });
   }
 
