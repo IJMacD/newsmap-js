@@ -56,3 +56,58 @@ body,
 .App-category-key input {
   vertical-align: sub;
 }
+
+.App-shade {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.App-modal {
+  box-sizing: border-box;
+  width: 480px;
+  max-width: 98%;
+  padding: 16px;
+  background-color: #222;
+  margin: 120px auto 0;
+  border-radius: 5px;
+  border: 1px solid #686868;
+  color: white;
+}
+
+.App-modal h1 {
+  margin-top: 0.25em;
+}
+
+.App-modal label {
+  cursor: pointer;
+  display: block;
+  margin-bottom: 0.8em;
+}
+
+.App-palette {
+  transition: 0.5s all;
+  padding: 2px 4px;
+  margin: 4px 0;
+  outline: 1px solid transparent;
+}
+
+.App-palette:hover {
+  outline: 1px solid #686868;
+}
+
+.App-palettelabel {
+  display: inline-block;
+  width: 120px;
+}
+
+.App-swatch {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #686868;
+  vertical-align: middle;
+  margin: 1px;
+}

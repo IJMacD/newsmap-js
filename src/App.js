@@ -5,7 +5,7 @@ import { getNews } from './GoogleNewsRSS';
 import { ucfirst } from './util';
 import Article from './Article';
 
-import colours from './colours';
+import defaultColours, * as palettes from './colours';
 import editions from './editions.json';
 
 import './App.css';
@@ -28,6 +28,8 @@ const availableCategories = [
  * @prop {string} edition
  * @prop {"tree"|"grid"} mode
  * @prop {boolean} showImages
+ * @prop {boolean} showOptions
+ * @prop {string} palette
  */
 
 /**
@@ -43,6 +45,8 @@ class App extends Component {
       edition: "uk",
       mode: "tree",
       showImages: false,
+      palette: "default",
+      showOptions: false,
     };
 
     /** @type {AppState} */
@@ -99,6 +103,13 @@ class App extends Component {
 
   handleImageChange (e) {
     const newState = { showImages: e.target.checked };
+
+    saveState(newState);
+    this.setState(newState);
+  }
+
+  handlePaletteChange (palette) {
+    const newState = { palette };
 
     saveState(newState);
     this.setState(newState);
@@ -161,9 +172,10 @@ class App extends Component {
 
   render() {
     const Map = this.state.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories, edition, showImages } = this.state;
+    const { selectedCategories, edition, showImages, showOptions, palette: selectedPalette } = this.state;
 
     const categories = this.state.categories.filter(c => selectedCategories.includes(c.id));
+    const colours = palettes[selectedPalette] || defaultColours;
 
     return (
       <div className="App">
@@ -172,6 +184,7 @@ class App extends Component {
           itemRender={props => (
             <Article
               showImages={showImages}
+              colours={colours}
               onClick={e => this.handleItemClick(e, props.item)}
               { ...props }
             />
@@ -181,15 +194,7 @@ class App extends Component {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline" }}>
               <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
-              <select value={edition} style={{ marginLeft: 10 }} onChange={this.handleEditionChange}>
-                {
-                  editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
-                }
-              </select>
-              <label style={{ marginLeft: 7 }}>
-                <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
-                Images
-              </label>
+              <button style={{ marginLeft: 7 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
             </div>
             <p className="App-intro">
               Data from <a href="https://news.google.com">Google News</a>.
@@ -199,23 +204,63 @@ class App extends Component {
           </div>
           <div className="App-category-chooser">
           {
-            availableCategories.map(cat => (
-              <label
-                key={cat}
-                className="App-category-key"
-                style={{ backgroundColor: colours[cat], color: luminance(colours[cat]) > 192 ? "#111" : "#FFF" }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(cat)}
-                  onChange={this.onCategoryChange}
-                  value={cat} />
-                {ucfirst(cat)}
-              </label>
-            ))
+            availableCategories.map(cat => {
+              const colour = colours[cat];
+              return (
+                <label
+                  key={cat}
+                  className="App-category-key"
+                  style={{ backgroundColor: colour, color: luminance(colour) > 192 ? "#111" : "#FFF" }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(cat)}
+                    onChange={this.onCategoryChange}
+                    value={cat} />
+                  {ucfirst(cat)}
+                </label>
+              )
+            })
           }
           </div>
         </header>
+        { showOptions &&
+          <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
+            <div className="App-modal" onClick={e => e.stopPropagation()}>
+              <h1>Options</h1>
+              <label>
+                Edition
+                <select value={edition} style={{ marginLeft: 10 }} onChange={this.handleEditionChange}>
+                  {
+                    editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
+                  }
+                </select>
+              </label>
+              <label>
+                Show Images
+                <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
+              </label>
+              <label>
+                Palette:
+                {
+                  Object.entries(palettes).map(([name, palette]) => (
+                    <div
+                      className="App-palette"
+                      style={{ outlineColor: name === selectedPalette ? "#FFF" : false }}
+                      onClick={() => this.handlePaletteChange(name)}
+                    >
+                      <span className="App-palettelabel">{name}</span>
+                      { Object.values(palette).map(colour => <div className="App-swatch" style={{ backgroundColor: colour }} />) }
+                    </div>
+                  ))
+                }
+              </label>
+              <p style={{ textAlign: "right", marginBottom: 0 }}>
+                <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
+              </p>
+            </div>
+          </div>
+        }
       </div>
     );
   }

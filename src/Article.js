@@ -1,11 +1,10 @@
 import React from 'react';
 
-import colours from './colours';
+import defaultColours from './colours';
 
 import './Article.css';
 
-
-export default function Article ({ item, category, showImages, style, onClick }) {
+export default function Article ({ item, category, showImages, colours = defaultColours, style, onClick }) {
   const timeDelta = Date.now() - (new Date(item.publishedAt)).valueOf();
   let fontSize;
 
