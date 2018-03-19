@@ -43,9 +43,13 @@ function getAgedColour(base, age) {
 
   const scale = k1 / (age + k2) + c;
 
-  const r = (base[1] * scale).toFixed();
-  const g = (base[2] * scale).toFixed();
-  const b = (base[3] * scale).toFixed();
+  const b1 = parseInt(base.substr(1,2), 16);
+  const b2 = parseInt(base.substr(3,2), 16);
+  const b3 = parseInt(base.substr(5,2), 16);
+
+  const r = (b1 * scale).toFixed();
+  const g = (b2 * scale).toFixed();
+  const b = (b3 * scale).toFixed();
 
   return `rgb(${r},${g},${b})`;
 }
