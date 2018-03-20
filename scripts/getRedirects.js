@@ -1,6 +1,6 @@
 const https = require("https");
 
-const editions = require("./src/editions.json");
+const editions = require("../src/editions.json");
 
 const API_ROOT = "https://news.google.com";
 
