@@ -22,9 +22,7 @@ export function getNews (options) {
         throw Error("Invalid Edition");
     }
 
-    const gl = edition.gl;
-    const hl = edition.hl;
-    return xmlFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.${ed}/${titleCase}?ned=${ed}&gl=${gl}&hl=${hl}`)
+    return xmlFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.${ed}/${titleCase}`)
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
@@ -70,11 +68,40 @@ export function getNews (options) {
         });
 }
 
+function redirectFetch (request) {
+    return fetch(request)
+        .then(r => {
+            if (r.ok) return r;
+            if (r.status >= 300 && r.status < 400) {
+                // We got a transparent redirect
+
+                // The server might unintentially redirect us to http
+                // so we should correct it in that case
+                let url = r.headers.get("Location");
+                if (/^http:/.test(url)) {
+                    url = url.replace("http", "https");
+                }
+
+                return redirectFetch(url);
+            }
+            return Promise.reject("CORS Error");
+        });
+}
+
 function xmlFetch (url) {
     if (DOMParser) {
-        // Clearing out Accept-Language stops Google's servers from redirecting to a different language
-        const headers = new Headers({ "Accept-Language": "" });
-        return fetch(url, { headers })
+        const request = new Request(url, { mode: "same-origin", redirect: "manual" });
+        return redirectFetch(request)
+            .then(r => {
+                if (r.status === 0 || r.type === "opaqueredirect") {
+                    // Fallback to clearing out the Accept-Language header
+                    // to hopefully avoid the redirection
+                    const headers = new Headers({ "Accept-Language": "" });
+                    const request = new Request(url, { headers });
+                    return redirectFetch(request);
+                }
+                return Promise.reject(`Unexpected Response: ${url}`);
+            })
             .then(r => r.text())
             .then(t => (new DOMParser()).parseFromString(t, "text/xml"));
     }
