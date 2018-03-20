@@ -1,8 +1,10 @@
+import runtimeEnv from '@mars/heroku-js-runtime-env';
 import { ucfirst, urlize } from './util';
 
 import editions from './editions.json';
 
-const API_ROOT = `//${window.location.host}/api`;
+const env = runtimeEnv();
+const API_ROOT = env.REACT_APP_API_ROOT || `//${window.location.host}/api`;
 
 /**
  *
@@ -67,7 +69,6 @@ export function getNews (options) {
             };
         });
 }
-
 
 function xmlFetch (url) {
     if (DOMParser) {
