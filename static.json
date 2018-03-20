@@ -4,5 +4,10 @@
     "/api/": {
       "origin": "${API_URL}"
     }
+  },
+  "headers": {
+    "/api/**": {
+      "Access-Control-Allow-Origin": "*"
+    }
   }
 }
