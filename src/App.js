@@ -251,12 +251,13 @@ class App extends Component {
                 {
                   Object.entries(palettes).map(([name, palette]) => (
                     <div
+                      key={name}
                       className="App-palette"
                       style={{ outlineColor: name === selectedPalette ? "#FFF" : false }}
                       onClick={() => this.handlePaletteChange(name)}
                     >
                       <span className="App-palettelabel">{name}</span>
-                      { Object.values(palette).map(colour => <div className="App-swatch" style={{ backgroundColor: colour }} />) }
+                      { Object.entries(palette).map(([cat, colour]) => <div key={cat} className="App-swatch" style={{ backgroundColor: colour }} title={cat} />) }
                     </div>
                   ))
                 }
