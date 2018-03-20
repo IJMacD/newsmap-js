@@ -68,7 +68,18 @@ export function getNews (options) {
         });
 }
 
+
 function xmlFetch (url) {
+    if (DOMParser) {
+        // Clearing out Accept-Language stops Google's servers from redirecting to a different language
+        const headers = new Headers({ "Accept-Language": "" });
+        return fetch(url, { headers })
+            .then(r => r.text())
+            .then(t => (new DOMParser()).parseFromString(t, "text/xml"));
+    }
+
+    // Fallback to XMLHttpRequest
+    //  * Does not handle redirect gracefully
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
@@ -100,18 +111,6 @@ function findEdition (edition) {
             return editions[i];
         }
     }
-}
-
-function escapeHtml (str) {
-    var map =
-    {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return str.replace(/[&<>"']/g, m => map[m]);
 }
 
 function decodeHtml (str) {
