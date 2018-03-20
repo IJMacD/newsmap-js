@@ -2,7 +2,8 @@ import { ucfirst, urlize } from './util';
 
 import editions from './editions.json';
 
-const API_ROOT = `//${window.location.host}/api`;
+// const API_ROOT = `//${window.location.host}/api`;
+const API_ROOT = `https://newsmap.ijmacd.com/api`;
 
 /**
  *
@@ -22,7 +23,7 @@ export function getNews (options) {
 
     const gl = edition.gl;
     const hl = edition.hl;
-    return xmlFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.${ed}/${titleCase}?ned=${ed}&gl=${gl}&hl=${hl}`)
+    return fallbackFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.${ed}/${titleCase}?ned=${ed}&gl=${gl}&hl=${hl}`)
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
@@ -66,6 +67,13 @@ export function getNews (options) {
                 articles: items,
             };
         });
+}
+
+function fallbackFetch (url) {
+    if (DOMParser) {
+        return fetch(url).then(r => r.text()).then(t => (new DOMParser).parseFromString(t, "text/xml"));
+    }
+    return xmlFetch(url);
 }
 
 function xmlFetch (url) {
