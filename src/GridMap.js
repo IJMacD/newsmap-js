@@ -8,7 +8,7 @@ export default function (props) {
           {
             props.items.map(category => {
               return (
-                <li key={category.id} style={{flex: category.weight}}>
+                <li key={category.key} style={{flex: category.weight}}>
                   <ol className="GridMap-article-list">
                     {
                       category.articles.map((article,i) => {

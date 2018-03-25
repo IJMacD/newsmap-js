@@ -26,7 +26,7 @@ export default class TreeMap extends Component {
             const articleDimensions = layoutTreeMap(articleValues, dimensions[i]);
 
             return (
-              <li key={category.id} style={dimensions[i]}>
+              <li key={category.key} style={dimensions[i]}>
                 <ol className="TreeMap-article-list">
                   {
                     category.articles.map((article,i) => {

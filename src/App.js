@@ -33,7 +33,7 @@ const availableCategories = [
  * @typedef AppState
  * @prop {Category[]} categories
  * @prop {string[]} selectedCategories
- * @prop {string} edition
+ * @prop {string[]} selectedEditions
  * @prop {"tree"|"grid"} mode
  * @prop {boolean} showImages
  * @prop {boolean} showOptions
@@ -51,7 +51,7 @@ class App extends Component {
     const defaultState = {
       categories: [],
       selectedCategories: availableCategories,
-      edition: "uk",
+      selectedEditions: ["uk"],
       mode: "tree",
       showImages: false,
       palette: "default",
@@ -97,17 +97,19 @@ class App extends Component {
   }
 
   handleEditionChange (e) {
-    const { value } = e.target;
+    const { options } = e.target;
 
-    saveState({ edition: value });
+    const selectedEditions = Array.from(options).filter(o => o.selected).map(o => o.value);
 
-    this.setState({ edition: value, categories: [] });
+    saveState({ selectedEditions });
 
-    this.loadAllCategories(value);
+    this.setState({ selectedEditions, categories: [] });
+
+    selectedEditions.forEach(ed => { this.loadAllCategories(ed); });
 
     if (window['ga']) {
       // Send analytics for new edition
-      window['ga']('send', 'pageview', { "dimension1": value });
+      window['ga']('send', 'pageview', { "dimension1": selectedEditions[0] });
     }
   }
 
@@ -175,10 +177,11 @@ class App extends Component {
 
         articles = articles.sort((a,b) => b.sources.length - a.sources.length);
 
+        const key = `${edition}_${category}`;
         const weight = articles.map(a => Math.pow(Math.E, a.sources.length)).reduce((a,b) => a+b, 0);
-        const newCat = { id: category, name: category, articles, weight };
+        const newCat = { id: category, key, name: category, articles, weight };
 
-        let categories = [ ...oldState.categories.filter(c => c.name !== category), newCat ];
+        let categories = [ ...oldState.categories.filter(c => c.key !== key), newCat ];
 
         categories = categories.sort((a,b) => b.weight - a.weight);
 
@@ -235,7 +238,7 @@ class App extends Component {
   }
 
   renderOptions() {
-    const { edition, showImages, mode } = this.state;
+    const { editions: selectedEditions, showImages, mode } = this.state;
 
     return (
       <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
@@ -243,9 +246,9 @@ class App extends Component {
           <h1>Options</h1>
           <label>
             Edition
-            <select value={edition} style={{ marginLeft: 10 }} onChange={this.handleEditionChange}>
+            <select style={{ marginLeft: 10, verticalAlign: "top" }} multiple onChange={this.handleEditionChange}>
               {
-                editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
+                editions.map(ed => <option key={ed.value} value={ed.value} selected={ed.key === selectedEditions}>{ed.name}</option>)
               }
             </select>
           </label>
