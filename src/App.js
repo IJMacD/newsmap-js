@@ -68,6 +68,7 @@ class App extends Component {
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
+    this.handleModeChange = this.handleModeChange.bind(this);
   }
 
   onResize () {
@@ -119,6 +120,13 @@ class App extends Component {
 
   handlePaletteChange (palette) {
     const newState = { palette };
+
+    saveState(newState);
+    this.setState(newState);
+  }
+
+  handleModeChange (e) {
+    const newState = { mode: e.target.value };
 
     saveState(newState);
     this.setState(newState);
@@ -227,7 +235,7 @@ class App extends Component {
   }
 
   renderOptions() {
-    const { edition, showImages } = this.state;
+    const { edition, showImages, mode } = this.state;
 
     return (
       <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
@@ -244,6 +252,13 @@ class App extends Component {
           <label>
             Show Images
             <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
+          </label>
+          <label>
+            View Mode
+            <select value={mode} style={{ marginLeft: 10 }} onChange={this.handleModeChange}>
+              <option value="tree">Tree Map</option>
+              <option value="grid">Grid</option>
+            </select>
           </label>
           <label>
             Palette:

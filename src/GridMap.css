@@ -7,8 +7,6 @@
   height: calc(100% - 52px);
 }
 
-.GridMap-cat-list > li {
-}
 
 .GridMap-cat-list > li > p {
   padding: 4px;
@@ -22,4 +20,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.GridMap-article-list > li {
+  position: relative;
+  transition: all 2s;
 }
