@@ -22,8 +22,16 @@ const availableCategories = [
 ];
 
 /**
+ * @typedef Category
+ * @prop {string} id
+ * @prop {string} name
+ * @prop {any[]} articles
+ * @prop {number} weight
+ */
+
+/**
  * @typedef AppState
- * @prop {any[]} categories
+ * @prop {Category[]} categories
  * @prop {string[]} selectedCategories
  * @prop {string} edition
  * @prop {"tree"|"grid"} mode
@@ -39,6 +47,7 @@ class App extends Component {
   constructor (props) {
     super(props);
 
+    /** @type {AppState} */
     const defaultState = {
       categories: [],
       selectedCategories: availableCategories,
@@ -176,9 +185,110 @@ class App extends Component {
     });
   }
 
+  renderHeader(colours) {
+    const { selectedCategories } = this.state;
+
+    return (
+      <header className="App-header">
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline" }}>
+            <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
+            <button style={{ marginLeft: 7 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
+          </div>
+          <p className="App-intro">
+            Data from <a href="https://news.google.com">Google News</a>.
+            Inspried by <a href="http://newsmap.jp">newsmap.jp</a>.
+            Fork me on <a href="https://github.com/ijmacd/newsmap-js">GitHub</a>.
+          </p>
+        </div>
+        <div className="App-category-chooser">
+        {
+          availableCategories.map(cat => {
+            const colour = colours[cat];
+            return (
+              <label
+                key={cat}
+                className="App-category-key"
+                style={{ backgroundColor: colour, color: luminance(colour) > 128 ? "#111" : "#FFF" }}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCategories.includes(cat)}
+                  onChange={this.onCategoryChange}
+                  value={cat} />
+                {ucfirst(cat)}
+              </label>
+            )
+          })
+        }
+        </div>
+      </header>
+    );
+  }
+
+  renderOptions() {
+    const { edition, showImages } = this.state;
+
+    return (
+      <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
+        <div className="App-modal" onClick={e => e.stopPropagation()}>
+          <h1>Options</h1>
+          <label>
+            Edition
+            <select value={edition} style={{ marginLeft: 10 }} onChange={this.handleEditionChange}>
+              {
+                editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
+              }
+            </select>
+          </label>
+          <label>
+            Show Images
+            <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
+          </label>
+          <label>
+            Palette:
+            {
+              this.renderPalettes()
+            }
+          </label>
+          <p style={{ textAlign: "right", marginBottom: 0 }}>
+            <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  renderPalettes() {
+    const { palette: selectedPalette } = this.state;
+
+    return Object.entries(palettes).map(([name, palette]) => {
+      if (name === "default")
+        return null;
+
+      return (
+        <div
+          key={name}
+          className="App-palette"
+          style={{ outlineColor: name === selectedPalette ? "#FFF" : false }}
+          onClick={() => this.handlePaletteChange(name)}
+        >
+          { Object.entries(palette).map(([cat, colour]) => (
+            <div
+              key={cat}
+              className="App-swatch"
+              style={{ backgroundColor: colour }}
+              title={ucfirst(cat)}
+            />
+          )) }
+        </div>
+      );
+    })
+  }
+
   render() {
     const Map = this.state.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories, edition, showImages, showOptions, palette: selectedPalette } = this.state;
+    const { selectedCategories, showImages, showOptions, palette: selectedPalette } = this.state;
 
     const categories = this.state.categories.filter(c => selectedCategories.includes(c.id));
     const colours = palettes[selectedPalette] || defaultColours;
@@ -196,78 +306,8 @@ class App extends Component {
             />
           )}
         />
-        <header className="App-header">
-          <div style={{ flex: 1 }}>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline" }}>
-              <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
-              <button style={{ marginLeft: 7 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
-            </div>
-            <p className="App-intro">
-              Data from <a href="https://news.google.com">Google News</a>.
-              Inspried by <a href="http://newsmap.jp">newsmap.jp</a>.
-              Fork me on <a href="https://github.com/ijmacd/newsmap-js">GitHub</a>.
-            </p>
-          </div>
-          <div className="App-category-chooser">
-          {
-            availableCategories.map(cat => {
-              const colour = colours[cat];
-              return (
-                <label
-                  key={cat}
-                  className="App-category-key"
-                  style={{ backgroundColor: colour, color: luminance(colour) > 192 ? "#111" : "#FFF" }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(cat)}
-                    onChange={this.onCategoryChange}
-                    value={cat} />
-                  {ucfirst(cat)}
-                </label>
-              )
-            })
-          }
-          </div>
-        </header>
-        { showOptions &&
-          <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
-            <div className="App-modal" onClick={e => e.stopPropagation()}>
-              <h1>Options</h1>
-              <label>
-                Edition
-                <select value={edition} style={{ marginLeft: 10 }} onChange={this.handleEditionChange}>
-                  {
-                    editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
-                  }
-                </select>
-              </label>
-              <label>
-                Show Images
-                <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
-              </label>
-              <label>
-                Palette:
-                {
-                  Object.entries(palettes).map(([name, palette]) => (
-                    <div
-                      key={name}
-                      className="App-palette"
-                      style={{ outlineColor: name === selectedPalette ? "#FFF" : false }}
-                      onClick={() => this.handlePaletteChange(name)}
-                    >
-                      <span className="App-palettelabel">{name}</span>
-                      { Object.entries(palette).map(([cat, colour]) => <div key={cat} className="App-swatch" style={{ backgroundColor: colour }} title={cat} />) }
-                    </div>
-                  ))
-                }
-              </label>
-              <p style={{ textAlign: "right", marginBottom: 0 }}>
-                <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
-              </p>
-            </div>
-          </div>
-        }
+        { this.renderHeader(colours) }
+        { showOptions && this.renderOptions() }
       </div>
     );
   }
