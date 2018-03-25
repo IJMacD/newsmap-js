@@ -22,6 +22,10 @@ export default class TreeMap extends Component {
       <ol className="TreeMap-cat-list" ref={r => this.ref = r}>
         {
           this.props.items.map((category, i) => {
+            if (category.articles.length === 0) {
+              return null;
+            }
+
             const articleValues = getArticleValues(category.articles);
             const articleDimensions = layoutTreeMap(articleValues, dimensions[i]);
 
@@ -84,7 +88,7 @@ function layoutTreeMap (values, { width, height }) {
   let currentY = 0;
 
   values.forEach(value => {
-    const w = valueLength();
+    const w = horizontal ? valueWidth : valueHeight; // valueLength
     const worst_n = worst(row, w);
     const worst_y = worst([ ...row, value ], w);
 
@@ -151,10 +155,6 @@ function layoutTreeMap (values, { width, height }) {
     });
 
     horizontal = !horizontal;
-  }
-
-  function valueLength () {
-    return horizontal ? valueWidth : valueHeight;
   }
 
   function worst(/* row */ R, /* width */ w) {

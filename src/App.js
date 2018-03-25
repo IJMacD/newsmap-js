@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import GridMap from './GridMap';
-import TreeMap from './TreeMap';
-import { getNews } from './GoogleNewsRSS';
+import Edition from './Edition';
 import { ucfirst } from './util';
-import Article from './Article';
 
 import defaultColours, * as palettes from './colours';
 import editions from './editions.json';
@@ -105,8 +102,6 @@ class App extends Component {
 
     this.setState({ selectedEditions, categories: [] });
 
-    selectedEditions.forEach(ed => { this.loadAllCategories(ed); });
-
     if (window['ga']) {
       // Send analytics for new edition
       window['ga']('send', 'pageview', { "dimension1": selectedEditions[0] });
@@ -134,66 +129,12 @@ class App extends Component {
     this.setState(newState);
   }
 
-  handleItemClick (e, item) {
-    if (e.altKey) {
-      e.preventDefault();
-
-      item.sources.push(item.sources.shift());
-
-      item.title = item.sources[0].originalTitle;
-      item.url = item.sources[0].originalURL;
-
-      this.forceUpdate();
-
-      return;
-    }
-  }
-
   componentDidMount () {
-    this.loadAllCategories(this.state.edition);
-
-    if (window['ga']) {
-      window['ga']('send', 'pageview', { "dimension1": this.state.edition });
-    }
-
-    this.timeout = setInterval(() => this.loadAllCategories(this.state.edition), 10 * 60 * 1000);
-
     window.addEventListener("resize", this.onResize);
   }
 
   componentWillUnmount () {
-    clearInterval(this.timeout);
-
     window.removeEventListener("resize", this.onResize);
-  }
-
-  loadAllCategories (edition) {
-
-    const cats = availableCategories;
-
-    cats.forEach(category => {
-      getNews({ category, edition }).then(data => this.setState(oldState => {
-        let { articles } = data;
-
-        articles = articles.sort((a,b) => b.sources.length - a.sources.length);
-
-        const key = `${edition}_${category}`;
-        const weight = articles.map(a => Math.pow(Math.E, a.sources.length)).reduce((a,b) => a+b, 0);
-        const newCat = { id: category, key, name: category, articles, weight };
-
-        let categories = [ ...oldState.categories.filter(c => c.key !== key), newCat ];
-
-        categories = categories.sort((a,b) => b.weight - a.weight);
-
-        return { categories };
-      }), err => {
-        if (err === "CORS Error" && !this.embarrassed) {
-          this.embarrassed = true;
-          alert("Well this is embarrassing.\n\nI'll be honest - Google News RSS servers don't exactly play nicely with NewsMap.JS. More accurately they just don't consider CORS which would let us load the news directly. Instead I need to proxy the requests through the NewsMap.JS servers and I'm too cheap to implement the proxying properly.\n\nMy advice is to try a different news edition in the options.");
-        }
-        console.log(err);
-      });
-    });
   }
 
   renderHeader(colours) {
@@ -238,7 +179,7 @@ class App extends Component {
   }
 
   renderOptions() {
-    const { editions: selectedEditions, showImages, mode } = this.state;
+    const { selectedEditions, showImages, mode } = this.state;
 
     return (
       <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
@@ -246,9 +187,14 @@ class App extends Component {
           <h1>Options</h1>
           <label>
             Edition
-            <select style={{ marginLeft: 10, verticalAlign: "top" }} multiple onChange={this.handleEditionChange}>
+            <select
+              style={{ marginLeft: 10, verticalAlign: "top" }}
+              multiple
+              onChange={this.handleEditionChange}
+              value={selectedEditions}
+            >
               {
-                editions.map(ed => <option key={ed.value} value={ed.value} selected={ed.key === selectedEditions}>{ed.name}</option>)
+                editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
               }
             </select>
           </label>
@@ -305,25 +251,26 @@ class App extends Component {
   }
 
   render() {
-    const Map = this.state.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories, showImages, showOptions, palette: selectedPalette } = this.state;
+    const { selectedCategories, mode, showImages, showOptions, palette: selectedPalette, selectedEditions } = this.state;
 
-    const categories = this.state.categories.filter(c => selectedCategories.includes(c.id));
     const colours = palettes[selectedPalette] || defaultColours;
 
     return (
       <div className="App">
-        <Map
-          items={categories}
-          itemRender={props => (
-            <Article
+        <div style={{ display: "flex", height: "calc(100% - 50px)" }}>
+          { selectedEditions.map(ed => (
+            <Edition
+              key={ed}
+              edition={ed}
+              mode={mode}
+              availableCategories={availableCategories}
               showImages={showImages}
               colours={colours}
-              onClick={e => this.handleItemClick(e, props.item)}
-              { ...props }
+              selectedCategories={selectedCategories}
             />
-          )}
-        />
+          ))
+          }
+        </div>
         { this.renderHeader(colours) }
         { showOptions && this.renderOptions() }
       </div>
