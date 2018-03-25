@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import './TreeMap.css';
 
+/**
+ * @augments Component<{ items: any[], itemRender: (any) => React.ReactNode }>
+ */
 export default class TreeMap extends Component {
 
   render () {

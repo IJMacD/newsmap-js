@@ -105,9 +105,9 @@ class App extends Component {
 
     this.loadAllCategories(value);
 
-    if (window.ga) {
+    if (window['ga']) {
       // Send analytics for new edition
-      window.ga('send', 'pageview', { "dimension1": value });
+      window['ga']('send', 'pageview', { "dimension1": value });
     }
   }
 
@@ -150,8 +150,8 @@ class App extends Component {
   componentDidMount () {
     this.loadAllCategories(this.state.edition);
 
-    if (window.ga) {
-      window.ga('send', 'pageview', { "dimension1": this.state.edition });
+    if (window['ga']) {
+      window['ga']('send', 'pageview', { "dimension1": this.state.edition });
     }
 
     this.timeout = setInterval(() => this.loadAllCategories(this.state.edition), 10 * 60 * 1000);
