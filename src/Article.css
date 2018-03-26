@@ -28,6 +28,7 @@
   right: 0;
   height: 5%;
   background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
+  color: white;
 }
 
 .Article-image .article {

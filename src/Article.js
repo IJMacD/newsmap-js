@@ -3,6 +3,7 @@ import React from 'react';
 import defaultColours from './colours';
 
 import './Article.css';
+import { luminance } from './util';
 
 export default function Article ({ item, category, showImages, colours = defaultColours, style, onClick }) {
   const timeDelta = Date.now() - (new Date(item.publishedAt)).valueOf();
@@ -28,7 +29,7 @@ export default function Article ({ item, category, showImages, colours = default
         className="article"
         title={`${item.sources[0].name}: ${item.title}`}
         data-source={item.sources[0].name}
-        style={{ backgroundColor, fontSize }}
+        style={{ backgroundColor, fontSize, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}
         onClick={onClick}
       >
         {item.title}
@@ -48,9 +49,9 @@ function getAgedColour(base, age) {
   const b2 = parseInt(base.substr(3,2), 16);
   const b3 = parseInt(base.substr(5,2), 16);
 
-  const r = (b1 * scale).toFixed();
-  const g = (b2 * scale).toFixed();
-  const b = (b3 * scale).toFixed();
+  const r = Math.floor(b1 * scale).toString(16).padStart(2,"0");
+  const g = Math.floor(b2 * scale).toString(16).padStart(2,"0");
+  const b = Math.floor(b3 * scale).toString(16).padStart(2,"0");
 
-  return `rgb(${r},${g},${b})`;
+  return `#${r}${g}${b}`;
 }

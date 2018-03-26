@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Edition from './Edition';
-import { ucfirst } from './util';
+import { ucfirst, luminance } from './util';
 
 import defaultColours, * as palettes from './colours';
 import editions from './editions.json';
@@ -293,14 +293,6 @@ function getSavedState () {
 
 function saveState (state) {
   localStorage["state"] = JSON.stringify({ ...getSavedState(), ...state });
-}
-
-function luminance (c) {
-  const R = parseInt(c.substr(1,2), 16);
-  const G = parseInt(c.substr(3,2), 16);
-  const B = parseInt(c.substr(5,2), 16);
-
-  return (0.2126*R + 0.7152*G + 0.0722*B);
 }
 
 function findEdition (id) {
