@@ -28,22 +28,28 @@ export function getNews (options) {
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
-                    const title = decodeHtml(itemEl.getElementsByTagName("title")[0].innerHTML);
-                    const url = itemEl.getElementsByTagName("link")[0].innerHTML;
-                    const id = itemEl.getElementsByTagName("guid")[0].innerHTML;
-                    const publishedAt = new Date(itemEl.getElementsByTagName("pubDate")[0].innerHTML).toISOString();
+                    const titleEl = itemEl.getElementsByTagName("title")[0];
+                    const title = decodeHtml(titleEl.textContent || titleEl.innerHTML);
+                    const linkEl = itemEl.getElementsByTagName("link")[0];
+                    const url = linkEl.textContent || linkEl.innerHTML;
+                    const idEl = itemEl.getElementsByTagName("guid")[0];
+                    const id = idEl.textContent || idEl.innerHTML;
+                    const dateEl = itemEl.getElementsByTagName("pubDate")[0];
+                    const publishedAt = new Date(dateEl.textContent || dateEl.innerHTML).toISOString();
 
-                    const desc = decodeHtml(itemEl.getElementsByTagName("description")[0].innerHTML);
+                    const descEl = itemEl.getElementsByTagName("description")[0];
+                    const desc = decodeHtml(descEl.textContent || descEl.innerHTML);
                     const descDoc = (new DOMParser()).parseFromString(desc, "text/html");
                     const imageEl = descDoc.getElementsByTagName("img")[0];
                     const imageURL = imageEl && imageEl.attributes.getNamedItem("src").textContent;
 
                     const sources = Array.from(descDoc.getElementsByTagName("li"))
                         .map(liEl => {
-                            const name = liEl.getElementsByTagName("font")[0].innerText;
+                            const nameEl = liEl.getElementsByTagName("font")[0];
+                            const name = nameEl.textContent || nameEl.innerText;
                             const id = urlize(name);
                             const aEl = liEl.getElementsByTagName("a")[0];
-                            const originalTitle = aEl.innerText;
+                            const originalTitle = aEl.textContent || aEl.innerText;
                             const originalURL = aEl.attributes.getNamedItem("href").textContent;
 
                             return {

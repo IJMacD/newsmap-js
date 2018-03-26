@@ -251,7 +251,14 @@ class App extends Component {
   }
 
   render() {
-    const { selectedCategories, mode, showImages, showOptions, palette: selectedPalette, selectedEditions } = this.state;
+    const {
+      selectedCategories,
+      mode,
+      showImages,
+      showOptions,
+      palette: selectedPalette,
+      selectedEditions,
+    } = this.state;
 
     const colours = palettes[selectedPalette] || defaultColours;
 
