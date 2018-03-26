@@ -255,19 +255,26 @@ class App extends Component {
 
     const colours = palettes[selectedPalette] || defaultColours;
 
+    const showEditionName = selectedEditions.length > 1;
+
     return (
       <div className="App">
         <div style={{ display: "flex", height: "calc(100% - 50px)" }}>
           { selectedEditions.map(ed => (
-            <Edition
+            <div
               key={ed}
-              edition={ed}
-              mode={mode}
-              availableCategories={availableCategories}
-              showImages={showImages}
-              colours={colours}
-              selectedCategories={selectedCategories}
-            />
+              style={{ height: showEditionName ? "calc(100% - 1em)" : "100%", flex: 1 }}
+            >
+              { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold" }}>{(findEdition(ed)||{}).name}</p> }
+              <Edition
+                edition={ed}
+                mode={mode}
+                availableCategories={availableCategories}
+                showImages={showImages}
+                colours={colours}
+                selectedCategories={selectedCategories}
+              />
+            </div>
           ))
           }
         </div>
@@ -294,4 +301,8 @@ function luminance (c) {
   const B = parseInt(c.substr(5,2), 16);
 
   return (0.2126*R + 0.7152*G + 0.0722*B);
+}
+
+function findEdition (id) {
+  return editions.find(e => e.value === id);
 }
