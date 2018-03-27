@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import './TreeMap.css';
+// import './TreeMap.css';
 
 /**
  * @augments Component<{ items: any[], itemRender: (any) => React.ReactNode }>

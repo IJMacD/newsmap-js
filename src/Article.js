@@ -2,7 +2,7 @@ import React from 'react';
 
 import defaultColours from './colours';
 
-import './Article.css';
+// import './Article.css';
 import { luminance } from './util';
 
 export default function Article ({ item, category, showImages, colours = defaultColours, style, onClick }) {

@@ -63,7 +63,7 @@ class Edition extends Component {
   componentDidMount () {
     this.loadAllCategories(this.props.edition);
 
-    if (window['ga']) {
+    if (typeof window !== 'undefined' && window['ga']) {
       window['ga']('send', 'pageview', { "dimension1": this.props.edition });
     }
 

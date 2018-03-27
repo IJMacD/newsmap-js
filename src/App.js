@@ -6,7 +6,7 @@ import defaultColours, * as palettes from './colours';
 // @ts-ignore
 import editions from './editions.json';
 
-import './App.css';
+// import './App.css';
 
 const availableCategories = [
   "world",
@@ -101,7 +101,7 @@ class App extends Component {
 
     this.setState({ categories: [] });
 
-    if (window['ga']) {
+    if (typeof window !== 'undefined' && window['ga']) {
       // Send analytics for new edition
       window['ga']('send', 'pageview', { "dimension1": selectedEditions[0] });
     }

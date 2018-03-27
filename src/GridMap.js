@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './GridMap.css';
+// import './GridMap.css';
 
 export default function (props) {
     return (
