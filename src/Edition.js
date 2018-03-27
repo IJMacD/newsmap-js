@@ -37,6 +37,7 @@ class Edition extends Component {
   constructor (props) {
     super(props);
 
+    /** @type {EditionState} */
     this.state = {
       categories: [],
     };

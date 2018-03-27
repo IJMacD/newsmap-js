@@ -3,6 +3,7 @@ import Edition from './Edition';
 import { ucfirst, luminance } from './util';
 
 import defaultColours, * as palettes from './colours';
+// @ts-ignore
 import editions from './editions.json';
 
 import './App.css';
@@ -141,12 +142,14 @@ class App extends Component {
         {
           availableCategories.map(cat => {
             const active = selectedCategories.includes(cat);
-            const colour = active ? colours[cat] : "#999";
+            const backgroundColor = active ? colours[cat] : "#777";
+            const color = active ? (luminance(backgroundColor) > 128 ? "#111" : "#FFF") : "#555";
+
             return (
               <label
                 key={cat}
                 className="App-category-key"
-                style={{ backgroundColor: colour, color: luminance(colour) > 128 ? "#111" : "#FFF" }}
+                style={{ backgroundColor, color }}
               >
                 <input
                   type="checkbox"
