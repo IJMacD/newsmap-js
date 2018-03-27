@@ -34,6 +34,7 @@ const availableCategories = [
  * @prop {"tree"|"grid"} mode
  * @prop {boolean} showImages
  * @prop {boolean} showOptions
+ * @prop {boolean} headerTop
  * @prop {string} palette
  */
 
@@ -53,6 +54,7 @@ class App extends Component {
       showImages: false,
       palette: "default",
       showOptions: false,
+      headerTop: false,
     };
 
     /** @type {AppState} */
@@ -64,8 +66,6 @@ class App extends Component {
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
-    this.handleImageChange = this.handleImageChange.bind(this);
-    this.handleModeChange = this.handleModeChange.bind(this);
   }
 
   onResize () {
@@ -88,9 +88,7 @@ class App extends Component {
       selectedCategories = selectedCategories.filter(c => c !== value );
     }
 
-    saveState({ selectedCategories });
-
-    this.setState({ selectedCategories });
+    this.setSavedState({ selectedCategories });
   }
 
   handleEditionChange (e) {
@@ -98,9 +96,9 @@ class App extends Component {
 
     const selectedEditions = Array.from(options).filter(o => o.selected).map(o => o.value);
 
-    saveState({ selectedEditions });
+    this.setSavedState({ selectedEditions });
 
-    this.setState({ selectedEditions, categories: [] });
+    this.setState({ categories: [] });
 
     if (window['ga']) {
       // Send analytics for new edition
@@ -108,24 +106,9 @@ class App extends Component {
     }
   }
 
-  handleImageChange (e) {
-    const newState = { showImages: e.target.checked };
+  setSavedState (newState) {
+    localStorage["state"] = JSON.stringify({ ...getSavedState(), ...newState });
 
-    saveState(newState);
-    this.setState(newState);
-  }
-
-  handlePaletteChange (palette) {
-    const newState = { palette };
-
-    saveState(newState);
-    this.setState(newState);
-  }
-
-  handleModeChange (e) {
-    const newState = { mode: e.target.value };
-
-    saveState(newState);
     this.setState(newState);
   }
 
@@ -180,7 +163,7 @@ class App extends Component {
   }
 
   renderOptions() {
-    const { selectedEditions, showImages, mode } = this.state;
+    const { selectedEditions, showImages, mode, headerTop } = this.state;
 
     return (
       <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
@@ -205,13 +188,19 @@ class App extends Component {
             <label>
               Show Images
             </label>
-            <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
+            <input type="checkbox" checked={showImages} onChange={e => this.setSavedState({ showImages: e.target.checked })} />
+          </div>
+          <div className="App-formgroup">
+            <label>
+              Controls on Top
+            </label>
+            <input type="checkbox" checked={headerTop} onChange={e => this.setSavedState({ headerTop: e.target.checked })} />
           </div>
           <div className="App-formgroup">
             <label>
               View Mode
             </label>
-            <select value={mode}onChange={this.handleModeChange}>
+            <select value={mode} onChange={e => this.setSavedState({ mode: e.target.value })}>
               <option value="tree">Tree Map</option>
               <option value="grid">Grid</option>
             </select>
@@ -244,7 +233,7 @@ class App extends Component {
           key={name}
           className="App-palette"
           style={{ outlineColor: name === selectedPalette ? "#FFF" : false }}
-          onClick={() => this.handlePaletteChange(name)}
+          onClick={() => this.setSavedState({ palette: name })}
         >
           { Object.entries(palette).map(([cat, colour]) => (
             <div
@@ -267,6 +256,7 @@ class App extends Component {
       showOptions,
       palette: selectedPalette,
       selectedEditions,
+      headerTop,
     } = this.state;
 
     const colours = palettes[selectedPalette] || defaultColours;
@@ -275,6 +265,7 @@ class App extends Component {
 
     return (
       <div className="App">
+        { headerTop && this.renderHeader(colours) }
         <div style={{ display: "flex", height: "calc(100% - 48px)" }}>
           { selectedEditions.map(ed => (
             <div
@@ -294,7 +285,7 @@ class App extends Component {
           ))
           }
         </div>
-        { this.renderHeader(colours) }
+        { !headerTop && this.renderHeader(colours) }
         { showOptions && this.renderOptions() }
       </div>
     );
@@ -305,10 +296,6 @@ export default App;
 
 function getSavedState () {
   return typeof localStorage["state"] !== "undefined" ? JSON.parse(localStorage["state"]) : {};
-}
-
-function saveState (state) {
-  localStorage["state"] = JSON.stringify({ ...getSavedState(), ...state });
 }
 
 function findEdition (id) {
