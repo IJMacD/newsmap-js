@@ -14,14 +14,13 @@ body,
 .App-header {
   background-color: #222;
   min-height: 48px;
-  padding: 1px;
   color: white;
   display: flex;
 }
 
 .App-title {
   font-size: 1em;
-  margin: 10px 0 0 10px;
+  margin: 8px 0 0 10px;
 }
 
 .App-title a {
@@ -39,22 +38,22 @@ body,
 }
 
 .App-category-chooser {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  text-align: right;
 }
 
 .App-category-key {
-  min-width: 80px;
-  font-size: 8pt;
+  font-size: 0.75em;
   font-weight: bold;
-  padding: 2px;
+  padding: 8px 16px;
+  height: 48px;
   cursor: pointer;
   border: 2px solid rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  box-sizing: border-box;
 }
 
 .App-category-key input {
-  vertical-align: sub;
+  display: none;
 }
 
 .App-shade {
@@ -71,7 +70,7 @@ body,
   max-width: 98%;
   padding: 16px;
   background-color: #222;
-  margin: 120px auto 0;
+  margin: 80px auto 0;
   border-radius: 5px;
   border: 1px solid #686868;
   color: white;
@@ -81,17 +80,23 @@ body,
   margin-top: 0.25em;
 }
 
-.App-modal label {
-  cursor: pointer;
-  display: block;
+.App-formgroup {
+  padding-left: 120px;
+  position: relative;
   margin-bottom: 0.8em;
+}
+
+.App-modal label {
+  position: absolute;
+  max-width: 120px;
+  margin-left: -120px;
 }
 
 .App-palette {
   transition: 0.5s all;
   padding: 2px 4px;
-  margin: 4px 0;
   outline: 1px solid transparent;
+  display: inline-block;
 }
 
 .App-palette:hover {

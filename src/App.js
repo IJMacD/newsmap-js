@@ -143,20 +143,21 @@ class App extends Component {
     return (
       <header className="App-header">
         <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline" }}>
-            <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
-            <button style={{ marginLeft: 7 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
-          </div>
+          <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
           <p className="App-intro">
             Data from <a href="https://news.google.com">Google News</a>.
             Inspried by <a href="http://newsmap.jp">newsmap.jp</a>.
             Fork me on <a href="https://github.com/ijmacd/newsmap-js">GitHub</a>.
           </p>
         </div>
+        <div>
+          <button style={{ margin: 8 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
+        </div>
         <div className="App-category-chooser">
         {
           availableCategories.map(cat => {
-            const colour = colours[cat];
+            const active = selectedCategories.includes(cat);
+            const colour = active ? colours[cat] : "#999";
             return (
               <label
                 key={cat}
@@ -165,7 +166,7 @@ class App extends Component {
               >
                 <input
                   type="checkbox"
-                  checked={selectedCategories.includes(cat)}
+                  checked={active}
                   onChange={this.onCategoryChange}
                   value={cat} />
                 {ucfirst(cat)}
@@ -185,10 +186,12 @@ class App extends Component {
       <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
         <div className="App-modal" onClick={e => e.stopPropagation()}>
           <h1>Options</h1>
-          <label>
-            Edition
+          <div className="App-formgroup">
+            <label>
+              Edition
+            </label>
             <select
-              style={{ marginLeft: 10, verticalAlign: "top" }}
+              style={{ verticalAlign: "top", height: 120 }}
               multiple
               onChange={this.handleEditionChange}
               value={selectedEditions}
@@ -197,24 +200,30 @@ class App extends Component {
                 editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
               }
             </select>
-          </label>
-          <label>
-            Show Images
+          </div>
+          <div className="App-formgroup">
+            <label>
+              Show Images
+            </label>
             <input type="checkbox" checked={showImages} onChange={this.handleImageChange} />
-          </label>
-          <label>
-            View Mode
-            <select value={mode} style={{ marginLeft: 10 }} onChange={this.handleModeChange}>
+          </div>
+          <div className="App-formgroup">
+            <label>
+              View Mode
+            </label>
+            <select value={mode}onChange={this.handleModeChange}>
               <option value="tree">Tree Map</option>
               <option value="grid">Grid</option>
             </select>
-          </label>
-          <label>
-            Palette:
+          </div>
+          <div className="App-formgroup">
+            <label>
+              Palette:
+            </label>
             {
               this.renderPalettes()
             }
-          </label>
+          </div>
           <p style={{ textAlign: "right", marginBottom: 0 }}>
             <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
           </p>
@@ -266,13 +275,13 @@ class App extends Component {
 
     return (
       <div className="App">
-        <div style={{ display: "flex", height: "calc(100% - 50px)" }}>
+        <div style={{ display: "flex", height: "calc(100% - 48px)" }}>
           { selectedEditions.map(ed => (
             <div
               key={ed}
               style={{ height: showEditionName ? "calc(100% - 1em)" : "100%", flex: 1 }}
             >
-              { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold" }}>{(findEdition(ed)||{}).name}</p> }
+              { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1em" }}>{(findEdition(ed)||{}).name}</p> }
               <Edition
                 edition={ed}
                 mode={mode}

@@ -19,6 +19,7 @@ import Article from './Article';
  * @typedef EditionProps
  * @prop {string} edition
  * @prop {string} mode
+ * @prop {string[]} availableCategories
  * @prop {string[]} selectedCategories
  * @prop {any} selectedPalette
  * @prop {boolean} showImages
@@ -70,8 +71,6 @@ class Edition extends Component {
 
   componentWillUnmount () {
     clearInterval(this.timeout);
-
-    window.removeEventListener("resize", this.onResize);
   }
 
   loadAllCategories (edition) {
