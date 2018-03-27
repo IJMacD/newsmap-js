@@ -38,13 +38,9 @@
 }
 
 .Article-image .article:hover {
+  color: transparent !important;
   background-color: transparent !important;
   opacity: 1;
-  text-shadow:
-        0.07em 0 0.14em black,
-        0 0.07em 0.14em black,
-        -0.07em 0 0.14em black,
-        0 -0.07em 0.14em black;
 }
 
 .article:hover::after {

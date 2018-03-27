@@ -11,6 +11,17 @@ body,
   background-color: #111;
 }
 
+.App-EditionContainer {
+  display: flex;
+  height: calc(100% - 48px);
+}
+
+.App-EditionContainer:-webkit-full-screen {
+  height: 100%;
+  width: 100%;
+  background-color: #111;
+}
+
 .App-header {
   background-color: #222;
   min-height: 48px;

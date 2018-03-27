@@ -21,7 +21,7 @@ import Article from './Article';
  * @prop {string} mode
  * @prop {string[]} availableCategories
  * @prop {string[]} selectedCategories
- * @prop {any} selectedPalette
+ * @prop {{[category: string]: string}} colours
  * @prop {boolean} showImages
  */
 
@@ -31,7 +31,7 @@ import Article from './Article';
  */
 
 /**
- * @augments Component<{ edition: string, mode: string }, EditionState>
+ * @augments Component<EditionProps, EditionState>
  */
 class Edition extends Component {
   constructor (props) {

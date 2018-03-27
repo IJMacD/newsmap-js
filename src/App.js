@@ -135,6 +135,7 @@ class App extends Component {
         </div>
         <div>
           <button style={{ margin: 8 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
+          <button style={{ margin: 8 }} onClick={() => this.ref && requestFullscreen(this.ref)}>Fullscreen</button>
         </div>
         <div className="App-category-chooser">
         {
@@ -266,7 +267,7 @@ class App extends Component {
     return (
       <div className="App">
         { headerTop && this.renderHeader(colours) }
-        <div style={{ display: "flex", height: "calc(100% - 48px)" }}>
+        <div className="App-EditionContainer" ref={r => this.ref = r}>
           { selectedEditions.map(ed => (
             <div
               key={ed}
@@ -300,4 +301,14 @@ function getSavedState () {
 
 function findEdition (id) {
   return editions.find(e => e.value === id);
+}
+
+function requestFullscreen (el) {
+  if (el.requestFullscreen) {
+		el.requestFullscreen();
+	} else if (el.mozRequestFullScreen) {
+		el.mozRequestFullScreen();
+	} else if (el.webkitRequestFullScreen) {
+		el.webkitRequestFullScreen();
+	}
 }
