@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
-import Edition from './Edition';
-import { ucfirst, luminance } from './util';
+import runtimeEnv from '@mars/heroku-js-runtime-env';
 
+import Edition from './Edition';
+
+import { ucfirst, luminance } from './util';
 import defaultColours, * as palettes from './colours';
 // @ts-ignore
 import editions from './editions.json';
 
 import './App.css';
+
+const env = runtimeEnv();
 
 const availableCategories = [
   "world",
@@ -67,6 +71,9 @@ class App extends Component {
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
+
+    // psuedo-state
+    this.optionsCount = 0;
   }
 
   onResize () {
@@ -111,6 +118,12 @@ class App extends Component {
     localStorage["state"] = JSON.stringify({ ...getSavedState(), ...newState });
 
     this.setState(newState);
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (this.state.showOptions && !prevState.showOptions) {
+      this.optionsCount++;
+    }
   }
 
   componentDidMount () {
@@ -217,6 +230,9 @@ class App extends Component {
               this.renderPalettes()
             }
           </div>
+          { env.REACT_APP_BTC_ADDRESS && this.optionsCount >= 2 &&
+            <p style={{ fontSize: 12, color: "#666", float: "left" }}>BTC: {env.REACT_APP_BTC_ADDRESS}</p>
+          }
           <p style={{ textAlign: "right", marginBottom: 0 }}>
             <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
           </p>
