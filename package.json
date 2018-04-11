@@ -12,6 +12,9 @@
     "react-dom": "^16.2.0",
     "react-scripts": "1.0.17"
   },
+  "devDependencies": {
+    "xmldom": "^0.1.27"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

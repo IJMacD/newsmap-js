@@ -20,13 +20,11 @@ const newEditions = editions.map(ed => {
     const hlMatch = /hl=([^&]+)/.exec(loc);
 
     if (glMatch && hlMatch) {
-      return {
-        name: ed.name,
-        value: ed.value,
-        gl: glMatch[1],
-        hl: hlMatch[1],
-      };
+      ed.gl = glMatch[1];
+      ed.hl = hlMatch[1];
     }
+
+    return ed;
   });
 });
 

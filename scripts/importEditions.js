@@ -8,7 +8,7 @@ const snippet = require("./snippet");
 
 const doc = new DOMParser().parseFromString(snippet, "text/html");
 
-const elems = Array.from(doc.documentElement.getElementsByTagName("div")).filter(el => el.getAttribute("class") === 'MocG8c yR6cfb LMgvRb');
+const elems = Array.from(doc.documentElement.getElementsByTagName("div")).filter(el => !!el.getAttribute("data-value"));
 
 const values = elems.map(/** @param {HTMLElement} el */ el => {
   const value = el.getAttribute("data-value");

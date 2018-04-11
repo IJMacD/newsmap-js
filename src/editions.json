@@ -1,6 +1,7 @@
 [
   {"name":"Arabic (العالم العربي)","value":"ar_me","gl":"ME","hl":"ar"},
   {"name":"Argentina (Español)‎","value":"es_ar","gl":"AR","hl":"es-419"},
+  {"name":"Australia‎","value":"au","gl":"AU","hl":"en-AU"},
   {"name":"Austria (Österreich)‎","value":"de_at","gl":"AT","hl":"de-AT"},
   {"name":"Bangladesh (বাংলাদেশ)‎","value":"bn_bd","gl":"BD","hl":"bn"},
   {"name":"Belgium (België)‎","value":"nl_be","gl":"BE","hl":"nl"},
