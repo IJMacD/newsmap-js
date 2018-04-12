@@ -8,7 +8,6 @@ body,
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #111;
 }
 
 .App-EditionContainer {
@@ -20,6 +19,10 @@ body,
   height: 100%;
   width: 100%;
   background-color: #111;
+}
+
+.App-Edition:not(:empty) {
+  background: #111;
 }
 
 .App-header {

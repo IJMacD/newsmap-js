@@ -291,6 +291,7 @@ class App extends Component {
             <div
               key={ed}
               style={{ height: showEditionName ? "calc(100% - 1em)" : "100%", flex: 1 }}
+              className="App-Edition"
             >
               { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1em" }}>{(findEdition(ed)||{}).name}</p> }
               <Edition

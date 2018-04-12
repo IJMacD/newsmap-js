@@ -108,9 +108,15 @@ class Edition extends Component {
     const { selectedCategories, showImages, colours } = this.props;
     const { categories } = this.state;
 
+    const items = categories.filter(c => selectedCategories.includes(c.id));
+
+    if (items.length === 0) {
+      return null;
+    }
+
     return (
       <Map
-        items={categories.filter(c => selectedCategories.includes(c.id))}
+        items={items}
         itemRender={props => (
           <Article
             showImages={showImages}
