@@ -1,6 +1,7 @@
 import runtimeEnv from '@mars/heroku-js-runtime-env';
 import { ucfirst, urlize } from './util';
 
+import categories from './categories.json';
 import editions from './editions.json';
 
 const env = runtimeEnv();
@@ -13,8 +14,7 @@ const API_ROOT = env.REACT_APP_API_ROOT || `//${window.location.host}/api`;
  * @param {string} options.edition
  */
 export function getNews (options) {
-    const capCase = options.category.toUpperCase();
-    const titleCase = ucfirst(options.category);
+    const catCode = categories[options.category.toLowerCase()];
     const ed = options.edition;
     const edition = findEdition(ed);
 
@@ -24,7 +24,9 @@ export function getNews (options) {
 
     const gl = edition.gl;
     const hl = edition.hl;
-    return xmlFetch(`${API_ROOT}/news/rss/headlines/section/topic/${capCase}.${ed}/${titleCase}?ned=${ed}&gl=${gl}&hl=${hl}`)
+    const ceid = hl.split("-").reverse().join(":");
+
+    return xmlFetch(`${API_ROOT}/_/rss/topics/${catCode}?hl=${hl}&gl=${gl}&ceid=${ceid}`)
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
@@ -46,11 +48,11 @@ export function getNews (options) {
                     const sources = Array.from(descDoc.getElementsByTagName("li"))
                         .map(liEl => {
                             const nameEl = liEl.getElementsByTagName("font")[0];
-                            const name = nameEl.textContent || nameEl.innerText;
+                            const name = nameEl ? nameEl.textContent || nameEl.innerText : "";
                             const id = urlize(name);
                             const aEl = liEl.getElementsByTagName("a")[0];
-                            const originalTitle = aEl.textContent || aEl.innerText;
-                            const originalURL = aEl.attributes.getNamedItem("href").textContent;
+                            const originalTitle = aEl ? aEl.textContent || aEl.innerText : "";
+                            const originalURL = aEl ? aEl.attributes.getNamedItem("href").textContent : "";
 
                             return {
                                 id,

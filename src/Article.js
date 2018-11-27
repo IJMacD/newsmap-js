@@ -22,13 +22,15 @@ export default function Article ({ item, category, showImages, colours = default
 
   const backgroundColor = getAgedColour(colours[category.id], timeDelta / (1000 * 60 * 60));
 
+  const sourceName = item.sources && item.sources.length && item.sources[0].name;
+
   return (
     <li className={"Article-li " + (showImages ? "Article-image" : "")} style={style}>
       <a
         href={item.url}
         className="article"
-        title={`${item.sources[0].name}: ${item.title}`}
-        data-source={item.sources[0].name}
+        title={`${sourceName}: ${item.title}`}
+        data-source={sourceName}
         style={{ backgroundColor, fontSize, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}
         onClick={onClick}
       >

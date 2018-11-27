@@ -49,6 +49,10 @@ class Edition extends Component {
     if (e.altKey) {
       e.preventDefault();
 
+      if (!item.sources) {
+        return;
+      }
+
       item.sources.push(item.sources.shift());
 
       item.title = item.sources[0].originalTitle;
