@@ -7,21 +7,12 @@ import { ucfirst, luminance } from './util';
 import defaultColours, * as palettes from './colours';
 // @ts-ignore
 import editions from './editions.json';
+// @ts-ignore
+import availableCategories from './categories.json';
 
 import './App.css';
 
 const env = runtimeEnv();
-
-const availableCategories = [
-  "world",
-  "nation",
-  "business",
-  "technology",
-  "entertainment",
-  "sports",
-  "science",
-  "health"
-];
 
 /**
  * @typedef Category
@@ -60,6 +51,8 @@ class App extends Component {
       palette: "default",
       showOptions: false,
       headerTop: false,
+      itemsPerCategory: 20,
+      refreshTime: 10 * 60 * 1000,
     };
 
     /** @type {AppState} */
@@ -180,59 +173,73 @@ class App extends Component {
   }
 
   renderOptions() {
-    const { selectedEditions, showImages, mode, headerTop } = this.state;
+    const {
+      selectedEditions,
+      showImages,
+      mode,
+      headerTop,
+      itemsPerCategory,
+    } = this.state;
 
     return (
       <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
         <div className="App-modal" onClick={e => e.stopPropagation()}>
           <h1>Options</h1>
-          <div className="App-formgroup">
-            <label>
-              Edition
-            </label>
-            <select
-              style={{ verticalAlign: "top", height: 120 }}
-              multiple
-              onChange={this.handleEditionChange}
-              value={selectedEditions}
-            >
+          <div className="App-modalbody">
+            <div className="App-formgroup">
+              <label>
+                Edition
+              </label>
+              <select
+                style={{ verticalAlign: "top", height: 120 }}
+                multiple
+                onChange={this.handleEditionChange}
+                value={selectedEditions}
+              >
+                {
+                  editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
+                }
+              </select>
+            </div>
+            <div className="App-formgroup">
+              <label>
+                Show Images
+              </label>
+              <input type="checkbox" checked={showImages} onChange={e => this.setSavedState({ showImages: e.target.checked })} />
+            </div>
+            <div className="App-formgroup">
+              <label>
+                Controls on Top
+              </label>
+              <input type="checkbox" checked={headerTop} onChange={e => this.setSavedState({ headerTop: e.target.checked })} />
+            </div>
+            <div className="App-formgroup">
+              <label>
+                View Mode
+              </label>
+              <select value={mode} onChange={e => this.setSavedState({ mode: e.target.value })}>
+                <option value="tree">Tree Map</option>
+                <option value="grid">Grid</option>
+              </select>
+            </div>
+            <div className="App-formgroup">
+              <label>
+                Palette:
+              </label>
               {
-                editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
+                this.renderPalettes()
               }
-            </select>
-          </div>
-          <div className="App-formgroup">
-            <label>
-              Show Images
-            </label>
-            <input type="checkbox" checked={showImages} onChange={e => this.setSavedState({ showImages: e.target.checked })} />
-          </div>
-          <div className="App-formgroup">
-            <label>
-              Controls on Top
-            </label>
-            <input type="checkbox" checked={headerTop} onChange={e => this.setSavedState({ headerTop: e.target.checked })} />
-          </div>
-          <div className="App-formgroup">
-            <label>
-              View Mode
-            </label>
-            <select value={mode} onChange={e => this.setSavedState({ mode: e.target.value })}>
-              <option value="tree">Tree Map</option>
-              <option value="grid">Grid</option>
-            </select>
-          </div>
-          <div className="App-formgroup">
-            <label>
-              Palette:
-            </label>
-            {
-              this.renderPalettes()
+            </div>
+            <div className="App-formgroup">
+              <label>
+                Items per category:
+              </label>
+              <input type="number" min={0} value={itemsPerCategory} onChange={e => this.setSavedState({ itemsPerCategory: e.target.value })} />
+            </div>
+            { env.REACT_APP_BTC_ADDRESS && this.optionsCount >= 2 &&
+              <p style={{ fontSize: 12, color: "#666", float: "left" }}>BTC: {env.REACT_APP_BTC_ADDRESS}</p>
             }
           </div>
-          { env.REACT_APP_BTC_ADDRESS && this.optionsCount >= 2 &&
-            <p style={{ fontSize: 12, color: "#666", float: "left" }}>BTC: {env.REACT_APP_BTC_ADDRESS}</p>
-          }
           <p style={{ textAlign: "right", marginBottom: 0 }}>
             <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
           </p>
@@ -277,6 +284,8 @@ class App extends Component {
       palette: selectedPalette,
       selectedEditions,
       headerTop,
+      itemsPerCategory,
+      refreshTime,
     } = this.state;
 
     const colours = palettes[selectedPalette] || defaultColours;
@@ -301,6 +310,8 @@ class App extends Component {
                 showImages={showImages}
                 colours={colours}
                 selectedCategories={selectedCategories}
+                itemsPerCategory={itemsPerCategory}
+                refreshTime={refreshTime}
               />
             </div>
           ))

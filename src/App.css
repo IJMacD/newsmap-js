@@ -76,6 +76,8 @@ body,
   height: 100%;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
 }
 
 .App-modal {
@@ -84,10 +86,18 @@ body,
   max-width: 98%;
   padding: 16px;
   background-color: #222;
-  margin: 80px auto 0;
   border-radius: 5px;
   border: 1px solid #686868;
+  margin: 0 auto;
   color: white;
+  position: absolute;
+  top: 40px;
+  bottom: 40px;
+}
+
+.App-modalbody {
+  overflow-y: auto;
+  height: calc(100% - 100px);
 }
 
 .App-modal h1 {

@@ -14,19 +14,21 @@ const API_ROOT = env.REACT_APP_API_ROOT || `//${window.location.host}/api`;
  * @param {string} options.edition
  */
 export function getNews (options) {
-    const catCode = categories[options.category.toLowerCase()];
     const ed = options.edition;
     const edition = findEdition(ed);
+
+    const urls = require(`./editions/${ed}.json`);
+    const path = urls[options.category.toLowerCase()];
 
     if (!edition) {
         throw Error("Invalid Edition");
     }
 
-    const gl = edition.gl;
-    const hl = edition.hl;
-    const ceid = hl.split("-").reverse().join(":");
+    if (!path) {
+        throw Error("Can't find URL for edition/category");
+    }
 
-    return xmlFetch(`${API_ROOT}/_/rss/topics/${catCode}?hl=${hl}&gl=${gl}&ceid=${ceid}`)
+    return xmlFetch(`${API_ROOT}${path}`)
         .then(/** @param {document} data */ data => {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {

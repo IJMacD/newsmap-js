@@ -23,6 +23,7 @@ import Article from './Article';
  * @prop {string[]} selectedCategories
  * @prop {{[category: string]: string}} colours
  * @prop {boolean} showImages
+ * @prop {number} itemsPerCategory
  */
 
 /**
@@ -71,22 +72,33 @@ class Edition extends Component {
       window['ga']('send', 'pageview', { "dimension1": this.props.edition });
     }
 
-    this.timeout = setInterval(() => this.loadAllCategories(this.props.edition), 10 * 60 * 1000);
+    this.timeout = setInterval(() => this.loadAllCategories(this.props.edition), this.props.refreshTime);
   }
 
   componentWillUnmount () {
     clearInterval(this.timeout);
   }
 
+  componentDidUpdate (prevProps) {
+    if (this.props.itemsPerCategory !== prevProps.itemsPerCategory) {
+      this.loadAllCategories(this.props.edition);
+    }
+  }
+
   loadAllCategories (edition) {
 
     const cats = this.props.availableCategories;
+    const { itemsPerCategory } = this.props;
 
     cats.forEach(category => {
       getNews({ category, edition }).then(data => this.setState(oldState => {
         let { articles } = data;
 
         articles = articles.sort((a,b) => b.sources.length - a.sources.length);
+
+        if (articles.length > itemsPerCategory) {
+          articles.length = itemsPerCategory;
+        }
 
         const key = `${edition}_${category}`;
         const weight = articles.map(a => Math.pow(Math.E, a.sources.length)).reduce((a,b) => a+b, 0);
@@ -109,7 +121,7 @@ class Edition extends Component {
 
   render() {
     const Map = this.props.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories, showImages, colours } = this.props;
+    const { selectedCategories, showImages, colours, itemsPerCategory } = this.props;
     const { categories } = this.state;
 
     const items = categories.filter(c => selectedCategories.includes(c.id));
