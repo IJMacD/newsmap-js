@@ -32,7 +32,7 @@ export function getNews (options) {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
                     const titleEl = itemEl.getElementsByTagName("title")[0];
-                    const title = titleEl ? decodeHtml(titleEl.textContent || titleEl.innerHTML) : "";
+                    let title = titleEl ? decodeHtml(titleEl.textContent || titleEl.innerHTML) : "";
 
                     const linkEl = itemEl.getElementsByTagName("link")[0];
                     const url = linkEl ? linkEl.textContent || linkEl.innerHTML : "";
@@ -40,19 +40,26 @@ export function getNews (options) {
                     const idEl = itemEl.getElementsByTagName("guid")[0];
                     const id = idEl ? idEl.textContent || idEl.innerHTML : "";
 
+                    const sourceNameEl = itemEl.getElementsByTagName("source")[0];
+                    const sourceName = sourceNameEl ? sourceNameEl.textContent || sourceNameEl.innerHTML : "";
+
+                    const sourceTail = ` - ${sourceName}`;
+                    if (title.endsWith(sourceTail)) {
+                        title = title.substring(0, title.length - sourceTail.length);
+                    }
+
                     const dateEl = itemEl.getElementsByTagName("pubDate")[0];
                     const publishedAt = dateEl ? new Date(dateEl.textContent || dateEl.innerHTML).toISOString() : "";
 
+                    const imageEl = itemEl.getElementsByTagName("media:content")[0];
+                    let imageURL = imageEl ? imageEl.attributes.getNamedItem("url").textContent : "";
+
                     let sources;
-                    let imageURL;
                     const descEl = itemEl.getElementsByTagName("description")[0];
 
                     if (descEl) {
                         const desc = decodeHtml(descEl.textContent || descEl.innerHTML);
                         const descDoc = (new DOMParser()).parseFromString(desc, "text/html");
-
-                        const imageEl = descDoc.getElementsByTagName("img")[0];
-                        imageURL = imageEl ? imageEl.attributes.getNamedItem("src").textContent : "";
 
                         sources = Array.from(descDoc.getElementsByTagName("li"))
                             .map(liEl => {
@@ -62,16 +69,31 @@ export function getNews (options) {
                                 const id = urlize(name);
 
                                 const aEl = liEl.getElementsByTagName("a")[0];
-                                const originalTitle = aEl ? aEl.textContent || aEl.innerText : "";
-                                const originalURL = aEl ? aEl.attributes.getNamedItem("href").textContent : "";
+                                let title = aEl ? aEl.textContent || aEl.innerText : "";
+                                const url = aEl ? aEl.attributes.getNamedItem("href").textContent : "";
+
+
+                                const sourceTail = ` - ${name}`;
+                                if (title.endsWith(sourceTail)) {
+                                    title = title.substring(0, title.length - sourceTail.length);
+                                }
 
                                 return {
                                     id,
                                     name,
-                                    originalTitle,
-                                    originalURL,
+                                    title,
+                                    url,
                                 };
                             }).filter(s => s.name);
+                    }
+
+                    if (!sources || sourceName.length === 0) {
+                        sources = [{
+                            id: urlize(sourceName),
+                            name: sourceName,
+                            title,
+                            url,
+                        }];
                     }
 
                     return {

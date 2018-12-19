@@ -16,27 +16,27 @@ export default function Article ({ item, category, showImage, colours = defaultC
     fontSize = 100 * Math.pow(item.title.length, -0.5);
   }
 
-  if (showImage) {
+  if (showImage && item.imageURL) {
     style.backgroundImage = `url(${item.imageURL})`;
   }
 
   const backgroundColor = getAgedColour(colours[category.id], timeDelta / (1000 * 60 * 60));
 
-  const sourceName = item.sources && item.sources.length && item.sources[0].name;
+  const source = item.sources && item.sources.length && item.sources[0] || item;
 
   return (
-    <li className={"Article-li " + (showImage ? "Article-image" : "")} style={style}>
+    <li className={"Article-li " + (showImage && item.imageURL ? "Article-image" : "")} style={style}>
       <a
         href={item.url}
         className="article"
-        title={`${sourceName}: ${item.title}`}
-        data-source={sourceName}
+        title={source.name ? `${source.name}: ${source.title}` : source.title}
+        data-source={source.name}
         style={{ backgroundColor, fontSize, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}
         onClick={onClick}
         rel="noopener"
         target={newTab ? "_blank" : "_self"}
       >
-        {item.title}
+        {source.title}
       </a>
     </li>
   );

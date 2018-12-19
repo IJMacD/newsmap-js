@@ -57,8 +57,8 @@ class Edition extends Component {
 
       item.sources.push(item.sources.shift());
 
-      item.title = item.sources[0].originalTitle;
-      item.url = item.sources[0].originalURL;
+      item.title = item.sources[0].title;
+      item.url = item.sources[0].url;
 
       this.forceUpdate();
 
