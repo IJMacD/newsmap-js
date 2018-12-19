@@ -23,6 +23,8 @@ import Article from './Article';
  * @prop {{[category: string]: string}} colours
  * @prop {boolean} showImages
  * @prop {number} itemsPerCategory
+ * @prop {number} refreshTime
+ * @prop {boolean} newTab
  */
 
 /**
@@ -110,7 +112,7 @@ class Edition extends Component {
 
   render() {
     const Map = this.props.mode === "tree" ? TreeMap : GridMap;
-    const { selectedCategories, showImages, colours, itemsPerCategory } = this.props;
+    const { selectedCategories, showImages, colours, itemsPerCategory, newTab } = this.props;
     const { categories } = this.state;
 
     const cats = categories.filter(c => selectedCategories.includes(c.id));
@@ -142,9 +144,10 @@ class Edition extends Component {
         items={items}
         itemRender={props => (
           <Article
-            showImages={showImages}
+            showImage={showImages}
             colours={colours}
             onClick={e => this.handleItemClick(e, props.item)}
+            newTab={newTab}
             { ...props }
           />
         )}

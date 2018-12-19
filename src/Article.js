@@ -5,7 +5,7 @@ import defaultColours from './colours';
 import './Article.css';
 import { luminance } from './util';
 
-export default function Article ({ item, category, showImages, colours = defaultColours, style, onClick }) {
+export default function Article ({ item, category, showImage, colours = defaultColours, style, onClick, newTab }) {
   const timeDelta = Date.now() - (new Date(item.publishedAt)).valueOf();
   let fontSize;
 
@@ -16,7 +16,7 @@ export default function Article ({ item, category, showImages, colours = default
     fontSize = 100 * Math.pow(item.title.length, -0.5);
   }
 
-  if (showImages) {
+  if (showImage) {
     style.backgroundImage = `url(${item.imageURL})`;
   }
 
@@ -25,7 +25,7 @@ export default function Article ({ item, category, showImages, colours = default
   const sourceName = item.sources && item.sources.length && item.sources[0].name;
 
   return (
-    <li className={"Article-li " + (showImages ? "Article-image" : "")} style={style}>
+    <li className={"Article-li " + (showImage ? "Article-image" : "")} style={style}>
       <a
         href={item.url}
         className="article"
@@ -33,6 +33,8 @@ export default function Article ({ item, category, showImages, colours = default
         data-source={sourceName}
         style={{ backgroundColor, fontSize, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}
         onClick={onClick}
+        rel="noopener"
+        target={newTab ? "_blank" : "_self"}
       >
         {item.title}
       </a>

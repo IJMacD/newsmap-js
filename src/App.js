@@ -32,6 +32,9 @@ const env = runtimeEnv();
  * @prop {boolean} showOptions
  * @prop {boolean} headerTop
  * @prop {string} palette
+ * @prop {number} itemsPerCategory
+ * @prop {number} refreshTime
+ * @prop {boolean} newTab
  */
 
 /**
@@ -53,6 +56,7 @@ class App extends Component {
       headerTop: false,
       itemsPerCategory: 20,
       refreshTime: 10 * 60 * 1000,
+      newTab: false,
     };
 
     /** @type {AppState} */
@@ -179,6 +183,7 @@ class App extends Component {
       mode,
       headerTop,
       itemsPerCategory,
+      newTab,
     } = this.state;
 
     return (
@@ -236,6 +241,12 @@ class App extends Component {
               </label>
               <input type="number" min={0} value={itemsPerCategory} onChange={e => this.setSavedState({ itemsPerCategory: e.target.value })} />
             </div>
+            <div className="App-formgroup">
+              <label>
+                Open in new tab
+              </label>
+              <input type="checkbox" checked={newTab} onChange={e => this.setSavedState({ newTab: e.target.checked })} />
+            </div>
             { env.REACT_APP_BTC_ADDRESS && this.optionsCount >= 2 &&
               <p style={{ fontSize: 12, color: "#666", float: "left" }}>BTC: {env.REACT_APP_BTC_ADDRESS}</p>
             }
@@ -286,6 +297,7 @@ class App extends Component {
       headerTop,
       itemsPerCategory,
       refreshTime,
+      newTab,
     } = this.state;
 
     const colours = palettes[selectedPalette] || defaultColours;
@@ -312,6 +324,7 @@ class App extends Component {
                 selectedCategories={selectedCategories}
                 itemsPerCategory={itemsPerCategory}
                 refreshTime={refreshTime}
+                newTab={newTab}
               />
             </div>
           ))
