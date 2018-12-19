@@ -12,7 +12,6 @@ import Article from './Article';
  * @prop {string} key
  * @prop {string} name
  * @prop {any[]} articles
- * @prop {number} weight
  */
 
 /**
@@ -88,25 +87,15 @@ class Edition extends Component {
   loadAllCategories (edition) {
 
     const cats = this.props.availableCategories;
-    const { itemsPerCategory } = this.props;
 
     cats.forEach(category => {
       getNews({ category, edition }).then(data => this.setState(oldState => {
         let { articles } = data;
 
-        articles = articles.sort((a,b) => b.sources.length - a.sources.length);
-
-        if (articles.length > itemsPerCategory) {
-          articles.length = itemsPerCategory;
-        }
-
         const key = `${edition}_${category}`;
-        const weight = articles.map(a => Math.pow(Math.E, a.sources.length)).reduce((a,b) => a+b, 0);
-        const newCat = { id: category, key, name: category, articles, weight };
+        const newCat = { id: category, key, name: category, articles };
 
         let categories = [ ...oldState.categories.filter(c => c.key !== key), newCat ];
-
-        categories = categories.sort((a,b) => b.weight - a.weight);
 
         return { categories };
       }), err => {
@@ -124,7 +113,25 @@ class Edition extends Component {
     const { selectedCategories, showImages, colours, itemsPerCategory } = this.props;
     const { categories } = this.state;
 
-    const items = categories.filter(c => selectedCategories.includes(c.id));
+    const cats = categories.filter(c => selectedCategories.includes(c.id));
+
+    let items = cats.map(c => {
+      const articles = c.articles.map(a => ({ ...a, weight: weight(a) }));
+
+      articles.sort((a,b) => b.weight - a.weight)
+
+      if (articles.length > itemsPerCategory) {
+        articles.length = itemsPerCategory;
+      }
+
+      return {
+        ...c,
+        articles,
+        weight: articles.reduce((t, a) => t + a.weight, 0),
+      };
+    });
+
+    items.sort((a,b) => b.weight - a.weight);
 
     if (items.length === 0) {
       return null;
@@ -145,5 +152,7 @@ class Edition extends Component {
     );
   }
 }
+
+const weight = a => 1/(Date.now() - +new Date(a.publishedAt));
 
 export default Edition;

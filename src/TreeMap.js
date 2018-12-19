@@ -14,7 +14,7 @@ export default class TreeMap extends Component {
       rootHeight = this.ref.clientHeight;
     }
 
-    const values = this.props.items.map(cat => getArticleValues(cat.articles).reduce(sum, 0));
+    const values = this.props.items.map(cat => cat.weight);
 
     const dimensions = layoutTreeMap(values, { width: rootWidth, height: rootHeight });
 
@@ -26,7 +26,7 @@ export default class TreeMap extends Component {
               return null;
             }
 
-            const articleValues = getArticleValues(category.articles);
+            const articleValues = category.articles.map(a => a.weight);
             const articleDimensions = layoutTreeMap(articleValues, dimensions[i]);
 
             return (
@@ -55,14 +55,6 @@ export default class TreeMap extends Component {
       </ol>
     );
   }
-}
-
-function getArticleValues (articles) {
-  return articles.map(a => a.sources.length).map(x => Math.pow(Math.E, x));
-}
-
-function sum(a, b) {
-  return a + b;
 }
 
 /**

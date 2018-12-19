@@ -1,7 +1,6 @@
 import runtimeEnv from '@mars/heroku-js-runtime-env';
-import { ucfirst, urlize } from './util';
+import { urlize } from './util';
 
-import categories from './categories.json';
 import editions from './editions.json';
 
 const env = runtimeEnv();
@@ -33,36 +32,47 @@ export function getNews (options) {
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
                     const titleEl = itemEl.getElementsByTagName("title")[0];
-                    const title = decodeHtml(titleEl.textContent || titleEl.innerHTML);
+                    const title = titleEl ? decodeHtml(titleEl.textContent || titleEl.innerHTML) : "";
+
                     const linkEl = itemEl.getElementsByTagName("link")[0];
-                    const url = linkEl.textContent || linkEl.innerHTML;
+                    const url = linkEl ? linkEl.textContent || linkEl.innerHTML : "";
+
                     const idEl = itemEl.getElementsByTagName("guid")[0];
-                    const id = idEl.textContent || idEl.innerHTML;
+                    const id = idEl ? idEl.textContent || idEl.innerHTML : "";
+
                     const dateEl = itemEl.getElementsByTagName("pubDate")[0];
-                    const publishedAt = new Date(dateEl.textContent || dateEl.innerHTML).toISOString();
+                    const publishedAt = dateEl ? new Date(dateEl.textContent || dateEl.innerHTML).toISOString() : "";
 
+                    let sources;
+                    let imageURL;
                     const descEl = itemEl.getElementsByTagName("description")[0];
-                    const desc = decodeHtml(descEl.textContent || descEl.innerHTML);
-                    const descDoc = (new DOMParser()).parseFromString(desc, "text/html");
-                    const imageEl = descDoc.getElementsByTagName("img")[0];
-                    const imageURL = imageEl && imageEl.attributes.getNamedItem("src").textContent;
 
-                    const sources = Array.from(descDoc.getElementsByTagName("li"))
-                        .map(liEl => {
-                            const nameEl = liEl.getElementsByTagName("font")[0];
-                            const name = nameEl ? nameEl.textContent || nameEl.innerText : "";
-                            const id = urlize(name);
-                            const aEl = liEl.getElementsByTagName("a")[0];
-                            const originalTitle = aEl ? aEl.textContent || aEl.innerText : "";
-                            const originalURL = aEl ? aEl.attributes.getNamedItem("href").textContent : "";
+                    if (descEl) {
+                        const desc = decodeHtml(descEl.textContent || descEl.innerHTML);
+                        const descDoc = (new DOMParser()).parseFromString(desc, "text/html");
 
-                            return {
-                                id,
-                                name,
-                                originalTitle,
-                                originalURL,
-                            };
-                        });
+                        const imageEl = descDoc.getElementsByTagName("img")[0];
+                        imageURL = imageEl ? imageEl.attributes.getNamedItem("src").textContent : "";
+
+                        sources = Array.from(descDoc.getElementsByTagName("li"))
+                            .map(liEl => {
+                                const nameEl = liEl.getElementsByTagName("font")[0];
+                                const name = nameEl ? nameEl.textContent || nameEl.innerText : "";
+
+                                const id = urlize(name);
+
+                                const aEl = liEl.getElementsByTagName("a")[0];
+                                const originalTitle = aEl ? aEl.textContent || aEl.innerText : "";
+                                const originalURL = aEl ? aEl.attributes.getNamedItem("href").textContent : "";
+
+                                return {
+                                    id,
+                                    name,
+                                    originalTitle,
+                                    originalURL,
+                                };
+                            }).filter(s => s.name);
+                    }
 
                     return {
                         id,
