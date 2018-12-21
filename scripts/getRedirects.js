@@ -23,7 +23,7 @@ async function run () {
       const url = `${API_ROOT}/news/rss/headlines/section/topic/${category.toUpperCase()}.${ed.value}/World?ned=${ed.value}`;
 
       return fetch(url).then(res => {
-        out[category] = res.req.path;
+        out[category] = res.req.path.substring(res.req.path.lastIndexOf("/"));
       });
     });
 
@@ -34,7 +34,7 @@ async function run () {
           }
 
           console.log(`Written ${ed.name || ed.value}`);
-      }); 
+      });
     });
   }
 }

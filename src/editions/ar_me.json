@@ -1,10 +1,10 @@
 {
   "nation": "/_flgnh/news/rss/headlines/section/topic/NATION.ar_me/World?ned=ar_me&gl=ME&hl=ar",
-  "business": "/_/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
-  "science": "/_/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
-  "world": "/_/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
-  "health": "/_/rss/topics/CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FtRnlLQUFQAQ?hl=ar&gl=EG&ceid=EG:ar",
-  "entertainment": "/_/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
-  "sports": "/_/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
-  "technology": "/_/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar"
+  "business": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
+  "science": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
+  "world": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
+  "health": "CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FtRnlLQUFQAQ?hl=ar&gl=EG&ceid=EG:ar",
+  "entertainment": "CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
+  "sports": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar",
+  "technology": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtRnlHZ0pOUlNnQVAB?hl=ar&gl=EG&ceid=EG:ar"
 }
