@@ -87,7 +87,7 @@ export function getNews (options) {
                             }).filter(s => s.name);
                     }
 
-                    if (!sources || sourceName.length === 0) {
+                    if (!sources || sources.length === 0) {
                         sources = [{
                             id: urlize(sourceName),
                             name: sourceName,
