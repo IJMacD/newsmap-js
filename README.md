@@ -15,4 +15,4 @@ That being said, you can do whatever you like with the following links:
 
 * [Amazon Gift Cards](https://www.amazon.co.uk/Amazon-Amazon-co-uk-eGift-Voucher/dp/B006AUF6X0/) can be sent to IJMacD@gmail.com
 * [PayPal.Me](https://www.paypal.me/ijmacd)
-* BTC: [1ETfDf9EHunaeZaQaBe1YHzurDLHdqhe3C](https://blockchain.info/payment_request?address=1ETfDf9EHunaeZaQaBe1YHzurDLHdqhe3C)
+* BTC: [bc1qeglhcee4jy0evnar8m2nqcgyusdaa507u8ppak](bitcoin:bc1qeglhcee4jy0evnar8m2nqcgyusdaa507u8ppak?amount=0.001)
