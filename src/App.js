@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import runtimeEnv from '@mars/heroku-js-runtime-env';
 
 import Edition from './Edition';
 
@@ -11,8 +10,6 @@ import editions from './editions.json';
 import availableCategories from './categories.json';
 
 import './App.css';
-
-const env = runtimeEnv();
 
 /**
  * @typedef Category
@@ -247,8 +244,8 @@ class App extends Component {
               </label>
               <input type="checkbox" checked={newTab} onChange={e => this.setSavedState({ newTab: e.target.checked })} />
             </div>
-            { env.REACT_APP_BTC_ADDRESS && this.optionsCount >= 2 &&
-              <p style={{ fontSize: 12, color: "#666", float: "left" }}>BTC: {env.REACT_APP_BTC_ADDRESS}</p>
+            { process.env.REACT_APP_BTC_ADDRESS && this.optionsCount >= 2 &&
+              <p style={{ fontSize: 12, color: "#666", float: "left" }}>BTC: {process.env.REACT_APP_BTC_ADDRESS}</p>
             }
           </div>
           <p style={{ textAlign: "right", marginBottom: 0 }}>
@@ -270,7 +267,7 @@ class App extends Component {
         <div
           key={name}
           className="App-palette"
-          style={{ outlineColor: name === selectedPalette ? "#FFF" : false }}
+          style={{ outlineColor: name === selectedPalette ? "#FFF" : null }}
           onClick={() => this.setSavedState({ palette: name })}
         >
           { Object.entries(palette).map(([cat, colour]) => (

@@ -1,10 +1,8 @@
-import runtimeEnv from '@mars/heroku-js-runtime-env';
 import { urlize } from './util';
 
 import editions from './editions.json';
 
-const env = runtimeEnv();
-const API_ROOT = env.REACT_APP_API_ROOT || `//${window.location.host}/api`;
+const API_ROOT = process.env.REACT_APP_API_ROOT || `//${window.location.host}/api`;
 
 /**
  *
