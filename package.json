@@ -7,6 +7,7 @@
     "core-js": "^2.5.3",
     "express": "^4.16.2",
     "express-http-proxy": "^1.1.0",
+    "gh-pages": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1"
@@ -18,12 +19,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
   },
   "proxy": {
     "/api": {
       "target": "http://localhost:8000",
-        "pathRewrite": {
+      "pathRewrite": {
         "^/api/": "/"
       }
     }
