@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import 'core-js/fn/array/from';
 import 'core-js/fn/array/includes';
@@ -11,7 +11,8 @@ import ErrorHandler from './ErrorHandler';
 import App from './App';
 import './index.css';
 
-ReactDOM.render(<ErrorHandler><App /></ErrorHandler>, document.getElementById('root'));
+const root = createRoot(document.getElementById('root'));
+root.render(<ErrorHandler><App /></ErrorHandler>);
 
 if (process.env.REACT_APP_GA_TRACKING) {
   const ga = function(){(ga.q = ga.q||[]).push(arguments)};

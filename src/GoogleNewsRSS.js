@@ -2,7 +2,7 @@ import { urlize } from './util';
 
 import editions from './editions.json';
 
-const API_ROOT = process.env.REACT_APP_API_ROOT || `//${window.location.host}/api`;
+const API_ROOT = process.env.REACT_APP_API_ROOT || window.location.origin;
 
 /**
  *
@@ -146,6 +146,9 @@ function xmlFetch (url) {
     });
 }
 
+/**
+ * @param {string} edition
+ */
 function findEdition (edition) {
     for(let i = 0; i < editions.length; i++) {
         if (editions[i].value === edition) {

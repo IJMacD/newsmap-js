@@ -10,21 +10,30 @@ Implemented in pure Javascript using react. Open source - read source, ask quest
 Running Locally
 ---------------
 
-Follow the steps below to get it running locally. Due to [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) you'll need to run a proxy server as well in a second terminal window.
+Follow the steps below to get it running locally. In `dev` environment API requests will be proxied automatically.
 
 1. Install
 
-        git clone https://github.com/IJMacD/newsmap-js.git
-        cd newsmap-js
-        npm install
-        
-2. Run development server
-   
-       npm start
-       
-3. Run proxy server (in second terminal window)
+       git clone https://github.com/IJMacD/newsmap-js.git
+       cd newsmap-js
+       npm install
 
-       node ./server.js
+2. Run development server
+
+       npm start
+
+Building for Prod
+-----------------
+
+When you build for `prod` you'll have to set environment variable `REACT_APP_API_ROOT` to an RSS news source compatible with Google News (or a proxy to it).
+
+* Bash compatible shell
+
+       REACT_APP_API_ROOT=https://example.com npm run build
+
+* Powershell
+
+       $env:REACT_APP_API_ROOT = "https://example.com"; npm run build
 
 FAQ
 ---
@@ -42,11 +51,9 @@ Or these news articles from the time:
 
 Donation
 --------
-Some people have asked for a donation link. While I feel that it's mostly uneccessary since I feel this work is conceptually derivative if not actually technically dervied from any pre-existing code. It also comes pretty close to selling Google News - itself just a content aggregator.
+Some people have asked for a donation link. While I feel that it's mostly unnecessary since I feel this work is conceptually derivative if not actually technically derived from any pre-existing code. It also comes pretty close to selling Google News - itself just a content aggregator.
 
 That being said, you can do whatever you like with the following links:
 
 * [Amazon Gift Cards](https://www.amazon.co.uk/Amazon-Amazon-co-uk-eGift-Voucher/dp/B006AUF6X0/) can be sent to IJMacD@gmail.com
 * [PayPal.Me](https://www.paypal.me/ijmacd)
-* BTC: [bc1qeglhcee4jy0evnar8m2nqcgyusdaa507u8ppak](https://www.blockchain.com/btc/payment_request?address=bc1qeglhcee4jy0evnar8m2nqcgyusdaa507u8ppak&amount=0.001)  
-  ![bc1qeglhcee4jy0evnar8m2nqcgyusdaa507u8ppak](https://user-images.githubusercontent.com/1497651/93284409-3ff88d00-f805-11ea-9be6-3b6ca0e5db6e.png)

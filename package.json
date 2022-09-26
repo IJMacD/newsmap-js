@@ -22,12 +22,17 @@
     "eject": "react-scripts eject",
     "deploy": "gh-pages -d build"
   },
-  "proxy": {
-    "/api": {
-      "target": "http://localhost:8000",
-      "pathRewrite": {
-        "^/api/": "/"
-      }
-    }
+  "proxy": "https://news.google.com",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
