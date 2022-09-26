@@ -15,10 +15,26 @@ body,
   height: calc(100% - 48px);
 }
 
-.App-EditionContainer:-webkit-full-screen {
+.App-EditionContainer:fullscreen {
   height: 100%;
   width: 100%;
   background-color: #111;
+  /* Issue #34 */
+  padding-top: 1px;
+}
+
+/*
+  Give space for mouse to rest at bottom of screen without hovering over
+  articles. See Issue #34
+ */
+.App-EditionContainer:fullscreen::after {
+  content: "";
+  background: black;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
 }
 
 .App-Edition:not(:empty) {
