@@ -13,7 +13,7 @@
     "react-scripts": "^5.0.1"
   },
   "devDependencies": {
-    "@xmldom/xmldom": "^0.8.2"
+    "@xmldom/xmldom": "^0.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
