@@ -118,8 +118,6 @@ class Edition extends Component {
 
     const cats = categories.filter(c => selectedCategories.includes(c.id));
 
-    const newsMix = [];
-
     let items = cats.map(c => {
       const articles = c.articles.map(a => ({ ...a, weight: weight(a), category: c.id }));
 
