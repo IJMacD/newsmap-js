@@ -24,7 +24,7 @@ import './App.css';
  * @prop {Category[]} categories
  * @prop {string[]} selectedCategories
  * @prop {string[]} selectedEditions
- * @prop {"tree"|"grid"} mode
+ * @prop {"tree"|"grid"|"tree_mixed"} mode
  * @prop {boolean} showImages
  * @prop {boolean} showOptions
  * @prop {boolean} headerTop
@@ -46,7 +46,7 @@ class App extends Component {
       categories: [],
       selectedCategories: availableCategories,
       selectedEditions: ["uk"],
-      mode: "tree",
+      mode: "tree_mixed",
       showImages: false,
       palette: "default",
       showOptions: false,
@@ -220,8 +220,9 @@ class App extends Component {
                 View Mode
               </label>
               <select value={mode} onChange={e => this.setSavedState({ mode: e.target.value })}>
-                <option value="tree">Tree Map</option>
-                <option value="grid">Grid</option>
+                <option value="tree_mixed">Tree Map mixed</option>
+                <option value="tree">Tree Map per Category</option>
+                <option value="grid">Grid per Category</option>
               </select>
             </div>
             <div className="App-formgroup">

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GridMap from './GridMap';
 import TreeMap from './TreeMap';
+import TreeMapMixed from './TreeMapMixed';
 import { getNews } from './GoogleNewsRSS';
 
 import Article from './Article';
@@ -111,14 +112,16 @@ class Edition extends Component {
   }
 
   render() {
-    const Map = this.props.mode === "tree" ? TreeMap : GridMap;
+    const Map = {"tree":TreeMap, "grid":GridMap, "tree_mixed":TreeMapMixed}[this.props.mode];
     const { selectedCategories, showImages, colours, itemsPerCategory, newTab } = this.props;
     const { categories } = this.state;
 
     const cats = categories.filter(c => selectedCategories.includes(c.id));
 
+    const newsMix = [];
+
     let items = cats.map(c => {
-      const articles = c.articles.map(a => ({ ...a, weight: weight(a) }));
+      const articles = c.articles.map(a => ({ ...a, weight: weight(a), category: c.id }));
 
       articles.sort((a,b) => b.weight - a.weight)
 
@@ -138,7 +141,6 @@ class Edition extends Component {
     if (items.length === 0) {
       return null;
     }
-
     return (
       <Map
         items={items}
