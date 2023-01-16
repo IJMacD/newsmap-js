@@ -7,6 +7,10 @@
   height: 100%;
 }
 
+.GridMap-cat-list > li {
+  flex-shrink: 1;
+  flex-basis: 0;
+}
 
 .GridMap-cat-list > li > p {
   padding: 4px;
@@ -25,4 +29,6 @@
 .GridMap-article-list > li {
   position: relative;
   transition: all 2s;
+  flex-shrink: 1;
+  flex-basis: 0;
 }

@@ -8,8 +8,14 @@ import './TreeMap.css';
  */
 export default class TreeMap extends Component {
 
+  // On first render: force rerender to get real dimensions
+  componentDidMount () {
+    this.forceUpdate();
+  }
+
   render () {
-    let rootWidth = 768, rootHeight = 1024 - 50;
+    // Wild guess only for first render
+    let rootWidth = 1024, rootHeight = 768;
     if (this.ref) {
       rootWidth = this.ref.clientWidth;
       rootHeight = this.ref.clientHeight;

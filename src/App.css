@@ -108,12 +108,8 @@ body,
   color: white;
   position: absolute;
   top: 40px;
-  bottom: 40px;
-}
-
-.App-modalbody {
+  max-height: 80vh;
   overflow-y: auto;
-  height: calc(100% - 100px);
 }
 
 .App-modal h1 {

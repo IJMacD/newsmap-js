@@ -17,7 +17,7 @@ app.use("/api", proxy("https://news.google.com", {
         return proxyReqOpts;
     },
     userResHeaderDecorator(headers, userReq, userRes, proxyReq, proxyRes) {
-      // recieves an Object of headers, returns an Object of headers.
+      // receives an Object of headers, returns an Object of headers.
       headers["access-control-allow-origin"] = "https://newsmap.ijmacd.com";
       return headers;
     }

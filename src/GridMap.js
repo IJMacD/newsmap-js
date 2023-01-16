@@ -8,7 +8,7 @@ export default function (props) {
           {
             props.items.map(category => {
               return (
-                <li key={category.key} style={{flex: category.weight}}>
+                <li key={category.key} style={{flexGrow: category.weight*1e8}}>
                   <ol className="GridMap-article-list">
                     {
                       category.articles.map((article,i) => {
@@ -17,7 +17,7 @@ export default function (props) {
                           item: article,
                           category,
                           style: {
-                            flex: article.sources.length,
+                            flexGrow: article.sources.length,
                           },
                         };
 

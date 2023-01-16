@@ -51,7 +51,7 @@ class App extends Component {
       palette: "default",
       showOptions: false,
       headerTop: false,
-      itemsPerCategory: 20,
+      itemsPerCategory: 10,
       refreshTime: 10 * 60 * 1000,
       newTab: false,
     };
@@ -176,7 +176,6 @@ class App extends Component {
   renderOptions() {
     const {
       selectedEditions,
-      showImages,
       mode,
       headerTop,
       itemsPerCategory,
@@ -202,12 +201,6 @@ class App extends Component {
                   editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
                 }
               </select>
-            </div>
-            <div className="App-formgroup">
-              <label>
-                Show Images
-              </label>
-              <input type="checkbox" checked={showImages} onChange={e => this.setSavedState({ showImages: e.target.checked })} />
             </div>
             <div className="App-formgroup">
               <label>
@@ -288,7 +281,6 @@ class App extends Component {
     const {
       selectedCategories,
       mode,
-      showImages,
       showOptions,
       palette: selectedPalette,
       selectedEditions,
@@ -297,6 +289,8 @@ class App extends Component {
       refreshTime,
       newTab,
     } = this.state;
+
+    const showImages = false;
 
     const colours = palettes[selectedPalette] || defaultColours;
 
