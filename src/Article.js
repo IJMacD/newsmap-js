@@ -1,20 +1,38 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import defaultColours from './colours';
 
 import './Article.css';
 import { luminance } from './util';
 
-export default function Article ({ item, category, showImage, colours = defaultColours, style, onClick, newTab }) {
-  const timeDelta = Date.now() - (new Date(item.publishedAt)).valueOf();
-  let fontSize;
+export default function Article ({ item, showImage, colours = defaultColours, style, onClick, newTab }) {
+  /** @type {import('react').MutableRefObject<HTMLAnchorElement>} */
+  const ref = useRef();
+  const [ fontSize, setFontSize ] = useState(10);
 
-  if (style.height && style.width) {
-    // Magic numbers calculated in: https://docs.google.com/spreadsheets/d/1Oht-quZFTpJQN-6aavqzmTVerkHPI46jbx3Sx0nUrEo/edit?usp=sharing
-    fontSize = 0.95 * Math.pow(style.height * style.width, 0.5349172175) * Math.pow(item.title.length, -0.5462199166);
-  } else {
-    fontSize = 100 * Math.pow(item.title.length, -0.5);
-  }
+  const { title } = item;
+  const { width, height } = style;
+
+  useEffect(() => {
+    setFontSize(1);
+  }, [title, width, height]);
+
+  useEffect(() => {
+    if (ref) {
+      const range = document.createRange();
+      range.selectNodeContents(ref.current.firstChild);
+      const rect = range.getBoundingClientRect();
+      const scale = height / rect.height;
+      const targetSize = fontSize * scale;
+
+      if (fontSize * 1.5 < targetSize) {
+        const newSize = fontSize * 0.9 + targetSize * 0.1;
+        setFontSize(newSize);
+      }
+    }
+  }, [fontSize, height]);
+
+  const timeDelta = Date.now() - (new Date(item.publishedAt)).valueOf();
 
   if (showImage && item.imageURL) {
     style.backgroundImage = `url(${item.imageURL})`;
@@ -35,6 +53,7 @@ export default function Article ({ item, category, showImage, colours = defaultC
         onClick={onClick}
         rel="noopener"
         target={newTab ? "_blank" : "_self"}
+        ref={ref}
       >
         {source.title}
       </a>
