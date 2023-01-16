@@ -46,7 +46,7 @@ class App extends Component {
       categories: [],
       selectedCategories: availableCategories,
       selectedEditions: ["uk"],
-      mode: "tree_mixed",
+      mode: "tree",
       showImages: false,
       palette: "default",
       showOptions: false,
@@ -220,9 +220,9 @@ class App extends Component {
                 View Mode
               </label>
               <select value={mode} onChange={e => this.setSavedState({ mode: e.target.value })}>
-                <option value="tree_mixed">Tree Map mixed</option>
-                <option value="tree">Tree Map per Category</option>
-                <option value="grid">Grid per Category</option>
+                <option value="tree">Tree Map</option>
+                <option value="tree_mixed">Tree Map (mixed)</option>
+                <option value="grid">Grid</option>
               </select>
             </div>
             <div className="App-formgroup">
