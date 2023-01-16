@@ -20,7 +20,7 @@ export default function Article ({ item, category, showImage, colours = defaultC
     style.backgroundImage = `url(${item.imageURL})`;
   }
 
-  const backgroundColor = getAgedColour(colours[category.id], timeDelta / (1000 * 60 * 60));
+  const backgroundColor = getAgedColour(colours[item.category], timeDelta / (1000 * 60 * 60));
 
   const source = item.sources && item.sources.length && item.sources[0] || item;
 

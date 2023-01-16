@@ -24,7 +24,7 @@ import './App.css';
  * @prop {Category[]} categories
  * @prop {string[]} selectedCategories
  * @prop {string[]} selectedEditions
- * @prop {"tree"|"grid"} mode
+ * @prop {"tree"|"grid"|"tree_mixed"} mode
  * @prop {boolean} showImages
  * @prop {boolean} showOptions
  * @prop {boolean} headerTop
@@ -221,6 +221,7 @@ class App extends Component {
               </label>
               <select value={mode} onChange={e => this.setSavedState({ mode: e.target.value })}>
                 <option value="tree">Tree Map</option>
+                <option value="tree_mixed">Tree Map (mixed)</option>
                 <option value="grid">Grid</option>
               </select>
             </div>
