@@ -1,10 +1,10 @@
 {
-  "health": "CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FteDJLQUFQAQ?hl=lv&gl=LV&ceid=LV:lv",
-  "science": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FteDJHZ0pNVmlnQVAB?hl=lv&gl=LV&ceid=LV:lv",
-  "nation": "CAAqIQgKIhtDQkFTRGdvSUwyMHZNRFJuTldzU0FteDJLQUFQAQ?hl=lv&gl=LV&ceid=LV:lv",
-  "entertainment": "CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FteDJHZ0pNVmlnQVAB?hl=lv&gl=LV&ceid=LV:lv",
-  "world": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FteDJHZ0pNVmlnQVAB?hl=lv&gl=LV&ceid=LV:lv",
-  "technology": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FteDJHZ0pNVmlnQVAB?hl=lv&gl=LV&ceid=LV:lv",
-  "sports": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FteDJHZ0pNVmlnQVAB?hl=lv&gl=LV&ceid=LV:lv",
-  "business": "CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FteDJHZ0pNVmlnQVAB?hl=lv&gl=LV&ceid=LV:lv"
+  "health": "/CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FteDJLQUFQAQ?ceid=LV:lv&hl=lv&gl=LV",
+  "technology": "/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FteDJHZ0pNVmlnQVAB?ceid=LV:lv&hl=lv&gl=LV",
+  "entertainment": "/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FteDJHZ0pNVmlnQVAB?ceid=LV:lv&hl=lv&gl=LV",
+  "science": "/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FteDJHZ0pNVmlnQVAB?ceid=LV:lv&hl=lv&gl=LV",
+  "business": "/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FteDJHZ0pNVmlnQVAB?ceid=LV:lv&hl=lv&gl=LV",
+  "nation": "/CAAqIQgKIhtDQkFTRGdvSUwyMHZNRFJuTldzU0FteDJLQUFQAQ?ceid=LV:lv&hl=lv&gl=LV",
+  "world": "/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FteDJHZ0pNVmlnQVAB?ceid=LV:lv&hl=lv&gl=LV",
+  "sports": "/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FteDJHZ0pNVmlnQVAB?ceid=LV:lv&hl=lv&gl=LV"
 }

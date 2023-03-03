@@ -1,4 +1,4 @@
-const DOMParser = require("xmldom").DOMParser;
+const DOMParser = require("@xmldom/xmldom").DOMParser;
 const snippet = require("./snippet");
 
 /*
@@ -8,12 +8,11 @@ const snippet = require("./snippet");
 
 const doc = new DOMParser().parseFromString(snippet, "text/html");
 
-const elems = Array.from(doc.documentElement.getElementsByTagName("div")).filter(el => !!el.getAttribute("data-value"));
+const elems = Array.from(doc.documentElement.getElementsByTagName("li")).filter(el => el.getAttribute("data-n-cess"));
 
 const values = elems.map(/** @param {HTMLElement} el */ el => {
-  const value = el.getAttribute("data-value");
-
-  const name = el.childNodes[1].firstChild.textContent;
+  const value = el.getElementsByTagName("input")[0].getAttribute("value").replace(":", "_");
+  const name = el.getElementsByTagName("label")[0].textContent;
 
   return {
     name,

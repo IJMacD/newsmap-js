@@ -1,6 +1,7 @@
 import { urlize } from './util';
 
 import editions from './editions.json';
+import oldEditions from './oldEditions.json';
 
 const API_ROOT = process.env.REACT_APP_API_ROOT || window.location.origin;
 
@@ -11,15 +12,28 @@ const API_ROOT = process.env.REACT_APP_API_ROOT || window.location.origin;
  * @param {string} options.edition
  */
 export function getNews (options) {
-    const ed = options.edition;
-    const edition = findEdition(ed);
-
-    const urls = require(`./editions/${ed}.json`);
-    const path = urls[options.category.toLowerCase()];
+    let ed = options.edition;
+    let edition = findEdition(ed);
 
     if (!edition) {
-        throw Error("Invalid Edition");
+        // Not found in current editions list.
+        // Check old list for mapping.
+        if (oldEditions[ed]) {
+            ed = oldEditions[ed].value;
+            edition = findEdition(ed);
+        }
     }
+
+    if (!edition) {
+        // If it's still not found then just fallback to U.K. edition so page
+        // doesn't crash.
+        console.error("Can't find edition " + ed);
+        ed = "GB_en";
+        edition = findEdition(ed);
+    }
+
+    let urls = require(`./editions/${ed}.json`);
+    const path = urls[options.category.toLowerCase()];
 
     if (!path) {
         throw Error("Can't find URL for edition/category");

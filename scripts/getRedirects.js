@@ -20,7 +20,8 @@ async function run () {
     const out = {};
 
     const urls = categories.map(category => {
-      const url = `${API_ROOT}/news/rss/headlines/section/topic/${category.toUpperCase()}.${ed.value}/World?ned=${ed.value}`;
+      const [ cc, lang ] = ed.value.split("_");
+      const url = `${API_ROOT}/news/rss/headlines/section/topic/${category.toUpperCase()}?ceid=${cc}:${lang}&hl=${lang}&gl=${cc}`;
 
       return fetch(url).then(res => {
         out[category] = res.req.path.substring(res.req.path.lastIndexOf("/"));
