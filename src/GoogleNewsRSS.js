@@ -1,4 +1,4 @@
-import { urlize } from './util';
+import { ucfirst, urlize } from './util';
 
 import editions from './editions.json';
 import oldEditions from './oldEditions.json';
@@ -39,8 +39,10 @@ export function getNews (options) {
         throw Error("Can't find URL for edition/category");
     }
 
-    return xmlFetch(`${API_ROOT}/rss/topics/${path}`)
+    return xmlFetch(`${API_ROOT}/rss/topics${path}`)
         .then(/** @param {document} data */ data => {
+            const [ title ] = data.getElementsByTagName("title")[0]?.textContent.split(" - ") || [ucfirst(options.category)];
+
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
                     const titleEl = itemEl.getElementsByTagName("title")[0];
@@ -119,6 +121,7 @@ export function getNews (options) {
                 });
 
             return {
+                title,
                 articles: items,
             };
         });

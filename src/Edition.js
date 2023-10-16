@@ -70,10 +70,6 @@ class Edition extends Component {
   componentDidMount () {
     this.loadAllCategories(this.props.edition);
 
-    if (window['ga']) {
-      window['ga']('send', 'pageview', { "dimension1": this.props.edition });
-    }
-
     this.timeout = setInterval(() => this.loadAllCategories(this.props.edition), this.props.refreshTime);
   }
 
@@ -93,10 +89,10 @@ class Edition extends Component {
 
     cats.forEach(category => {
       getNews({ category, edition }).then(data => this.setState(oldState => {
-        let { articles } = data;
+        let { articles, title } = data;
 
         const key = `${edition}_${category}`;
-        const newCat = { id: category, key, name: category, articles };
+        const newCat = { id: category, key, name: title, articles };
 
         let categories = [ ...oldState.categories.filter(c => c.key !== key), newCat ];
 

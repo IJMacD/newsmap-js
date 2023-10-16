@@ -101,11 +101,6 @@ class App extends Component {
     this.setSavedState({ selectedEditions });
 
     this.setState({ categories: [] });
-
-    if (window['ga']) {
-      // Send analytics for new edition
-      window['ga']('send', 'pageview', { "dimension1": selectedEditions[0] });
-    }
   }
 
   setSavedState (newState) {
@@ -238,9 +233,6 @@ class App extends Component {
               </label>
               <input type="checkbox" checked={newTab} onChange={e => this.setSavedState({ newTab: e.target.checked })} />
             </div>
-            { process.env.REACT_APP_BTC_ADDRESS && this.optionsCount >= 2 &&
-              <p style={{ fontSize: 12, color: "#666", float: "left" }}>BTC: {process.env.REACT_APP_BTC_ADDRESS}</p>
-            }
           </div>
           <p style={{ textAlign: "right", marginBottom: 0 }}>
             <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
