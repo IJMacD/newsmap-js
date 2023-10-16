@@ -65,9 +65,6 @@ class App extends Component {
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
-
-    // psuedo-state
-    this.optionsCount = 0;
   }
 
   onResize () {
@@ -109,18 +106,18 @@ class App extends Component {
     this.setState(newState);
   }
 
-  componentDidUpdate (prevProps, prevState) {
-    if (this.state.showOptions && !prevState.showOptions) {
-      this.optionsCount++;
-    }
-  }
-
   componentDidMount () {
     window.addEventListener("resize", this.onResize);
+
+    // this.refreshInterval = setInterval(() => {
+    //   this.forceUpdate();
+    // }, 5 * 60 * 1000);
   }
 
   componentWillUnmount () {
     window.removeEventListener("resize", this.onResize);
+
+    // clearInterval(this.refreshInterval);
   }
 
   renderHeader(colours) {
@@ -201,10 +198,9 @@ class App extends Component {
               <Edition
                 edition={ed}
                 mode={mode}
-                availableCategories={availableCategories}
                 showImages={showImages}
                 colours={colours}
-                selectedCategories={selectedCategories}
+                categories={selectedCategories}
                 itemsPerCategory={itemsPerCategory}
                 refreshTime={refreshTime}
                 newTab={newTab}

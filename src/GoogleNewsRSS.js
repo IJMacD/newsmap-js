@@ -122,6 +122,7 @@ export async function getNews (options) {
 
             return {
                 title,
+                category: options.category,
                 articles: items,
             };
         });

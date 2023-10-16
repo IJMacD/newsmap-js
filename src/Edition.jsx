@@ -19,8 +19,7 @@ import { getNews } from './GoogleNewsRSS';
  * @typedef EditionProps
  * @prop {string} edition
  * @prop {string} mode
- * @prop {string[]} availableCategories
- * @prop {string[]} selectedCategories
+ * @prop {string[]} categories
  * @prop {{[category: string]: string}} colours
  * @prop {boolean} showImages
  * @prop {number} itemsPerCategory
@@ -78,43 +77,37 @@ class Edition extends Component {
   }
 
   componentDidUpdate (prevProps) {
-    if (this.props.itemsPerCategory !== prevProps.itemsPerCategory) {
+    if (
+      (this.props.itemsPerCategory !== prevProps.itemsPerCategory) ||
+      !areArraysEqual(this.props.categories, prevProps.categories)
+    ) {
       this.loadAllCategories(this.props.edition);
     }
   }
 
+  /**
+   * @param {string} edition
+   */
   loadAllCategories (edition) {
-
-    const cats = this.props.availableCategories;
-
-    cats.forEach(category => {
-      getNews({ category, edition }).then(data => this.setState(oldState => {
-        let { articles, title } = data;
-
-        const key = `${edition}_${category}`;
-        const newCat = { id: category, key, name: title, articles };
-
-        let categories = [ ...oldState.categories.filter(c => c.key !== key), newCat ];
-
-        return { categories };
-      }), err => {
-        if (err === "CORS Error" && !this.embarrassed) {
-          this.embarrassed = true;
-          alert("Well this is embarrassing.\n\nI'll be honest - Google News RSS servers don't exactly play nicely with NewsMap.JS. More accurately they just don't consider CORS which would let us load the news directly. Instead I need to proxy the requests through the NewsMap.JS servers and I'm too cheap to implement the proxying properly.\n\nMy advice is to try a different news edition in the options.");
-        }
-        console.log(err);
-      });
+    Promise.all(this.props.categories.map(category => getNews({ category, edition }).then(data => {
+      let { category, articles, title } = data;
+      const key = `${edition}_${category}`;
+      return { id: category, key, name: title, articles }
+    })))
+    .then(categories => this.setState({ categories }), err => {
+      if (err === "CORS Error" && !this.embarrassed) {
+        this.embarrassed = true;
+        alert("Well this is embarrassing.\n\nI'll be honest - Google News RSS servers don't exactly play nicely with NewsMap.JS. More accurately they just don't consider CORS which would let us load the news directly. Instead I need to proxy the requests through the NewsMap.JS servers and I'm too cheap to implement the proxying properly.\n\nMy advice is to try a different news edition in the options.");
+      }
+      console.log(err);
     });
   }
 
   render() {
     const Map = {"tree":TreeMap, "grid":GridMap, "tree_mixed":TreeMapMixed}[this.props.mode];
-    const { selectedCategories, showImages, colours, itemsPerCategory, newTab } = this.props;
-    const { categories } = this.state;
+    const { showImages, colours, itemsPerCategory, newTab } = this.props;
 
-    const cats = categories.filter(c => selectedCategories.includes(c.id));
-
-    let items = cats.map(c => {
+    let items = this.state.categories.map(c => {
       const articles = c.articles.map(a => ({ ...a, weight: weight(a), category: c.id }));
 
       articles.sort((a,b) => b.weight - a.weight)
@@ -135,6 +128,7 @@ class Edition extends Component {
     if (items.length === 0) {
       return null;
     }
+
     return (
       <Map
         items={items}
@@ -155,3 +149,21 @@ class Edition extends Component {
 const weight = a => 1/(Date.now() - +new Date(a.publishedAt));
 
 export default Edition;
+
+/**
+ * @param {string[]} arrayAlpha
+ * @param {string[]} arrayBravo
+ */
+function areArraysEqual (arrayAlpha, arrayBravo) {
+  if (arrayAlpha.length != arrayBravo.length) {
+    return false;
+  }
+
+  for (let i = 0; i < arrayAlpha.length; i++) {
+    if (arrayAlpha[i] != arrayBravo[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
