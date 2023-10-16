@@ -7,18 +7,18 @@ import 'core-js/fn/array/find';
 import 'core-js/fn/object/entries';
 import 'core-js/fn/string/pad-start';
 
-import ErrorHandler from './ErrorHandler';
-import App from './App';
+import ErrorHandler from './ErrorHandler.jsx';
+import App from './App.jsx';
 import './index.css';
 
 const root = createRoot(document.getElementById('root'));
 root.render(<ErrorHandler><App /></ErrorHandler>);
 
-if (process.env.REACT_APP_GA_TRACKING) {
+if (import.meta.env.VITE_GA_TRACKING) {
   const ga = function(){(ga.q = ga.q||[]).push(arguments)};
   ga.l = +new Date();
   window.ga = ga;
-  ga('create', process.env.REACT_APP_GA_TRACKING, 'auto');
+  ga('create', process.env.VITE_GA_TRACKING, 'auto');
 
   const a = document.createElement('script');
   a.async = true;

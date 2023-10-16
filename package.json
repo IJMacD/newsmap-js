@@ -4,25 +4,23 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@vitejs/plugin-react": "^4.1.0",
     "core-js": "^2.5.3",
     "express": "^4.16.2",
     "express-http-proxy": "^1.1.0",
     "gh-pages": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1"
+    "vite": "^4.4.11"
   },
   "devDependencies": {
     "@xmldom/xmldom": "^0.8.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build"
+    "start": "vite",
+    "build": "vite build",
+    "deploy": "gh-pages -d dist"
   },
-  "proxy": "https://news.google.com",
   "browserslist": {
     "production": [
       ">0.2%",

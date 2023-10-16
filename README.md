@@ -25,12 +25,12 @@ Follow the steps below to get it running locally. In `dev` environment API reque
 Building for Prod
 -----------------
 
-When you build for `prod` you'll have to set environment variable `REACT_APP_API_ROOT` to an RSS news source compatible with Google News (or a proxy to it).
+When you build for `prod` you'll have to set environment variable `VITE_API_ROOT` to an RSS news source compatible with Google News (or a proxy to it).
 
 * Bash compatible shell
 
-       REACT_APP_API_ROOT=https://example.com npm run build
+       VITE_API_ROOT=https://example.com npm run build
 
 * Powershell
 
-       $env:REACT_APP_API_ROOT = "https://example.com"; npm run build
+       $env:VITE_API_ROOT = "https://example.com"; npm run build

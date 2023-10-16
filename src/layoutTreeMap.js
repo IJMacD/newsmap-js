@@ -102,7 +102,11 @@ export function layoutTreeMap(values, { width, height }) {
     if (!R.length)
       return Infinity;
 
-    var w_2 = w * w, s = R.reduce(sum, 0), s_2 = s * s, r_max = R[0], r_min = R[R.length - 1];
+    var w_2 = w * w;
+    var s = R.reduce(sum, 0);
+    var s_2 = s * s;
+    var r_max = R[0];
+    var r_min = R[R.length - 1];
 
     return Math.max(w_2 * r_min / s_2, s_2 / (w_2 * r_max));
   }

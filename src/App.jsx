@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import Edition from './Edition';
+import Edition from './Edition.jsx';
 
 import { ucfirst, luminance } from './util';
 import defaultColours, * as palettes from './colours';

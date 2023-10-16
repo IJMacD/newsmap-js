@@ -3,7 +3,7 @@ import { ucfirst, urlize } from './util';
 import editions from './editions.json';
 import oldEditions from './oldEditions.json';
 
-const API_ROOT = process.env.REACT_APP_API_ROOT || window.location.origin;
+const API_ROOT = import.meta.env.VITE_API_ROOT || (window.location.origin + "/api");
 
 /**
  *
@@ -11,7 +11,7 @@ const API_ROOT = process.env.REACT_APP_API_ROOT || window.location.origin;
  * @param {string} options.category
  * @param {string} options.edition
  */
-export function getNews (options) {
+export async function getNews (options) {
     let ed = options.edition;
     let edition = findEdition(ed);
 
@@ -32,7 +32,7 @@ export function getNews (options) {
         edition = findEdition(ed);
     }
 
-    let urls = require(`./editions/${ed}.json`);
+    let urls = await import(`./editions/${ed}.json`);
     const path = urls[options.category.toLowerCase()];
 
     if (!path) {

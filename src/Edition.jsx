@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import GridMap from './GridMap';
-import TreeMap from './TreeMap';
-import TreeMapMixed from './TreeMapMixed';
-import { getNews } from './GoogleNewsRSS';
+import GridMap from './GridMap.jsx';
+import TreeMap from './TreeMap.jsx';
+import TreeMapMixed from './TreeMapMixed.jsx';
+import Article from './Article.jsx';
 
-import Article from './Article';
+import { getNews } from './GoogleNewsRSS';
 
 
 /**
