@@ -14,28 +14,31 @@ export default function Article ({ item, showImage, colours = defaultColours, st
   const { width, height } = style;
 
   // If the width or height changes, then wait 2.5 seconds for animations to
-  // finish and start adjusting font size if required.
+  // finish and start adjusting font size if required (bigger or smaller).
   useEffect(() => {
+    let current = true;
+
     setTimeout(() => {
-      if (elementRef.current) {
-        const range = document.createRange();
-        range.selectNodeContents(elementRef.current.firstChild);
-        const rect = range.getBoundingClientRect();
+      if (current && elementRef.current) {
+        const rect = elementRef.current.getBoundingClientRect();
 
         // May shrink font size
-        if (rect.width > width) {
-          setFontSize(fontSize => fontSize / 2);
+        if (rect.width > width || rect.height > height) {
+          setFontSize(fontSize => {
+            const overscale = Math.min(width / rect.width, height / rect.height);
+            return fontSize * overscale;
+          });
         }
 
-        // May shrink font size
-        if (rect.height > height * 0.8) {
-          setFontSize(fontSize => fontSize / 2);
-        }
+        // Just aim for 90% of true height
+        const maxHeight = height * 0.9;
 
         // May grow font size
-        setFontSize(calculateNewFontSize(rect.width, rect.height, width, height));
+        setFontSize(calculateNewFontSize(rect.width, rect.height, width, maxHeight));
       }
     }, 2500);
+
+    return () => { current = false; };
   }, [title, width, height]);
 
   // If the font size (or height or width) has just changed, try to grow font
@@ -44,12 +47,13 @@ export default function Article ({ item, showImage, colours = defaultColours, st
   // This can only make the font size bigger.
   useEffect(() => {
     if (elementRef.current) {
-      const range = document.createRange();
-      range.selectNodeContents(elementRef.current.firstChild);
-      const rect = range.getBoundingClientRect();
+      const rect = elementRef.current.getBoundingClientRect();
+
+      // Just aim for 90% of true height
+      const maxHeight = height * 0.9;
 
       // May grow font size
-      setFontSize(calculateNewFontSize(rect.width, rect.height, width, height));
+      setFontSize(calculateNewFontSize(rect.width, rect.height, width, maxHeight));
     }
   }, [fontSize, width, height]);
 
@@ -63,14 +67,18 @@ export default function Article ({ item, showImage, colours = defaultColours, st
 
   const source = item.sources && item.sources.length && item.sources[0] || item;
 
+  // Dynamic padding
+  const ph = width * 0.03;
+  const pv = height * 0.03;
+
   return (
-    <li className={"Article-li " + (showImage && item.imageURL ? "Article-image" : "")} style={style}>
+    <li className={"Article-li " + (showImage && item.imageURL ? "Article-image" : "")} style={{ ...style,  backgroundColor, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}>
       <a
         href={item.url}
         className="article"
         title={source.name ? `${source.name}: ${source.title}` : source.title}
         data-source={source.name}
-        style={{ backgroundColor, fontSize, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}
+        style={{fontSize,padding:`${pv}px ${ph}px`}}
         onClick={onClick}
         rel="noopener"
         target={newTab ? "_blank" : "_self"}
@@ -82,17 +90,26 @@ export default function Article ({ item, showImage, colours = defaultColours, st
   );
 }
 
+/**
+ * Grow only
+ * @param {number} currentWidth
+ * @param {number} currentHeight
+ * @param {number} maxWidth
+ * @param {number} maxHeight
+ * @returns
+ */
 function calculateNewFontSize(currentWidth, currentHeight, maxWidth, maxHeight) {
-  return fontSize => {
-    // Aim for 80% of max height
-    let scale = maxHeight / currentHeight * 0.8;
-    // interpolation constant
-    const t = 0.99;
+  return (/** @type {number} */ fontSize) => {
+
+    const scale = maxHeight / currentHeight;
+
+    // low-pass constant
+    const t = 0.975;
 
     const targetFontSize = fontSize * scale;
     const newSize = fontSize * t + targetFontSize * (1 - t);
 
-    const delta = (newSize - fontSize) / fontSize;
+    const delta = (newSize - fontSize);
 
     // If we've spilled over, then just stop growing
     if (currentWidth > maxWidth) {
@@ -100,7 +117,7 @@ function calculateNewFontSize(currentWidth, currentHeight, maxWidth, maxHeight) 
     }
 
     // If the delta is too small then stop growing
-    if (delta < 0.005) {
+    if (delta/fontSize < 0.0025) {
       return fontSize;
     }
 
