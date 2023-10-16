@@ -117,15 +117,16 @@ body,
 }
 
 .App-formgroup {
-  padding-left: 120px;
-  position: relative;
+  display: flex;
   margin-bottom: 0.8em;
 }
 
 .App-modal label {
-  position: absolute;
-  max-width: 120px;
-  margin-left: -120px;
+  flex: 0 0 120px;
+}
+
+.App-modal select {
+  padding: 2px;
 }
 
 .App-palette {
@@ -151,4 +152,15 @@ body,
   border: 1px solid #686868;
   vertical-align: middle;
   margin: 1px;
+}
+
+.App-Options a {
+  color: white;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: white;
+  text-decoration: underline;
 }

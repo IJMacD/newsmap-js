@@ -34,3 +34,13 @@ When you build for `prod` you'll have to set environment variable `VITE_API_ROOT
 * Powershell
 
        $env:VITE_API_ROOT = "https://example.com"; npm run build
+
+Donation
+--------
+Due to the way the news data needs to be fetched, I have to run a server to
+proxy requests upstream to Google News.
+
+There is a small hosting cost associated with this.
+
+If NewsMap.JS is useful to you and you wish to help with these costs; donations
+are very much appreciated at this link [PayPal.Me](https://www.paypal.me/ijmacd).

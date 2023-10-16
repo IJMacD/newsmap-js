@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 
 import Edition from './Edition.jsx';
 
@@ -53,7 +53,7 @@ class App extends Component {
       headerTop: false,
       itemsPerCategory: 10,
       refreshTime: 10 * 60 * 1000,
-      newTab: false,
+      newTab: true,
     };
 
     /** @type {AppState} */
@@ -168,107 +168,6 @@ class App extends Component {
     );
   }
 
-  renderOptions() {
-    const {
-      selectedEditions,
-      mode,
-      headerTop,
-      itemsPerCategory,
-      newTab,
-    } = this.state;
-
-    return (
-      <div className="App-shade" onClick={() => this.setState({ showOptions: false })}>
-        <div className="App-modal" onClick={e => e.stopPropagation()}>
-          <h1>Options</h1>
-          <div className="App-modalbody">
-            <div className="App-formgroup">
-              <label>
-                Edition
-              </label>
-              <select
-                style={{ verticalAlign: "top", height: 120 }}
-                multiple
-                onChange={this.handleEditionChange}
-                value={selectedEditions}
-              >
-                {
-                  editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
-                }
-              </select>
-            </div>
-            <div className="App-formgroup">
-              <label>
-                Controls on Top
-              </label>
-              <input type="checkbox" checked={headerTop} onChange={e => this.setSavedState({ headerTop: e.target.checked })} />
-            </div>
-            <div className="App-formgroup">
-              <label>
-                View Mode
-              </label>
-              <select value={mode} onChange={e => this.setSavedState({ mode: e.target.value })}>
-                <option value="tree">Tree Map</option>
-                <option value="tree_mixed">Tree Map (mixed)</option>
-                <option value="grid">Grid</option>
-              </select>
-            </div>
-            <div className="App-formgroup">
-              <label>
-                Palette:
-              </label>
-              {
-                this.renderPalettes()
-              }
-            </div>
-            <div className="App-formgroup">
-              <label>
-                Items per category:
-              </label>
-              <input type="number" min={0} value={itemsPerCategory} onChange={e => this.setSavedState({ itemsPerCategory: e.target.value })} />
-            </div>
-            <div className="App-formgroup">
-              <label>
-                Open in new tab
-              </label>
-              <input type="checkbox" checked={newTab} onChange={e => this.setSavedState({ newTab: e.target.checked })} />
-            </div>
-          </div>
-          <p style={{ textAlign: "right", marginBottom: 0 }}>
-            <button onClick={() => this.setState({ showOptions: false })}>Dismiss</button>
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  renderPalettes() {
-    const { palette: selectedPalette } = this.state;
-
-    return Object.entries(palettes).map(([name, palette]) => {
-      if (name === "default")
-        return null;
-
-      return (
-        <div
-          key={name}
-          className="App-palette"
-          style={{ outlineColor: name === selectedPalette ? "#FFF" : null }}
-          onClick={() => this.setSavedState({ palette: name })}
-        >
-          { Object.entries(palette).map(([cat, colour]) => (
-            <div
-              key={cat}
-              className="App-swatch"
-              style={{ backgroundColor: colour }}
-              title={ucfirst(cat)}
-            />
-          )) }
-        </div>
-      );
-    })
-  }
-
   render() {
     const {
       selectedCategories,
@@ -315,10 +214,137 @@ class App extends Component {
           }
         </div>
         { !headerTop && this.renderHeader(colours) }
-        { showOptions && this.renderOptions() }
+        { showOptions &&
+          <OptionsModal
+            selectedEditions={this.state.selectedEditions}
+            mode={this.state.mode}
+            headerTop={this.state.headerTop}
+            itemsPerCategory={this.state.itemsPerCategory}
+            newTab={this.state.newTab}
+            selectedPalette={this.state.palette}
+            onClose={() => this.setState({ showOptions: false })}
+            onEditionChange={this.handleEditionChange.bind(this)}
+            setSavedState={this.setSavedState.bind(this)}
+          />
+        }
       </div>
     );
   }
+}
+
+function OptionsModal ({
+  selectedEditions,
+  mode,
+  headerTop,
+  itemsPerCategory,
+  newTab,
+  selectedPalette,
+  onClose,
+  onEditionChange,
+  setSavedState
+}) {
+  const [ showDonationLink, setShowDonationLink ] = useState(false);
+
+  return (
+    <div className="App-shade" onClick={onClose}>
+      <div className="App-modal App-Options" onClick={e => e.stopPropagation()}>
+        <h1>Options</h1>
+        <div className="App-modalbody">
+          <div className="App-formgroup">
+            <label htmlFor="sel-editions">
+              Edition
+            </label>
+            <select
+              id="sel-editions"
+              multiple
+              onChange={onEditionChange}
+              value={selectedEditions}
+            >
+              {
+                editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
+              }
+            </select>
+          </div>
+          <div className="App-formgroup">
+            <label htmlFor="chk-top-header">
+              Controls on Top
+            </label>
+            <input id="chk-top-header" type="checkbox" checked={headerTop} onChange={e => setSavedState({ headerTop: e.target.checked })} />
+          </div>
+          <div className="App-formgroup">
+            <label htmlFor="sel-layout-mode">
+              Layout Mode
+            </label>
+            <select id="sel-layout-mode" value={mode} onChange={e => setSavedState({ mode: e.target.value })}>
+              <option value="tree">Tree Map</option>
+              <option value="tree_mixed">Tree Map (mixed)</option>
+              <option value="grid">Grid</option>
+            </select>
+          </div>
+          <div className="App-formgroup">
+            <label>
+              Palette
+            </label>
+            <PaletteSelect selectedPalette={selectedPalette} setPalette={(name) => setSavedState({ palette: name })} />
+          </div>
+          <div className="App-formgroup">
+            <label htmlFor="num-per-cat">
+              Items per category
+            </label>
+            <div>
+              <input id="num-per-cat" type="number" min={0} value={itemsPerCategory} onChange={e => setSavedState({ itemsPerCategory: e.target.value })} />
+              <p style={{fontStyle:"italic",fontSize:"0.8em"}}>(Max is about 70 for most editions)</p>
+            </div>
+          </div>
+          <div className="App-formgroup">
+            <label htmlFor="chk-new-tab">
+              Open links in new tab
+            </label>
+            <input id="chk-new-tab" type="checkbox" checked={newTab} onChange={e => setSavedState({ newTab: e.target.checked })} />
+          </div>
+          {
+            typeof import.meta.env.VITE_DONATION_LINK === "string" &&
+            <div className="App-formgroup">
+              <label />
+              {
+                showDonationLink ?
+                  <p>If you find NewsMap.JS useful, donations are very much appreciated to help pay for associated hosting costs. <a href={import.meta.env.VITE_DONATION_LINK} target="_blank" rel="noopener">{import.meta.env.VITE_DONATION_LINK}</a>.</p> :
+                  <p><button onClick={() => setShowDonationLink(true)} className="btn-link">I want to help with hosting costs.</button></p>
+              }
+            </div>
+          }
+        </div>
+        <p style={{ textAlign: "right", marginBottom: 0 }}>
+          <button onClick={onClose}>Dismiss</button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PaletteSelect ({ selectedPalette, setPalette }) {
+  return Object.entries(palettes).map(([name, palette]) => {
+    if (name === "default")
+      return null;
+
+    return (
+      <div
+        key={name}
+        className="App-palette"
+        style={{ outlineColor: name === selectedPalette ? "#FFF" : null }}
+        onClick={() => setPalette(name)}
+      >
+        { Object.entries(palette).map(([cat, colour]) => (
+          <div
+            key={cat}
+            className="App-swatch"
+            style={{ backgroundColor: colour }}
+            title={ucfirst(cat)}
+          />
+        )) }
+      </div>
+    );
+  });
 }
 
 export default App;
