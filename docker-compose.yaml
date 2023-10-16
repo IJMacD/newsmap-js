@@ -1,0 +1,8 @@
+services:
+  web:
+    build: .
+    image: newsmap-js
+    container_name: newsmap-js
+    ports:
+      - 8030:8000
+    restart: unless-stopped
