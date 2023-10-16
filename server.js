@@ -10,15 +10,21 @@ app.use(express.static("static"));
 app.use("/api", proxy("https://news.google.com", {
     proxyReqOptDecorator(proxyReqOpts) {
         //  -H 'Sec-Fetch-Dest: empty'   -H 'Sec-Fetch-Mode: cors'   -H 'Sec-Fetch-Site: cross-site'
-        delete proxyReqOpts.headers['Sec-Fetch-Dest'];
-        delete proxyReqOpts.headers['Sec-Fetch-Mode'];
-        delete proxyReqOpts.headers['Sec-Fetch-Site'];
+        delete proxyReqOpts.headers['origin'];
+        delete proxyReqOpts.headers['sec-fetch-dest'];
+        delete proxyReqOpts.headers['sec-fetch-mode'];
+        delete proxyReqOpts.headers['sec-fetch-site'];
 
         return proxyReqOpts;
     },
     userResHeaderDecorator(headers, userReq, userRes, proxyReq, proxyRes) {
       // receives an Object of headers, returns an Object of headers.
-      headers["access-control-allow-origin"] = "https://newsmap.ijmacd.com";
+      if (userReq.headers["origin"]) {
+        const origin = userReq.headers["origin"];
+        if (origin === "https://newsmap.ijmacd.com" || origin.startsWith("http://localhost:")) {
+          headers["access-control-allow-origin"] = origin;
+        }
+      }
       headers["cache-control"] = "max-age=300";
 
       delete headers["accept-ch"];
@@ -28,6 +34,7 @@ app.use("/api", proxy("https://news.google.com", {
       delete headers["permissions-policy"];
       delete headers["pragma"];
       delete headers["set-cookie"];
+      delete headers["vary"];
 
       return headers;
     }
