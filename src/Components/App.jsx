@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 
 import Edition from './Edition.jsx';
 
@@ -9,6 +9,7 @@ import editions from '../data/editions.json';
 import availableCategories from '../data/categories.json';
 
 import './App.css';
+import { OptionsModal } from './OptionsModal.jsx';
 
 /**
  * @typedef Category
@@ -24,6 +25,7 @@ import './App.css';
  * @prop {string[]} selectedCategories
  * @prop {string[]} selectedEditions
  * @prop {"tree"|"grid"|"tree_mixed"} mode
+ * @prop {"time"|"sources"|"position"} weightingMode
  * @prop {boolean} showImages
  * @prop {boolean} showOptions
  * @prop {boolean} headerTop
@@ -53,6 +55,7 @@ class App extends Component {
       itemsPerCategory: 10,
       refreshTime: 10 * 60 * 1000,
       newTab: true,
+      weightingMode: "time"
     };
 
     /** @type {AppState} */
@@ -175,6 +178,7 @@ class App extends Component {
       itemsPerCategory,
       refreshTime,
       newTab,
+      weightingMode,
     } = this.state;
 
     const showImages = false;
@@ -203,6 +207,7 @@ class App extends Component {
                 itemsPerCategory={itemsPerCategory}
                 refreshTime={refreshTime}
                 newTab={newTab}
+                weightingMode={weightingMode}
               />
             </div>
           ))
@@ -213,6 +218,7 @@ class App extends Component {
           <OptionsModal
             selectedEditions={this.state.selectedEditions}
             mode={this.state.mode}
+            weightingMode={weightingMode}
             headerTop={this.state.headerTop}
             itemsPerCategory={this.state.itemsPerCategory}
             newTab={this.state.newTab}
@@ -227,131 +233,6 @@ class App extends Component {
   }
 }
 
-function OptionsModal ({
-  selectedEditions,
-  mode,
-  headerTop,
-  itemsPerCategory,
-  newTab,
-  selectedPalette,
-  onClose,
-  onEditionChange,
-  setSavedState
-}) {
-  return (
-    <div className="App-shade" onClick={onClose}>
-      <div className="App-modal App-Options" onClick={e => e.stopPropagation()}>
-        <h1>Options</h1>
-        <div className="App-modalbody">
-          <div className="App-formgroup">
-            <label htmlFor="sel-editions">
-              Edition
-            </label>
-            <select
-              id="sel-editions"
-              multiple
-              onChange={onEditionChange}
-              value={selectedEditions}
-            >
-              {
-                editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)
-              }
-            </select>
-          </div>
-          <div className="App-formgroup">
-            <label htmlFor="chk-top-header">
-              Controls on Top
-            </label>
-            <input id="chk-top-header" type="checkbox" checked={headerTop} onChange={e => setSavedState({ headerTop: e.target.checked })} />
-          </div>
-          <div className="App-formgroup">
-            <label htmlFor="sel-layout-mode">
-              Layout Mode
-            </label>
-            <select id="sel-layout-mode" value={mode} onChange={e => setSavedState({ mode: e.target.value })}>
-              <option value="tree">Tree Map</option>
-              <option value="tree_mixed">Tree Map (mixed)</option>
-              <option value="grid">Grid</option>
-            </select>
-          </div>
-          <div className="App-formgroup">
-            <label>
-              Palette
-            </label>
-            <PaletteSelect selectedPalette={selectedPalette} setPalette={(name) => setSavedState({ palette: name })} />
-          </div>
-          <div className="App-formgroup">
-            <label htmlFor="num-per-cat">
-              Items per category
-            </label>
-            <div>
-              <input id="num-per-cat" type="number" min={0} value={itemsPerCategory} onChange={e => setSavedState({ itemsPerCategory: e.target.value })} />
-              <p style={{fontStyle:"italic",fontSize:"0.8em"}}>(Max is about 70 for most editions)</p>
-            </div>
-          </div>
-          <div className="App-formgroup">
-            <label htmlFor="chk-new-tab">
-              Open links in new tab
-            </label>
-            <input id="chk-new-tab" type="checkbox" checked={newTab} onChange={e => setSavedState({ newTab: e.target.checked })} />
-          </div>
-          {
-            // @ts-ignore
-            typeof import.meta.env.VITE_DONATION_LINK === "string" && <DonationLink />
-          }
-        </div>
-        <p style={{ textAlign: "right", marginBottom: 0 }}>
-          <button onClick={onClose}>Dismiss</button>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function PaletteSelect ({ selectedPalette, setPalette }) {
-  return Object.entries(palettes).map(([name, palette]) => {
-    if (name === "default")
-      return null;
-
-    return (
-      <div
-        key={name}
-        className="App-palette"
-        style={{ outlineColor: name === selectedPalette ? "#FFF" : void 0 }}
-        onClick={() => setPalette(name)}
-      >
-        { Object.entries(palette).map(([cat, colour]) => (
-          <div
-            key={cat}
-            className="App-swatch"
-            style={{ backgroundColor: colour }}
-            title={ucfirst(cat)}
-          />
-        )) }
-      </div>
-    );
-  });
-}
-
-function DonationLink () {
-  const [ showDonationLink, setShowDonationLink ] = useState(false);
-
-  // @ts-ignore
-  const link = import.meta.env.VITE_DONATION_LINK;
-
-  return (
-    <div className="App-formgroup">
-      <label />
-      {
-        showDonationLink ?
-          <p>If you find NewsMap.JS useful, donations are very much appreciated to help pay for associated hosting costs.
-          <a href={link} target="_blank" rel="noopener">{link}</a>.</p> :
-          <p><button onClick={() => setShowDonationLink(true)} className="btn-link">I want to help with hosting costs.</button></p>
-      }
-    </div>
-  );
-}
-
 export default App;
 
 function getSavedState () {
@@ -362,12 +243,19 @@ function findEdition (id) {
   return editions.find(e => e.value === id);
 }
 
+/**
+ * @param {HTMLElement} el
+ */
 function requestFullscreen (el) {
   if (el.requestFullscreen) {
 		el.requestFullscreen();
+	// @ts-ignore
 	} else if (el.mozRequestFullScreen) {
+		// @ts-ignore
 		el.mozRequestFullScreen();
+	// @ts-ignore
 	} else if (el.webkitRequestFullScreen) {
+		// @ts-ignore
 		el.webkitRequestFullScreen();
 	}
 }
