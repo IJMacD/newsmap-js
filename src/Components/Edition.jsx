@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GridMap from './GridMap.jsx';
 import TreeMap from './TreeMap.jsx';
 import TreeMapMixed from './TreeMapMixed.jsx';
 import Article from './Article.jsx';
 
 import { getNews } from '../sources/GoogleNewsRSS.js';
+import { ucfirst } from '../util.js';
 
 
 /**
@@ -12,158 +13,170 @@ import { getNews } from '../sources/GoogleNewsRSS.js';
  * @prop {string} id
  * @prop {string} key
  * @prop {string} name
+ * @prop {number} loadedAt
  * @prop {any[]} articles
  */
 
 /**
- * @typedef EditionProps
- * @prop {string} edition
- * @prop {string} mode
- * @prop {string[]} categories
- * @prop {{[category: string]: string}} colours
- * @prop {boolean} showImages
- * @prop {number} itemsPerCategory
- * @prop {number} refreshTime
- * @prop {boolean} newTab
+ * @param {object} props
+ * @param {string} props.edition
+ * @param {string} props.mode
+ * @param {string[]} props.categories
+ * @param {{[category: string]: string}} props.colours
+ * @param {boolean} props.showImages
+ * @param {number} props.itemsPerCategory
+ * @param {number} props.refreshTime
+ * @param {boolean} props.newTab
  */
+function Edition ({ edition, categories, mode, showImages, colours, itemsPerCategory, newTab, refreshTime }) {
+  const [ categoryData, setCategoryData ] = useState(/** @type {{ [id: string]: Category }} */({}));
+  const loaderRef = useRef(/** @type {((cancellable: { current: boolean; }) => void)?} */(null));
 
-/**
- * @typedef EditionState
- * @prop {Category[]} categories
- */
-
-/**
- * @augments Component<EditionProps, EditionState>
- */
-class Edition extends Component {
-  constructor (props) {
-    super(props);
-
-    /** @type {EditionState} */
-    this.state = {
-      categories: [],
-    };
-
-    this.handleItemClick = this.handleItemClick.bind(this);
-  }
-
-  handleItemClick (e, item) {
-    if (e.altKey) {
-      e.preventDefault();
-
-      if (!item.sources) {
-        return;
-      }
-
-      item.sources.push(item.sources.shift());
-
-      item.title = item.sources[0].title;
-      item.url = item.sources[0].url;
-
-      this.forceUpdate();
-
-      return;
-    }
-  }
-
-  componentDidMount () {
-    this.loadAllCategories(this.props.edition);
-
-    this.timeout = setInterval(() => this.loadAllCategories(this.props.edition), this.props.refreshTime);
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.timeout);
-  }
-
-  componentDidUpdate (prevProps) {
-    if (
-      (this.props.itemsPerCategory !== prevProps.itemsPerCategory) ||
-      !areArraysEqual(this.props.categories, prevProps.categories)
-    ) {
-      this.loadAllCategories(this.props.edition);
-    }
-  }
+  // Rebind function with current props
+  loaderRef.current = (cancellable) => loadStaleCategories(cancellable);
 
   /**
-   * @param {string} edition
+   * @param {{ current: boolean; }} [cancellable]
    */
-  loadAllCategories (edition) {
-    Promise.all(this.props.categories.map(category => getNews({ category, edition }).then(data => {
-      let { category, articles, title } = data;
-      const key = `${edition}_${category}`;
-      return { id: category, key, name: title, articles }
-    })))
-    .then(categories => this.setState({ categories }), err => {
-      if (err === "CORS Error" && !this.embarrassed) {
-        this.embarrassed = true;
-        alert("Well this is embarrassing.\n\nI'll be honest - Google News RSS servers don't exactly play nicely with NewsMap.JS. More accurately they just don't consider CORS which would let us load the news directly. Instead I need to proxy the requests through the NewsMap.JS servers and I'm too cheap to implement the proxying properly.\n\nMy advice is to try a different news edition in the options.");
-      }
-      console.log(err);
-    });
-  }
+  async function loadStaleCategories (cancellable) {
+    const now = Date.now();
 
-  render() {
-    const Map = {"tree":TreeMap, "grid":GridMap, "tree_mixed":TreeMapMixed}[this.props.mode];
-    const { showImages, colours, itemsPerCategory, newTab } = this.props;
-
-    let items = this.state.categories.map(c => {
-      const articles = c.articles.map(a => ({ ...a, weight: weight(a), category: c.id }));
-
-      articles.sort((a,b) => b.weight - a.weight)
-
-      if (articles.length > itemsPerCategory) {
-        articles.length = itemsPerCategory;
-      }
-
-      return {
-        ...c,
-        articles,
-        weight: articles.reduce((t, a) => t + a.weight, 0),
-      };
+    const todoList = categories.filter(id => {
+      const cat = categoryData[id];
+      if (!cat) return true;
+      return (cat.loadedAt + refreshTime) < now;
     });
 
-    items.sort((a,b) => b.weight - a.weight);
-
-    if (items.length === 0) {
-      return null;
+    if (todoList.length === 0) {
+      return;
     }
 
-    return (
-      <Map
-        items={items}
-        itemRender={props => (
-          <Article
-            showImage={showImages}
-            colours={colours}
-            onClick={e => this.handleItemClick(e, props.item)}
-            newTab={newTab}
-            { ...props }
-          />
-        )}
-      />
-    );
+    // @ts-ignore
+    if (import.meta.env.DEV) {
+      console.log(`Loading: ${todoList.join()}`);
+    }
+
+    try {
+      const loadedCategories = await Promise.all(
+        todoList.map(category =>
+          getNews({ category, edition }).then(data => {
+            let { category, articles, title } = data;
+            const key = `${edition}_${category}`;
+
+            return {
+              id: category,
+              key,
+              name: title,
+              articles,
+              loadedAt: now,
+            };
+          })
+        )
+      );
+
+      if (!cancellable || cancellable.current) {
+        setCategoryData(categoryData => {
+          const newCategoryData = { ...categoryData };
+          for (const cat of loadedCategories) {
+            newCategoryData[cat.id] = cat;
+          }
+          return newCategoryData;
+        });
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
+
+  useEffect(() => {
+    if (loaderRef.current) {
+      let cancellable = {current: true};
+
+      loaderRef.current(cancellable);
+
+      return () => { cancellable.current = false; };
+    }
+  }, [edition, categories]);
+
+  useEffect(() => {
+    let cancellable = {current: true};
+
+    // Every minute check for stale categories with current function
+    const id = setInterval(() => {
+      if (loaderRef.current) {
+        loaderRef.current(cancellable);
+      }
+    }, 60 * 1000);
+
+    return () => { clearInterval(id); cancellable.current = false; };
+  }, []);
+
+  const Map = {"tree":TreeMap, "grid":GridMap, "tree_mixed":TreeMapMixed}[mode];
+
+  /** @type {Category[]} */
+  const loadedCategories = categories.map(categoryID =>
+    categoryData[categoryID] ||
+    // Dummy category while it loads
+    {
+      id: categoryID,
+      key: `${edition}_${categoryID}`,
+      name: ucfirst(categoryID),
+      articles: [],
+      loadedAt: 0,
+    }
+  );
+
+  let items = loadedCategories.map(c => {
+    const articles = c.articles.map(a => ({ ...a, weight: weight(a), category: c.id }));
+
+    articles.sort((a,b) => b.weight - a.weight)
+
+    if (articles.length > itemsPerCategory) {
+      articles.length = itemsPerCategory;
+    }
+
+    return {
+      ...c,
+      articles,
+      // Show immediate feedback even if still loading
+      weight: articles.length === 0 ?
+        // will be filled in later
+        NaN :
+        articles.reduce((t, a) => t + a.weight, 0),
+    };
+  });
+
+  // Allocate dummy space for loading category
+  const loadedItems = items.filter(it => it.weight);
+  if (loadedItems.length > 0 && loadedItems.length < items.length) {
+    const averageWeight = loadedItems.reduce((sum, it) => sum + it.weight, 0) / loadedItems.length;
+    for (const item of items) {
+      if (isNaN(item.weight)) item.weight = averageWeight;
+    }
+  }
+
+  items.sort((a,b) => b.weight - a.weight);
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <Map
+      items={items}
+      itemRender={props => (
+        <Article
+          showImage={showImages}
+          colours={colours}
+          newTab={newTab}
+          { ...props }
+        />
+      )}
+    />
+  );
 }
 
 const weight = a => 1/(Date.now() - +new Date(a.publishedAt));
 
 export default Edition;
-
-/**
- * @param {string[]} arrayAlpha
- * @param {string[]} arrayBravo
- */
-function areArraysEqual (arrayAlpha, arrayBravo) {
-  if (arrayAlpha.length != arrayBravo.length) {
-    return false;
-  }
-
-  for (let i = 0; i < arrayAlpha.length; i++) {
-    if (arrayAlpha[i] != arrayBravo[i]) {
-      return false;
-    }
-  }
-
-  return true;
-}
