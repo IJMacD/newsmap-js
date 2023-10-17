@@ -33,6 +33,7 @@ import { OptionsModal } from './OptionsModal.jsx';
  * @prop {number} itemsPerCategory
  * @prop {number} refreshTime
  * @prop {boolean} newTab
+ * @prop {boolean} wakeLock
  */
 
 /**
@@ -55,6 +56,7 @@ class App extends Component {
       itemsPerCategory: 10,
       refreshTime: 10 * 60 * 1000,
       newTab: true,
+      wakeLock: false,
       weightingMode: "time"
     };
 
@@ -67,6 +69,8 @@ class App extends Component {
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
+
+    this.wakeLockRef = null;
   }
 
   onResize () {
@@ -122,8 +126,32 @@ class App extends Component {
     // clearInterval(this.refreshInterval);
   }
 
+  componentDidUpdate () {
+    if (this.state.wakeLock) {
+      if (!this.wakeLockRef) {
+        navigator.wakeLock.request("screen").then(sentinel => {
+          this.wakeLockRef = sentinel;
+
+          // Keep UI up to date if system released wakeLock
+          sentinel.addEventListener("release", () => {
+            this.setState({ wakeLock: false });
+          })
+        }, err => {
+          // Couldn't acquire wakeLock
+          this.setState({ wakeLock: false });
+        });
+      }
+    }
+    else {
+      if (this.wakeLockRef) {
+        this.wakeLockRef.release();
+        this.wakeLockRef = null;
+      }
+    }
+  }
+
   renderHeader(colours) {
-    const { selectedCategories } = this.state;
+    const { selectedCategories, wakeLock } = this.state;
 
     return (
       <header className="App-header">
@@ -135,9 +163,13 @@ class App extends Component {
             Fork me on <a href="https://github.com/ijmacd/newsmap-js">GitHub</a>.
           </p>
         </div>
-        <div>
-          <button style={{ margin: 8 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
-          <button style={{ margin: 8 }} onClick={() => this.ref && requestFullscreen(this.ref)}>Fullscreen</button>
+        <div style={{margin: 4}}>
+          <button style={{ margin: 4 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
+          <button style={{ margin: 4 }} onClick={() => this.ref && requestFullscreen(this.ref)}>Fullscreen</button>
+          {
+            "wakeLock" in navigator &&
+            <label style={{ margin: 4 }}><input type="checkbox" checked={wakeLock} onChange={(e) => this.setState({ wakeLock: e.target.checked })} /> Keep Screen On</label>
+          }
         </div>
         <div className="App-category-chooser">
         {
