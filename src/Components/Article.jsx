@@ -49,7 +49,14 @@ export default function Article ({ item, showImage, colours = defaultColours, st
       const rect = elementRef.current.getBoundingClientRect();
 
       // Just aim for 90% of true height
-      const maxHeight = height * 0.9;
+      let maxHeight = height * 0.9;
+
+      // Reduce height limit for super wide cells since they are more likely to
+      // overflow suddenly.
+      const ratio = width / height;
+      if (ratio > 2.5) {
+        maxHeight = height * 0.75;
+      }
 
       // May grow font size
       setFontSize(calculateNewFontSize(rect.width, rect.height, width, maxHeight));
