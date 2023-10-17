@@ -131,7 +131,7 @@ class App extends Component {
           <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
           <p className="App-intro">
             Data from <a href="https://news.google.com">Google News</a>.
-            Inspried by <a href="http://newsmap.jp">newsmap.jp</a>.
+            Inspired by <a href="http://newsmap.jp">newsmap.jp</a>.
             Fork me on <a href="https://github.com/ijmacd/newsmap-js">GitHub</a>.
           </p>
         </div>
