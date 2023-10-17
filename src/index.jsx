@@ -7,16 +7,27 @@ import 'core-js/fn/array/find';
 import 'core-js/fn/object/entries';
 import 'core-js/fn/string/pad-start';
 
-import ErrorHandler from './ErrorHandler.jsx';
-import App from './App.jsx';
+import ErrorHandler from './Components/ErrorHandler.jsx';
+import App from './Components/App.jsx';
 import './index.css';
 
+// @ts-ignore
 const root = createRoot(document.getElementById('root'));
-root.render(<ErrorHandler><App /></ErrorHandler>);
 
+root.render(
+  <React.StrictMode>
+    <ErrorHandler>
+      <App />
+    </ErrorHandler>
+  </React.StrictMode>
+);
+
+// @ts-ignore
 if (import.meta.env.VITE_GA_TRACKING) {
+  // @ts-ignore
   const ga = function(){(ga.q = ga.q||[]).push(arguments)};
   ga.l = +new Date();
+  // @ts-ignore
   window.ga = ga;
   ga('create', process.env.VITE_GA_TRACKING, 'auto');
 

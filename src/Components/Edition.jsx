@@ -4,7 +4,7 @@ import TreeMap from './TreeMap.jsx';
 import TreeMapMixed from './TreeMapMixed.jsx';
 import Article from './Article.jsx';
 
-import { getNews } from './GoogleNewsRSS';
+import { getNews } from '../sources/GoogleNewsRSS.js';
 
 
 /**

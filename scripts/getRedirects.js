@@ -2,8 +2,8 @@ const https = require("https");
 const fs = require('fs');
 const path = require('path');
 
-const editions = require("../src/editions.json");
-const categories = require("../src/categories.json");
+const editions = require("../src/data/editions.json");
+const categories = require("../src/data/categories.json");
 
 const API_ROOT = "https://news.google.com";
 
@@ -29,7 +29,7 @@ async function run () {
     });
 
     await Promise.all(urls).then(() => {
-      fs.writeFile(path.join(__dirname, "../src/editions/", `${ed.value}.json`), JSON.stringify(out, null, 2), function(err) {
+      fs.writeFile(path.join(__dirname, "../src/data/editions/", `${ed.value}.json`), JSON.stringify(out, null, 2), function(err) {
           if(err) {
               return console.log(err);
           }

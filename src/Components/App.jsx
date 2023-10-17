@@ -2,12 +2,11 @@ import React, { Component, useState } from 'react';
 
 import Edition from './Edition.jsx';
 
-import { ucfirst, luminance } from './util';
-import defaultColours, * as palettes from './colours';
-// @ts-ignore
-import editions from './editions.json';
-// @ts-ignore
-import availableCategories from './categories.json';
+import { ucfirst, luminance } from '../util.js';
+import defaultColours, * as palettes from '../colours.js';
+
+import editions from '../data/editions.json';
+import availableCategories from '../data/categories.json';
 
 import './App.css';
 
@@ -239,8 +238,6 @@ function OptionsModal ({
   onEditionChange,
   setSavedState
 }) {
-  const [ showDonationLink, setShowDonationLink ] = useState(false);
-
   return (
     <div className="App-shade" onClick={onClose}>
       <div className="App-modal App-Options" onClick={e => e.stopPropagation()}>
@@ -299,15 +296,8 @@ function OptionsModal ({
             <input id="chk-new-tab" type="checkbox" checked={newTab} onChange={e => setSavedState({ newTab: e.target.checked })} />
           </div>
           {
-            typeof import.meta.env.VITE_DONATION_LINK === "string" &&
-            <div className="App-formgroup">
-              <label />
-              {
-                showDonationLink ?
-                  <p>If you find NewsMap.JS useful, donations are very much appreciated to help pay for associated hosting costs. <a href={import.meta.env.VITE_DONATION_LINK} target="_blank" rel="noopener">{import.meta.env.VITE_DONATION_LINK}</a>.</p> :
-                  <p><button onClick={() => setShowDonationLink(true)} className="btn-link">I want to help with hosting costs.</button></p>
-              }
-            </div>
+            // @ts-ignore
+            typeof import.meta.env.VITE_DONATION_LINK === "string" && <DonationLink />
           }
         </div>
         <p style={{ textAlign: "right", marginBottom: 0 }}>
@@ -327,7 +317,7 @@ function PaletteSelect ({ selectedPalette, setPalette }) {
       <div
         key={name}
         className="App-palette"
-        style={{ outlineColor: name === selectedPalette ? "#FFF" : null }}
+        style={{ outlineColor: name === selectedPalette ? "#FFF" : void 0 }}
         onClick={() => setPalette(name)}
       >
         { Object.entries(palette).map(([cat, colour]) => (
@@ -341,6 +331,25 @@ function PaletteSelect ({ selectedPalette, setPalette }) {
       </div>
     );
   });
+}
+
+function DonationLink () {
+  const [ showDonationLink, setShowDonationLink ] = useState(false);
+
+  // @ts-ignore
+  const link = import.meta.env.VITE_DONATION_LINK;
+
+  return (
+    <div className="App-formgroup">
+      <label />
+      {
+        showDonationLink ?
+          <p>If you find NewsMap.JS useful, donations are very much appreciated to help pay for associated hosting costs.
+          <a href={link} target="_blank" rel="noopener">{link}</a>.</p> :
+          <p><button onClick={() => setShowDonationLink(true)} className="btn-link">I want to help with hosting costs.</button></p>
+      }
+    </div>
+  );
 }
 
 export default App;

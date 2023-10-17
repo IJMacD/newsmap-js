@@ -5,7 +5,7 @@ export default class ErrorHandler extends Component {
         super(props);
 
         this.state = {
-            /** @type {Error} */
+            /** @type {Error?} */
             error: null,
         };
     }

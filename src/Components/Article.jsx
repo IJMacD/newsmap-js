@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import defaultColours from './colours';
+import defaultColours from '../colours';
 
 import './Article.css';
-import { luminance } from './util';
+import { luminance } from '../util';
 
 export default function Article ({ item, showImage, colours = defaultColours, style, onClick, newTab }) {
-  /** @type {import('react').MutableRefObject<HTMLAnchorElement>} */
-  const elementRef = useRef();
+  const elementRef = useRef(/** @type {HTMLAnchorElement?} */(null));
   const [ fontSize, setFontSize ] = useState(10);
 
   const { title } = item;

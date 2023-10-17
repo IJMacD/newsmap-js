@@ -1,8 +1,9 @@
-import { ucfirst, urlize } from './util';
+import { ucfirst, urlize } from '../util';
 
-import editions from './editions.json';
-import oldEditions from './oldEditions.json';
+import editions from '../data/editions.json';
+import oldEditions from '../data/oldEditions.json';
 
+// @ts-ignore
 const API_ROOT = import.meta.env.VITE_API_ROOT || (window.location.origin + "/api");
 
 /**
@@ -32,7 +33,7 @@ export async function getNews (options) {
         edition = findEdition(ed);
     }
 
-    let urls = await import(`./editions/${ed}.json`);
+    let urls = await import(`../data/editions/${ed}.json`);
     const path = urls[options.category.toLowerCase()];
 
     if (!path) {
@@ -41,7 +42,7 @@ export async function getNews (options) {
 
     return xmlFetch(`${API_ROOT}/rss/topics${path}`)
         .then(/** @param {document} data */ data => {
-            const [ title ] = data.getElementsByTagName("title")[0]?.textContent.split(" - ") || [ucfirst(options.category)];
+            const [ title ] = data.getElementsByTagName("title")[0]?.textContent?.split(" - ") || [ucfirst(options.category)];
 
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
@@ -66,7 +67,7 @@ export async function getNews (options) {
                     const publishedAt = dateEl ? new Date(dateEl.textContent || dateEl.innerHTML).toISOString() : "";
 
                     const imageEl = itemEl.getElementsByTagName("media:content")[0];
-                    let imageURL = imageEl ? imageEl.attributes.getNamedItem("url").textContent : "";
+                    let imageURL = imageEl ? imageEl.attributes.getNamedItem("url")?.textContent : "";
 
                     let sources;
                     const descEl = itemEl.getElementsByTagName("description")[0];
@@ -84,7 +85,7 @@ export async function getNews (options) {
 
                                 const aEl = liEl.getElementsByTagName("a")[0];
                                 let title = aEl ? aEl.textContent || aEl.innerText : "";
-                                const url = aEl ? aEl.attributes.getNamedItem("href").textContent : "";
+                                const url = aEl ? aEl.attributes.getNamedItem("href")?.textContent : "";
 
 
                                 const sourceTail = ` - ${name}`;

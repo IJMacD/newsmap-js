@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { layoutTreeMap } from './layoutTreeMap';
+import { layoutTreeMap } from '../layoutTreeMap';
 
 import './TreeMap.css';
 
