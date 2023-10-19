@@ -70,6 +70,12 @@ class App extends Component {
     this.onCategoryChange = this.onCategoryChange.bind(this);
     this.handleEditionChange = this.handleEditionChange.bind(this);
 
+    this.visibilityChangeCallback = () => {
+      if (this.wakeLockRef !== null && document.visibilityState === "visible") {
+        this.getWakeLock();
+      }
+    };
+
     this.wakeLockRef = null;
   }
 
@@ -118,28 +124,29 @@ class App extends Component {
     // this.refreshInterval = setInterval(() => {
     //   this.forceUpdate();
     // }, 5 * 60 * 1000);
+    document.addEventListener("visibilitychange", this.visibilityChangeCallback);
   }
 
   componentWillUnmount () {
     window.removeEventListener("resize", this.onResize);
 
     // clearInterval(this.refreshInterval);
+    document.removeEventListener("visibilitychange", this.visibilityChangeCallback);
+  }
+
+  getWakeLock () {
+    navigator.wakeLock.request("screen").then(sentinel => {
+      this.wakeLockRef = sentinel;
+    }, err => {
+      // Couldn't acquire wakeLock
+      this.setState({ wakeLock: false });
+    });
   }
 
   componentDidUpdate () {
     if (this.state.wakeLock) {
       if (!this.wakeLockRef) {
-        navigator.wakeLock.request("screen").then(sentinel => {
-          this.wakeLockRef = sentinel;
-
-          // Keep UI up to date if system released wakeLock
-          sentinel.addEventListener("release", () => {
-            this.setState({ wakeLock: false });
-          })
-        }, err => {
-          // Couldn't acquire wakeLock
-          this.setState({ wakeLock: false });
-        });
+        this.getWakeLock();
       }
     }
     else {
