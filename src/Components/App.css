@@ -12,7 +12,11 @@ body,
 
 .App-EditionContainer {
   display: flex;
-  height: calc(100% - 48px);
+  height: 100%;
+}
+
+.App-header-bottom .App-EditionContainer {
+  height: calc(100% - 30px);
 }
 
 .App-EditionContainer:fullscreen {
@@ -21,6 +25,18 @@ body,
   background-color: #111;
   /* Issue #34 */
   padding-top: 1px;
+}
+
+button {
+  background: none;
+  border: 2px solid white;
+  border-radius: 5px;
+  color: white;
+  padding: 4px 8px;
+}
+
+button:active {
+  background-color: rgba(255,255,255,0.1);
 }
 
 /*
@@ -46,6 +62,40 @@ body,
   min-height: 48px;
   color: white;
   display: flex;
+  flex-direction: column;
+}
+
+.App-header-top .App-header {
+  flex-direction: column-reverse;
+}
+
+.App-header-config {
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .App-header-top .App-header,
+  .App-header-bottom .App-header {
+    flex-direction: row;
+  }
+  .App-header-config-topline {
+    display: flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .App-header-top .App-EditionContainer,
+  .App-header-bottom .App-EditionContainer {
+    height: calc(100% - 48px);
+  }
+}
+
+.App-header-controls {
+  margin: 0 4px;
+}
+
+.App-header-controls button {
+  padding: 2px 8px;
 }
 
 .App-title {
@@ -106,10 +156,23 @@ body,
   border: 1px solid #686868;
   margin: 0 auto;
   color: white;
-  position: absolute;
-  top: 40px;
-  max-height: 80vh;
+  position: fixed;
+  top: 2em;
+  bottom: 2em;
+  display: flex;
+  flex-direction: column;
+}
+.App-modalbody {
+  flex: 1;
   overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .App-modal {
+    top: 4em;
+    bottom: 4em;
+    max-height: 700px;
+  }
 }
 
 .App-modal h1 {

@@ -10,6 +10,8 @@ import availableCategories from '../data/categories.json';
 
 import './App.css';
 import { OptionsModal } from './OptionsModal.jsx';
+import { SearchContext, defaultSearchContextValue } from '../SearchContext.js';
+import { SearchOptionsModal } from './SearchOptionsModal.jsx';
 
 /**
  * @typedef Category
@@ -28,12 +30,14 @@ import { OptionsModal } from './OptionsModal.jsx';
  * @prop {"time"|"sources"|"position"} weightingMode
  * @prop {boolean} showImages
  * @prop {boolean} showOptions
+ * @prop {boolean} showSearchOptions
  * @prop {boolean} headerTop
  * @prop {string} palette
  * @prop {number} itemsPerCategory
  * @prop {number} refreshTime
  * @prop {boolean} newTab
  * @prop {boolean} wakeLock
+ * @prop {import('../SearchContext.js').SearchContextValue} searchValue
  */
 
 /**
@@ -52,12 +56,14 @@ class App extends Component {
       showImages: false,
       palette: "default",
       showOptions: false,
+      showSearchOptions: false,
       headerTop: false,
       itemsPerCategory: 10,
       refreshTime: 10 * 60 * 1000,
       newTab: true,
       wakeLock: false,
-      weightingMode: "time"
+      weightingMode: "time",
+      searchValue: defaultSearchContextValue,
     };
 
     /** @type {AppState} */
@@ -158,25 +164,28 @@ class App extends Component {
   }
 
   renderHeader(colours) {
-    const { selectedCategories, wakeLock } = this.state;
+    const { selectedCategories, wakeLock, searchValue } = this.state;
 
     return (
       <header className="App-header">
-        <div style={{ flex: 1 }}>
-          <h1 className="App-title"><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
+        <div className="App-header-config">
+          <div  className="App-header-config-topline">
+            <h1 className="App-title" style={{flex:1}}><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
+            <div className="App-header-controls">
+              <button style={{ margin: 4 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
+              <button style={{ margin: 4 }} onClick={() => this.ref && requestFullscreen(this.ref)}>Fullscreen</button>
+              <button style={{ margin: 4, outline: searchValue.enabled ? "2px solid red" : void 0 }} onClick={() => this.setState({ showSearchOptions: true })}>{ searchValue.enabled ? "Search Active" : "Search"}</button>
+            </div>
+            {
+              "wakeLock" in navigator &&
+              <label style={{ margin: 4 }}><input type="checkbox" checked={wakeLock} onChange={(e) => this.setState({ wakeLock: e.target.checked })} /> Keep Screen On</label>
+            }
+          </div>
           <p className="App-intro">
             Data from <a href="https://news.google.com">Google News</a>.
             Inspired by <a href="http://newsmap.jp">newsmap.jp</a>.
             Fork me on <a href="https://github.com/ijmacd/newsmap-js">GitHub</a>.
           </p>
-        </div>
-        <div style={{margin: 4}}>
-          <button style={{ margin: 4 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
-          <button style={{ margin: 4 }} onClick={() => this.ref && requestFullscreen(this.ref)}>Fullscreen</button>
-          {
-            "wakeLock" in navigator &&
-            <label style={{ margin: 4 }}><input type="checkbox" checked={wakeLock} onChange={(e) => this.setState({ wakeLock: e.target.checked })} /> Keep Screen On</label>
-          }
         </div>
         <div className="App-category-chooser">
         {
@@ -211,6 +220,7 @@ class App extends Component {
       selectedCategories,
       mode,
       showOptions,
+      showSearchOptions,
       palette: selectedPalette,
       selectedEditions,
       headerTop,
@@ -227,31 +237,33 @@ class App extends Component {
     const showEditionName = selectedEditions.length > 1;
 
     return (
-      <div className="App">
+      <div className={`App ${headerTop?"App-header-top":"App-header-bottom"}`}>
         { headerTop && this.renderHeader(colours) }
-        <div className="App-EditionContainer" ref={r => this.ref = r}>
-          { selectedEditions.map(ed => (
-            <div
-              key={ed}
-              style={{ height: showEditionName ? "calc(100% - 1em)" : "100%", flex: 1 }}
-              className="App-Edition"
-            >
-              { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1em" }}>{(findEdition(ed)||{}).name}</p> }
-              <Edition
-                edition={ed}
-                mode={mode}
-                showImages={showImages}
-                colours={colours}
-                categories={selectedCategories}
-                itemsPerCategory={itemsPerCategory}
-                refreshTime={refreshTime}
-                newTab={newTab}
-                weightingMode={weightingMode}
-              />
-            </div>
-          ))
-          }
-        </div>
+        <SearchContext.Provider value={this.state.searchValue}>
+          <div className="App-EditionContainer" ref={r => this.ref = r}>
+            { selectedEditions.map(ed => (
+              <div
+                key={ed}
+                style={{ height: showEditionName ? "calc(100% - 1em)" : "100%", flex: 1 }}
+                className="App-Edition"
+              >
+                { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1em" }}>{(findEdition(ed)||{}).name}</p> }
+                <Edition
+                  edition={ed}
+                  mode={mode}
+                  showImages={showImages}
+                  colours={colours}
+                  categories={selectedCategories}
+                  itemsPerCategory={itemsPerCategory}
+                  refreshTime={refreshTime}
+                  newTab={newTab}
+                  weightingMode={weightingMode}
+                />
+              </div>
+            ))
+            }
+          </div>
+        </SearchContext.Provider>
         { !headerTop && this.renderHeader(colours) }
         { showOptions &&
           <OptionsModal
@@ -265,6 +277,13 @@ class App extends Component {
             onClose={() => this.setState({ showOptions: false })}
             onEditionChange={this.handleEditionChange.bind(this)}
             setSavedState={this.setSavedState.bind(this)}
+          />
+        }
+        { showSearchOptions &&
+          <SearchOptionsModal
+            searchValue={this.state.searchValue}
+            setSearchValue={searchValue => this.setSavedState({ searchValue })}
+            onClose={() => this.setState({ showSearchOptions: false })}
           />
         }
       </div>

@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import defaultColours from '../colours';
 
 import './Article.css';
 import { luminance } from '../util';
+import { SearchContext } from '../SearchContext';
+import { isSearchMatching } from '../isSearchMatching';
 
 export default function Article ({ item, showImage, colours = defaultColours, style, onClick, newTab }) {
   const elementRef = useRef(/** @type {HTMLAnchorElement?} */(null));
@@ -11,6 +13,8 @@ export default function Article ({ item, showImage, colours = defaultColours, st
 
   const { title } = item;
   const { width, height } = style;
+
+  const searchValue = useContext(SearchContext);
 
   // If the width or height changes, then wait 2.5 seconds for animations to
   // finish and start adjusting font size if required (bigger or smaller).
@@ -69,13 +73,19 @@ export default function Article ({ item, showImage, colours = defaultColours, st
     style.backgroundImage = `url(${item.imageURL})`;
   }
 
-  const backgroundColor = getAgedColour(colours[item.category], timeDelta / (1000 * 60 * 60));
+  let backgroundColor = getAgedColour(colours[item.category], timeDelta / (1000 * 60 * 60));
 
   const source = item.sources && item.sources.length && item.sources[0] || item;
 
   // Dynamic padding
   const ph = width * 0.03;
   const pv = height * 0.03;
+
+  const matchesSearch = isSearchMatching(searchValue, item);
+
+  if (!matchesSearch) {
+    backgroundColor = "#666666";
+  }
 
   return (
     <li className={"Article-li " + (showImage && item.imageURL ? "Article-image" : "")} style={{ ...style,  backgroundColor, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}>

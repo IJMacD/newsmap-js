@@ -80,13 +80,16 @@ export function OptionsModal({
             </label>
             <input id="chk-new-tab" type="checkbox" checked={newTab} onChange={e => setSavedState({ newTab: e.target.checked })} />
           </div>
+        </div>
+        <div style={{display:"flex",justifyContent:"end"}}>
           {
             // @ts-ignore
-            typeof import.meta.env.VITE_DONATION_LINK === "string" && <DonationLink />}
+            typeof import.meta.env.VITE_DONATION_LINK === "string" && <DonationLink />
+          }
+          <p style={{ textAlign: "right", marginBottom: 0 }}>
+            <button onClick={onClose}>Dismiss</button>
+          </p>
         </div>
-        <p style={{ textAlign: "right", marginBottom: 0 }}>
-          <button onClick={onClose}>Dismiss</button>
-        </p>
       </div>
     </div>
   );
@@ -123,12 +126,19 @@ function DonationLink() {
   const link = import.meta.env.VITE_DONATION_LINK;
 
   return (
-    <div className="App-formgroup">
-      <label />
-      {showDonationLink ?
-        <p>If you find NewsMap.JS useful, donations are very much appreciated to help pay for associated hosting costs.
-          <a href={link} target="_blank" rel="noopener">{link}</a>.</p> :
-        <p><button onClick={() => setShowDonationLink(true)} className="btn-link">I want to help with hosting costs.</button></p>}
+    <div style={{flex: 1}}>
+      { showDonationLink ?
+        <p style={{fontSize: "0.8em"}}>
+          If you find NewsMap.JS useful, donations are very much appreciated to
+          help pay for associated hosting costs.{' '}
+          <a href={link} target="_blank" rel="noopener">{link}</a>.
+        </p> :
+        <p>
+          <button onClick={() => setShowDonationLink(true)} className="btn-link">
+            I want to help with hosting costs.
+          </button>
+        </p>
+      }
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import GridMap from './GridMap.jsx';
 import TreeMap from './TreeMap.jsx';
 import TreeMapMixed from './TreeMapMixed.jsx';
@@ -6,6 +6,8 @@ import Article from './Article.jsx';
 
 import { getNews } from '../sources/GoogleNewsRSS.js';
 import { ucfirst } from '../util.js';
+import { SearchContext } from '../SearchContext.js';
+import { isSearchMatching } from '../isSearchMatching.js';
 
 
 /**
@@ -40,7 +42,21 @@ function Edition ({
   newTab,
   refreshTime
 }) {
-  const items = useCategoryItems(categories, refreshTime, edition, itemsPerCategory, weightingMode);
+  let items = useCategoryItems(categories, refreshTime, edition, itemsPerCategory, weightingMode);
+
+  const searchValue = useContext(SearchContext);
+
+  if (searchValue.mode === "filter") {
+    items = items.map(item => {
+      const articles = item.articles.filter(item => isSearchMatching(searchValue, item));
+
+      return {
+        ...item,
+        articles,
+        weight: articles.length === 0 ? 0 : item.weight,
+      }
+    });
+  }
 
   if (items.length === 0) {
     return null;
