@@ -17,8 +17,11 @@ export function SearchOptionsModal({
   onClose,
 }) {
   function setSearchOption (newOptions) {
-    const enabled = typeof newOptions.text === "undefined" || newOptions.text;
-    setSearchValue({ ...searchValue, ...newOptions, enabled });
+    // Auto-enable/disable if we're setting text
+    const enabled = typeof newOptions.text === "undefined" ?
+      searchValue.enabled : (!!newOptions.text);
+
+    setSearchValue({ ...searchValue, enabled, ...newOptions });
   }
 
   let isInvalidRegex = false;
@@ -37,6 +40,12 @@ export function SearchOptionsModal({
       <div className="App-modal App-Options" onClick={e => e.stopPropagation()}>
         <h1>Search</h1>
         <div className="App-modalbody">
+          <div className="App-formgroup">
+            <label htmlFor="chk-enabled">
+              Enabled
+            </label>
+            <input id="chk-enabled" type="checkbox" checked={searchValue.enabled} onChange={e => setSearchOption({ enabled: e.target.checked })} />
+          </div>
           <div className="App-formgroup">
             <label>
               Mode
@@ -63,7 +72,7 @@ export function SearchOptionsModal({
           </div>
           <div className="App-formgroup">
             <label htmlFor="chk-case-sensitive">
-              Case sensitive
+              Case-Sensitive
             </label>
             <input id="chk-case-sensitive" type="checkbox" checked={searchValue.caseSensitive} onChange={e => setSearchOption({ caseSensitive: e.target.checked })} />
           </div>
@@ -74,16 +83,19 @@ export function SearchOptionsModal({
             <input id="chk-regex" type="checkbox" checked={searchValue.regex} onChange={e => setSearchOption({ regex: e.target.checked })} />
           </div>
           <div className="App-formgroup">
-            <label htmlFor="chk-headlines">
-              in Headlines
+            <label>
+              Search in
             </label>
-            <input id="chk-headlines" type="checkbox" checked={searchValue.includeHeadline} onChange={e => setSearchOption({ includeHeadline: e.target.checked })} />
-          </div>
-          <div className="App-formgroup">
-            <label htmlFor="chk-sources">
-              in Source Names
-            </label>
-            <input id="chk-sources" type="checkbox" checked={searchValue.includeSource} onChange={e => setSearchOption({ includeSource: e.target.checked })} />
+            <div>
+              <label htmlFor="chk-headlines" style={{display:"block",marginBottom:8}}>
+                <input id="chk-headlines" type="checkbox" checked={searchValue.includeHeadline} onChange={e => setSearchOption({ includeHeadline: e.target.checked })} />
+                Headline
+              </label>
+              <label htmlFor="chk-sources" style={{display:"block",marginBottom:8}}>
+                <input id="chk-sources" type="checkbox" checked={searchValue.includeSource} onChange={e => setSearchOption({ includeSource: e.target.checked })} />
+                Source Name
+              </label>
+            </div>
           </div>
           <div className="App-formgroup">
             <label>

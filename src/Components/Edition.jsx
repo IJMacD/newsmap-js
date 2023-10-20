@@ -44,20 +44,6 @@ function Edition ({
 }) {
   let items = useCategoryItems(categories, refreshTime, edition, itemsPerCategory, weightingMode);
 
-  const searchValue = useContext(SearchContext);
-
-  if (searchValue.mode === "filter") {
-    items = items.map(item => {
-      const articles = item.articles.filter(item => isSearchMatching(searchValue, item));
-
-      return {
-        ...item,
-        articles,
-        weight: articles.length === 0 ? 0 : item.weight,
-      }
-    });
-  }
-
   if (items.length === 0) {
     return null;
   }
@@ -195,8 +181,14 @@ function useCategoryItems(categories, refreshTime, edition, itemsPerCategory, we
     weightByPosition
   );
 
+  const searchValue = useContext(SearchContext);
+
   let items = loadedCategories.map(c => {
-    const articles = c.articles.map((a, i) => ({ ...a, weight: weight(a, i), category: c.id }));
+    let articles = c.articles.map((a, i) => ({ ...a, weight: weight(a, i), category: c.id }));
+
+    if (searchValue.mode === "filter") {
+      articles = articles.filter(item => isSearchMatching(searchValue, item));
+    }
 
     articles.sort((a, b) => b.weight - a.weight);
 
@@ -207,20 +199,16 @@ function useCategoryItems(categories, refreshTime, edition, itemsPerCategory, we
     return {
       ...c,
       articles,
-      // Show immediate feedback even if still loading
-      weight: articles.length === 0 ?
-        // will be filled in later
-        NaN :
-        articles.reduce((t, a) => t + a.weight, 0),
+      weight: articles.reduce((t, a) => t + a.weight, 0),
     };
   });
 
-  // Reserve dummy space for loading category
-  const loadedItems = items.filter(it => it.weight);
+  // Reserve dummy space for loading categories
+  const loadedItems = items.filter(it => it.loadedAt);
   if (loadedItems.length > 0 && loadedItems.length < items.length) {
     const averageWeight = loadedItems.reduce((sum, it) => sum + it.weight, 0) / loadedItems.length;
     for (const item of items) {
-      if (isNaN(item.weight)) item.weight = averageWeight;
+      if (item.loadedAt == 0 && item.weight === 0) item.weight = averageWeight;
     }
   }
 
