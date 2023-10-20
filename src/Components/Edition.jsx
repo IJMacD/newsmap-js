@@ -27,6 +27,7 @@ import { isSearchMatching } from '../isSearchMatching.js';
  * @param {string[]} props.categories
  * @param {{[category: string]: string}} props.colours
  * @param {boolean} props.showImages
+ * @param {boolean} props.showGradient
  * @param {number} props.itemsPerCategory
  * @param {number} props.refreshTime
  * @param {boolean} props.newTab
@@ -37,6 +38,7 @@ function Edition ({
   mode,
   weightingMode,
   showImages,
+  showGradient,
   colours,
   itemsPerCategory,
   newTab,
@@ -60,6 +62,7 @@ function Edition ({
       itemRender={props => (
         <Article
           showImage={showImages}
+          showGradient={showGradient}
           colours={colours}
           newTab={newTab}
           { ...props }

@@ -7,6 +7,7 @@ export function OptionsModal({
   selectedEditions,
   mode,
   weightingMode,
+  showGradient,
   headerTop,
   itemsPerCategory,
   newTab,
@@ -64,6 +65,21 @@ export function OptionsModal({
               Palette
             </label>
             <PaletteSelect selectedPalette={selectedPalette} setPalette={(name) => setSavedState({ palette: name })} />
+          </div>
+          <div className="App-formgroup">
+            <label>
+              Square Style
+            </label>
+            <div>
+              <label htmlFor="chk-style-flat" style={{marginBottom:8}}>
+                <input id="chk-style-flat" name="chk-style" type="radio" checked={!showGradient} onChange={e => setSavedState({ showGradient: !e.target.checked })} />
+                Flat
+              </label>
+              <label htmlFor="chk-style-gradient" style={{marginBottom:8}}>
+                <input id="chk-style-gradient" name="chk-style" type="radio" checked={showGradient} onChange={e => setSavedState({ showGradient: e.target.checked })} />
+                Gradient
+              </label>
+            </div>
           </div>
           <div className="App-formgroup">
             <label htmlFor="num-per-cat">

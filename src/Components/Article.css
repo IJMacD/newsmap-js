@@ -26,8 +26,11 @@
   left: 0;
   right: 0;
   height: 20px;
-  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
   color: white;
+}
+
+.Article--shadow .article::after {
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
 }
 
 .Article-image .article {
@@ -42,12 +45,11 @@
   opacity: 1;
 }
 
-.article:hover::after {
+.Article-li:hover .article::after {
   content: attr(data-source);
   height: auto;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 2%;
-  box-shadow: 0 0px 10px 10px rgba(0, 0, 0, 0.6);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9) 80%, transparent);
+  padding: 5% 2% 2%;
 }
 
 @keyframes fade-in {

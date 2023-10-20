@@ -29,6 +29,7 @@ import { SearchOptionsModal } from './SearchOptionsModal.jsx';
  * @prop {"tree"|"grid"|"tree_mixed"} mode
  * @prop {"time"|"sources"|"position"} weightingMode
  * @prop {boolean} showImages
+ * @prop {boolean} showGradient
  * @prop {boolean} showOptions
  * @prop {boolean} showSearchOptions
  * @prop {boolean} headerTop
@@ -54,6 +55,7 @@ class App extends Component {
       selectedEditions: ["GB_en"],
       mode: "tree",
       showImages: false,
+      showGradient: true,
       palette: "default",
       showOptions: false,
       showSearchOptions: false,
@@ -219,6 +221,7 @@ class App extends Component {
     const {
       selectedCategories,
       mode,
+      showGradient,
       showOptions,
       showSearchOptions,
       palette: selectedPalette,
@@ -252,6 +255,7 @@ class App extends Component {
                   edition={ed}
                   mode={mode}
                   showImages={showImages}
+                  showGradient={showGradient}
                   colours={colours}
                   categories={selectedCategories}
                   itemsPerCategory={itemsPerCategory}
@@ -271,6 +275,7 @@ class App extends Component {
             mode={this.state.mode}
             weightingMode={weightingMode}
             headerTop={this.state.headerTop}
+            showGradient={this.state.showGradient}
             itemsPerCategory={this.state.itemsPerCategory}
             newTab={this.state.newTab}
             selectedPalette={this.state.palette}

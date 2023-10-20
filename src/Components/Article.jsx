@@ -7,7 +7,27 @@ import { luminance } from '../util';
 import { SearchContext } from '../SearchContext';
 import { isSearchMatching } from '../isSearchMatching';
 
-export default function Article ({ item, showImage, colours = defaultColours, style, onClick, newTab }) {
+/**
+ *
+ * @param {object} props
+ * @param {object} props.item
+ * @param {boolean} props.showImage
+ * @param {boolean} props.showGradient
+ * @param {boolean} props.newTab
+ * @param {{ [category: string]: string }} props.colours;
+ * @param {{ top: number; left:number; width: number, height: number }} props.style
+ * @param {() => void} props.onClick
+ * @returns
+ */
+export default function Article ({
+  item,
+  showImage,
+  showGradient,
+  colours = defaultColours,
+  style,
+  onClick,
+  newTab
+}) {
   const elementRef = useRef(/** @type {HTMLAnchorElement?} */(null));
   const [ fontSize, setFontSize ] = useState(10);
 
@@ -90,7 +110,7 @@ export default function Article ({ item, showImage, colours = defaultColours, st
   }
 
   return (
-    <li className={"Article-li " + (showImage && item.imageURL ? "Article-image" : "")} style={{ ...style,  backgroundColor, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}>
+    <li className={"Article-li " + (showImage && item.imageURL ? "Article-image" : "") + (showGradient ? "Article--shadow" : "")} style={{ ...style,  backgroundColor, color: luminance(backgroundColor) > 176 ? "#111" : "#FFF" }}>
       <a
         href={item.url}
         className="article"
