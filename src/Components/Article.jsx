@@ -81,6 +81,8 @@ export default function Article ({ item, showImage, colours = defaultColours, st
   const ph = width * 0.03;
   const pv = height * 0.03;
 
+  const padding = Math.min(ph, pv);
+
   const matchesSearch = isSearchMatching(searchValue, item);
 
   if (!matchesSearch) {
@@ -94,7 +96,7 @@ export default function Article ({ item, showImage, colours = defaultColours, st
         className="article"
         title={source.name ? `${source.name}: ${source.title}` : source.title}
         data-source={source.name}
-        style={{fontSize,padding:`${pv}px ${ph}px`}}
+        style={{fontSize,padding}}
         onClick={onClick}
         rel="noopener"
         target={newTab ? "_blank" : "_self"}
