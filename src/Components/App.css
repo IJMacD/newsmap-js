@@ -132,8 +132,12 @@ button:active {
   box-sizing: border-box;
 }
 
+.App-category-key:focus-within {
+  border-color: white;
+}
+
 .App-category-key input {
-  display: none;
+  width: 0;
 }
 
 .App-shade {
