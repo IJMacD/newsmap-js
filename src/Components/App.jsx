@@ -244,10 +244,10 @@ class App extends Component {
             { selectedEditions.map(ed => (
               <div
                 key={ed}
-                style={{ height: showEditionName ? "calc(100% - 1em)" : "100%", flex: 1 }}
+                style={{ height: showEditionName ? "calc(100% - 1rem)" : "100%", flex: 1 }}
                 className="App-Edition"
               >
-                { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1em" }}>{(findEdition(ed)||{}).name}</p> }
+                { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1rem", fontSize: "0.8rem" }}>{(findEdition(ed)||{}).name}</p> }
                 <Edition
                   edition={ed}
                   mode={mode}
