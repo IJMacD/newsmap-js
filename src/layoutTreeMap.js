@@ -21,21 +21,41 @@ export function layoutTreeMap(values, { width, height }) {
   let currentX = 0;
   let currentY = 0;
 
-  values.forEach(value => {
-    const w = horizontal ? valueWidth : valueHeight; // valueLength
-    const worst_n = worst(row, w);
-    const worst_y = worst([...row, value], w);
+  values.forEach((value, i, a) => {
+    const rowFixedDimension = horizontal ? valueWidth : valueHeight; // valueLength
+    let worst_currentValues;
+    let worst_withAddition;
 
-    if (worst_y > worst_n) {
-      layoutRow(row);
-      row.length = 0;
+    // Special case for last item
+    // Compare how it would be with last item in a new row by itself vs. adding
+    // to current row.
+    if (i == a.length - 1) {
+      let remaining;
+      if (horizontal) {
+        const rowWidth = value / valueHeight;
+        remaining = valueWidth - rowWidth;
+      }
+      else {
+        const rowHeight = value / valueWidth;
+        remaining = valueHeight - rowHeight;
+      }
+      worst_currentValues = worstAspectRatio([value], remaining);
+      worst_withAddition = worstAspectRatio([...row, value], rowFixedDimension);
+    }
+    else {
+      worst_currentValues = worstAspectRatio(row, rowFixedDimension);
+      worst_withAddition = worstAspectRatio([...row, value], rowFixedDimension);
+    }
+
+    if (worst_withAddition > worst_currentValues) {
+      finalizeRow(row);
     }
 
     row.push(value);
   });
 
   if (row.length) {
-    layoutRow(row);
+    finalizeRow(row);
   }
 
   return dimensions;
@@ -43,7 +63,7 @@ export function layoutTreeMap(values, { width, height }) {
   /**
    * @param {number[]} row
    */
-  function layoutRow(row) {
+  function finalizeRow(row) {
     let rowValue = row.reduce(sum, 0);
     let rowWidth;
     let rowHeight;
@@ -63,7 +83,7 @@ export function layoutTreeMap(values, { width, height }) {
       currentY += rowHeight;
     }
 
-    row.forEach((/** @type {number} */ value) => {
+    for (const value of row) {
       let valueWidth;
       let valueHeight;
 
@@ -89,33 +109,36 @@ export function layoutTreeMap(values, { width, height }) {
       else {
         x += valueWidth;
       }
-    });
+    }
 
     horizontal = !horizontal;
+
+    row.length = 0;
   }
+}
 
-  /**
-   * @param {number[]} R
-   * @param {number} w
-   */
-  function worst(/* row */ R, /* width */ w) {
-    if (!R.length)
-      return Infinity;
+/**
+ * Returns the worst (most-extreme) aspect ratio found in this row
+ * @param {number[]} R
+ * @param {number} w
+ */
+function worstAspectRatio(/* row */ R, /* width */ w) {
+  if (!R.length)
+    return Infinity;
 
-    var w_2 = w * w;
-    var s = R.reduce(sum, 0);
-    var s_2 = s * s;
-    var r_max = R[0];
-    var r_min = R[R.length - 1];
+  var w_2 = w * w;
+  var s = R.reduce(sum, 0);
+  var s_2 = s * s;
+  var r_max = R[0];
+  var r_min = R[R.length - 1];
 
-    return Math.max(w_2 * r_min / s_2, s_2 / (w_2 * r_max));
-  }
+  return Math.max(w_2 * r_min / s_2, s_2 / (w_2 * r_max));
+}
 
-  /**
-   * @param {number} a
-   * @param {number} b
-   */
-  function sum(a, b) {
-    return a + b;
-  }
+/**
+ * @param {number} a
+ * @param {number} b
+ */
+function sum(a, b) {
+  return a + b;
 }
