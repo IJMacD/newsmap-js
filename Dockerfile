@@ -7,7 +7,7 @@ COPY public ./public
 COPY src ./src
 RUN yarn run build
 
-FROM node:16
+FROM node:16-alpine
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn
