@@ -1,0 +1,45 @@
+# k3d configuration file
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: newsmap-js
+servers: 1
+# agents: 1
+kubeAPI:
+  host: "localhost"
+  hostIP: "127.0.0.1"
+  hostPort: "6445"
+image: rancher/k3s:v1.28.2-k3s1
+
+registries: # define how registries should be created or used
+  use:
+    - k3d-registry.localhost:5111
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+
+env:
+  - envVar: name=newsmap-js
+    nodeFilters:
+      - all
+
+options:
+  k3d:
+    wait: true
+    timeout: "60s"
+    disableLoadbalancer: false
+    disableImageVolume: false
+    disableRollback: false
+
+  k3s:
+    extraArgs:
+      - arg: "--tls-san=127.0.0.1"
+        nodeFilters:
+          - server:*
+  kubeconfig:
+    updateDefaultKubeconfig: false
+    switchCurrentContext: false

@@ -1,0 +1,7 @@
+web:
+  replicaCount: 1
+  hostname: newsmap-js.localhost
+  local:
+    enabled: false
+  repository:
+    image: k3d-registry.localhost:5111/ijmacd/newsmap-js

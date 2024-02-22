@@ -1,0 +1,9 @@
+web:
+  replicaCount: 1
+  hostname: newsmap.ijmacd.com
+  path: /
+  local:
+    enabled: false
+  repository:
+    image: docker.io/ijmacd/newsmap-js
+    tag: ""

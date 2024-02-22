@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ .Release.Name }}-web"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+    - host: "{{ .Values.web.hostname }}"
+      http:
+        paths:
+          - path: '{{ .Values.web.path | default "/" }}'
+            pathType: Prefix
+            backend:
+              service:
+                name: "{{ .Release.Name }}-web"
+                port:
+                  name: http
+  tls:
+    - secretName: newsmap-js-cert
+      hosts:
+        - "{{ .Values.web.hostname }}"

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ .Release.Name }}-web'
+  labels:
+    katenary.io/component: web
+    katenary.io/project: '{{ .Chart.Name }}'
+    katenary.io/release: '{{ .Release.Name }}'
+spec:
+  replicas: {{ .Values.web.replicaCount }}
+  selector:
+    matchLabels:
+      katenary.io/component: web
+      katenary.io/release: '{{ .Release.Name }}'
+  template:
+    metadata:
+      labels:
+        katenary.io/component: web
+        katenary.io/release: '{{ .Release.Name }}'
+    spec:
+      containers:
+        - name: web
+          image: '{{ .Values.web.repository.image }}{{ if ne .Values.web.repository.tag "" }}:{{ .Values.web.repository.tag }}{{ end }}'
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+            {{- if .Values.web.local.enabled }}
+            - mountPath: /var/www/html
+              name: src
+            {{- end }}
+      {{ if not .Values.web.local.enabled }}
+      imagePullSecrets:
+      - name: regcred
+      {{ end }}
+      volumes:
+        {{- if .Values.web.local.enabled }}
+        - name: src
+          hostPath:
+            path: /ijmacd/newsmap-js
+        {{- end }}

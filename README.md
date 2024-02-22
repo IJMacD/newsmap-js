@@ -15,7 +15,7 @@ Follow the steps below to get it running locally. In `dev` environment API reque
 1. Install
 
        git clone https://github.com/IJMacD/newsmap-js.git
-       cd newsmap-js
+       cd newsmap-js/newsmap-js
        npm install
 
 2. Run development server

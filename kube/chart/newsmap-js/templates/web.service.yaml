@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}-web"
+  labels:
+    katenary.io/component: web
+    katenary.io/project: "{{ .Chart.Name }}"
+    katenary.io/release: "{{ .Release.Name }}"
+spec:
+  selector:
+    katenary.io/component: web
+    katenary.io/release: "{{ .Release.Name }}"
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8080
+      targetPort: http
