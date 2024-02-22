@@ -25,6 +25,13 @@ spec:
           ports:
             - name: http
               containerPort: 8000
+          env:
+            - name: API_ROOT
+              value: "/api"
+            - name: GA_TRACKING
+              value: ""
+            - name: DONATION_LINK
+              value: "https://www.paypal.me/ijmacd"
           volumeMounts:
             {{- if .Values.web.local.enabled }}
             - mountPath: /var/www/html

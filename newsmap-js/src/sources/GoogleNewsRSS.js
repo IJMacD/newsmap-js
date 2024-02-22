@@ -3,8 +3,7 @@ import { ucfirst, urlize } from '../util';
 import editions from '../data/editions.json';
 import oldEditions from '../data/oldEditions.json';
 
-// @ts-ignore
-const API_ROOT = import.meta.env.VITE_API_ROOT || (window.location.origin + "/api");
+const API_ROOT = window['env']['API_ROOT'] || (window.location.origin + "/api");
 
 /**
  *
@@ -12,7 +11,7 @@ const API_ROOT = import.meta.env.VITE_API_ROOT || (window.location.origin + "/ap
  * @param {string} options.category
  * @param {string} options.edition
  */
-export async function getNews (options) {
+export async function getNews(options) {
     let ed = options.edition;
     let edition = findEdition(ed);
 
@@ -42,7 +41,7 @@ export async function getNews (options) {
 
     return xmlFetch(`${API_ROOT}/rss/topics${path}`)
         .then(/** @param {document} data */ data => {
-            const [ title ] = data.getElementsByTagName("title")[0]?.textContent?.split(" - ") || [ucfirst(options.category)];
+            const [title] = data.getElementsByTagName("title")[0]?.textContent?.split(" - ") || [ucfirst(options.category)];
 
             const items = Array.from(data.getElementsByTagName("item"))
                 .map(itemEl => {
@@ -129,7 +128,7 @@ export async function getNews (options) {
         });
 }
 
-function xmlFetch (url) {
+function xmlFetch(url) {
     if (DOMParser) {
         // Clearing out Accept-Language stops Google's servers from redirecting to a different language
         const headers = new Headers({ "Accept-Language": "" });
@@ -168,15 +167,15 @@ function xmlFetch (url) {
 /**
  * @param {string} edition
  */
-function findEdition (edition) {
-    for(let i = 0; i < editions.length; i++) {
+function findEdition(edition) {
+    for (let i = 0; i < editions.length; i++) {
         if (editions[i].value === edition) {
             return editions[i];
         }
     }
 }
 
-function decodeHtml (str) {
+function decodeHtml(str) {
     var map =
     {
         '&amp;': '&',

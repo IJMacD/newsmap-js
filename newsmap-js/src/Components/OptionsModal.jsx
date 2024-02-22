@@ -71,11 +71,11 @@ export function OptionsModal({
               Square Style
             </label>
             <div>
-              <label htmlFor="chk-style-flat" style={{marginBottom:8}}>
+              <label htmlFor="chk-style-flat" style={{ marginBottom: 8 }}>
                 <input id="chk-style-flat" name="chk-style" type="radio" checked={!showGradient} onChange={e => setSavedState({ showGradient: !e.target.checked })} />
                 Flat
               </label>
-              <label htmlFor="chk-style-gradient" style={{marginBottom:8}}>
+              <label htmlFor="chk-style-gradient" style={{ marginBottom: 8 }}>
                 <input id="chk-style-gradient" name="chk-style" type="radio" checked={showGradient} onChange={e => setSavedState({ showGradient: e.target.checked })} />
                 Gradient
               </label>
@@ -97,10 +97,9 @@ export function OptionsModal({
             <input id="chk-new-tab" type="checkbox" checked={newTab} onChange={e => setSavedState({ newTab: e.target.checked })} />
           </div>
         </div>
-        <div style={{display:"flex",justifyContent:"end"}}>
+        <div style={{ display: "flex", justifyContent: "end" }}>
           {
-            // @ts-ignore
-            typeof import.meta.env.VITE_DONATION_LINK === "string" && <DonationLink />
+            typeof window['env']['DONATION_LINK'] === "string" && <DonationLink />
           }
           <p style={{ textAlign: "right", marginBottom: 0 }}>
             <button onClick={onClose}>Dismiss</button>
@@ -138,13 +137,12 @@ function PaletteSelect({ selectedPalette, setPalette }) {
 function DonationLink() {
   const [showDonationLink, setShowDonationLink] = useState(false);
 
-  // @ts-ignore
-  const link = import.meta.env.VITE_DONATION_LINK;
+  const link = window['env']['DONATION_LINK'];
 
   return (
-    <div style={{flex: 1}}>
-      { showDonationLink ?
-        <p style={{fontSize: "0.8em"}}>
+    <div style={{ flex: 1 }}>
+      {showDonationLink ?
+        <p style={{ fontSize: "0.8em" }}>
           If you find NewsMap.JS useful, donations are very much appreciated to
           help pay for associated hosting costs.{' '}
           <a href={link} target="_blank" rel="noopener">{link}</a>.

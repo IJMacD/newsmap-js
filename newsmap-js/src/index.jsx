@@ -22,14 +22,13 @@ root.render(
   </React.StrictMode>
 );
 
-// @ts-ignore
-if (import.meta.env.VITE_GA_TRACKING) {
+if (window['env']['GA_TRACKING']) {
   // @ts-ignore
-  const ga = function(){(ga.q = ga.q||[]).push(arguments)};
+  const ga = function () { (ga.q = ga.q || []).push(arguments) };
   ga.l = +new Date();
-  // @ts-ignore
-  window.ga = ga;
-  ga('create', process.env.VITE_GA_TRACKING, 'auto');
+
+  window['ga'] = ga;
+  ga('create', window['env']['GA_TRACKING'], 'auto');
 
   const a = document.createElement('script');
   a.async = true;
