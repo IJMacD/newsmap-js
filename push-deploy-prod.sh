@@ -15,9 +15,6 @@ source ${SCRIPT_DIR}/vars.sh
 # Override
 export KUBECONFIG=~/.kube/config.prod
 
-# Delete the images on the node - not the registry!
-# docker exec k3d-aiapp-server-0 sh -c 'ctr image rm $(ctr image list -q)'
-
 for project in "${PROJECTS}"; do
   docker push ${REGISTRY_NAME}/${REPO}/${project}:${TCTAG}
 done

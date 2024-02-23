@@ -1,4 +1,4 @@
 
-The application has been deployed under the name "{{ .Release.Name }}" in the {{ .Release.Namespace }} namespace.
+Version {{ .Chart.AppVersion }} of the application has been deployed under the name "{{ .Release.Name }}" in the {{ .Release.Namespace }} namespace.
 
 It should be available shortly at https://{{ .Values.web.hostname }}{{ .Values.web.path }}
