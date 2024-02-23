@@ -55,11 +55,23 @@ button:active {
 
 .App-Edition {
   transition: all 1s;
-  background: rgb(9 9 9 / 0);
+  /* First loading */
+  animation: fade-bg 1s;
 }
 
 .App-Edition:not(:empty) {
+  /* Toggling all categories on/off */
   background: rgb(9 9 9 / 0.8);
+}
+
+@keyframes fade-bg {
+  0% {
+    background: rgb(9 9 9 / 0);
+  }
+
+  100% {
+    background: rgb(9 9 9 / 0.8);
+  }
 }
 
 .App-header {
