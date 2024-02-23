@@ -55,6 +55,7 @@ button:active {
 
 .App-Edition {
   transition: all 1s;
+  background: rgb(9 9 9 / 0);
 }
 
 .App-Edition:not(:empty) {
