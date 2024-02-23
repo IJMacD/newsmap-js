@@ -36,7 +36,7 @@ button {
 }
 
 button:active {
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /*
@@ -53,8 +53,12 @@ button:active {
   height: 1px;
 }
 
+.App-Edition {
+  transition: all 1s;
+}
+
 .App-Edition:not(:empty) {
-  background: #111;
+  background: rgb(9 9 9 / 0.8);
 }
 
 .App-header {
@@ -74,16 +78,19 @@ button:active {
 }
 
 @media (min-width: 768px) {
+
   .App-header-top .App-header,
   .App-header-bottom .App-header {
     flex-direction: row;
   }
+
   .App-header-config-topline {
     display: flex;
   }
 }
 
 @media (min-width: 1024px) {
+
   .App-header-top .App-EditionContainer,
   .App-header-bottom .App-EditionContainer {
     height: calc(100% - 48px);
@@ -166,6 +173,7 @@ button:active {
   display: flex;
   flex-direction: column;
 }
+
 .App-modalbody {
   flex: 1;
   overflow-y: auto;
