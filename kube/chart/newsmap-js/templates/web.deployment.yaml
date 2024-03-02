@@ -37,6 +37,13 @@ spec:
             - mountPath: /var/www/html
               name: src
             {{- end }}
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 20m
+            limits:
+              memory: 250Mi
+              cpu: 100m
       {{ if not .Values.web.local.enabled }}
       imagePullSecrets:
       - name: regcred
