@@ -299,6 +299,13 @@ class App extends Component {
               </div>
             ))
             }
+            {enableSourcesModal && selectedArticle &&
+              <SourcesModal
+                article={selectedArticle}
+                newTab={newTab}
+                onClose={() => this.setState({ selectedArticle: null })}
+              />
+            }
           </div>
         </SearchContext.Provider>
         {!headerTop && this.renderHeader(colours)}
@@ -323,13 +330,6 @@ class App extends Component {
             searchValue={this.state.searchValue}
             setSearchValue={searchValue => this.setSavedState({ searchValue })}
             onClose={() => this.setState({ showSearchOptions: false })}
-          />
-        }
-        {enableSourcesModal && selectedArticle &&
-          <SourcesModal
-            article={selectedArticle}
-            newTab={newTab}
-            onClose={() => this.setState({ selectedArticle: null })}
           />
         }
       </div>
