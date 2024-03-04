@@ -29,7 +29,7 @@ spec:
             - name: API_ROOT
               value: "/api"
             - name: GA_TRACKING
-              value: ""
+              value: "G-N5XM8ZC4Z9"
             - name: DONATION_LINK
               value: "https://www.paypal.me/ijmacd"
           volumeMounts:
