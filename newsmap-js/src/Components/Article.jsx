@@ -12,7 +12,7 @@ const DEBUG_FONT_SIZE = false;
 /**
  *
  * @param {object} props
- * @param {object} props.item
+ * @param {import('./Edition').Article} props.item
  * @param {boolean} props.showImage
  * @param {boolean} props.showGradient
  * @param {boolean} props.newTab

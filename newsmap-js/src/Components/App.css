@@ -168,6 +168,8 @@ button:active {
   background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
+  /* Appear above any focused .Article-li */
+  z-index: 2;
 }
 
 .App-modal {
@@ -190,6 +192,8 @@ button:active {
 .App-modalbody {
   flex: 1;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #222 grey;
 }
 
 @media (min-width: 1024px) {
@@ -251,4 +255,28 @@ button:active {
   border: none;
   color: white;
   text-decoration: underline;
+}
+
+.SourcesModal-Source {
+  text-decoration: none;
+}
+
+.SourcesModal-Source section {
+  outline: 1px solid transparent;
+  transition: all 0.5s;
+  margin: 0.25em;
+  padding: 0.25em;
+  cursor: pointer;
+}
+
+.SourcesModal-Source section:hover {
+  outline-color: white;
+}
+
+.SourcesModal-Source h1 {
+  margin-bottom: 0;
+}
+
+.SourcesModal-Source p {
+  margin-top: 0;
 }

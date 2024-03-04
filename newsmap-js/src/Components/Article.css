@@ -6,6 +6,11 @@
   animation: fade-in 2s ease-in;
 }
 
+.Article-li:focus-within {
+  z-index: 1;
+  outline: 2px solid white;
+}
+
 .Article-image {
   background-size: cover;
   background-position: 50%;
@@ -19,6 +24,10 @@
   line-height: 1.1;
   /* background-color: rgba(0, 0, 0, 0.5); */
   box-sizing: border-box;
+}
+
+.article:focus {
+  outline: none;
 }
 
 .article::after {
@@ -50,6 +59,11 @@
 .Article-li:hover .article::after {
   content: attr(data-source);
   height: auto;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2% 2% 0;
+}
+
+.Article-li.Article--shadow:hover .article::after {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9) 80%, transparent);
   padding: 5% 2% 2%;
 }

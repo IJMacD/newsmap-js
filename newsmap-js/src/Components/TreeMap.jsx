@@ -4,16 +4,27 @@ import { layoutTreeMap } from '../layoutTreeMap';
 import './TreeMap.css';
 
 /**
- * @augments Component<{ items: any[], itemRender: (any) => React.ReactNode }>
+ * @typedef {import('./Edition').Category} Category
+ * @typedef {import('./Edition').Article} Article
+ */
+
+/**
+ * @typedef TreeMapProps
+ * @property {Category[]} items
+ * @property {(childProps: { key: string, item: Article, category: Category, style: import('react').CSSProperties }) => import('react').ReactNode} itemRender
+ */
+
+/**
+ * @augments Component<TreeMapProps>
  */
 export default class TreeMap extends Component {
 
   // On first render: force rerender to get real dimensions
-  componentDidMount () {
+  componentDidMount() {
     this.forceUpdate();
   }
 
-  render () {
+  render() {
     // Wild guess only for first render
     let rootWidth = 1024, rootHeight = 768;
     if (this.ref) {
@@ -40,7 +51,7 @@ export default class TreeMap extends Component {
               <li key={category.key} style={dimensions[i]}>
                 <ol className="TreeMap-article-list">
                   {
-                    category.articles.map((article,i) => {
+                    category.articles.map((article, i) => {
                       const childProps = {
                         key: article.id,
                         item: article,

@@ -11,19 +11,40 @@ import { isSearchMatching } from '../isSearchMatching.js';
 
 
 /**
+ * @typedef Source
+ * @prop {string} id
+ * @prop {string} title
+ * @prop {string} name
+ * @prop {string} url
+ */
+
+/**
+ * @typedef Article
+ * @prop {string} id
+ * @prop {string} category
+ * @prop {string} title
+ * @prop {string} url
+ * @prop {string} publishedAt
+ * @prop {string} imageURL
+ * @prop {Source[]} sources
+ * @prop {number} weight
+ */
+
+/**
  * @typedef Category
  * @prop {string} id
  * @prop {string} key
  * @prop {string} name
  * @prop {number} loadedAt
- * @prop {any[]} articles
+ * @prop {Article[]} articles
+ * @prop {number} weight
  */
 
 /**
  * @param {object} props
  * @param {string} props.edition
  * @param {"tree"|"grid"|"tree_mixed"} props.mode
- * @param {"time"|"sources"|"position"} props.weightingMode
+ * @param {"time"|"sourceCount"|"sources"|"position"} props.weightingMode
  * @param {string[]} props.categories
  * @param {{[category: string]: string}} props.colours
  * @param {boolean} props.showImages
@@ -31,8 +52,9 @@ import { isSearchMatching } from '../isSearchMatching.js';
  * @param {number} props.itemsPerCategory
  * @param {number} props.refreshTime
  * @param {boolean} props.newTab
+ * @param {(article: Article, e: import('react').MouseEvent) => void} props.onArticleClick
  */
-function Edition ({
+function Edition({
   edition,
   categories,
   mode,
@@ -42,18 +64,23 @@ function Edition ({
   colours,
   itemsPerCategory,
   newTab,
-  refreshTime
+  refreshTime,
+  onArticleClick,
 }) {
   let items = useCategoryItems(categories, refreshTime, edition, itemsPerCategory, weightingMode);
+
+  // Fast visual update
+  // (Article sizes update every 60 seconds, doesn't refetch)
+  useFastVisualRefresh(weightingMode === "time", 60 * 1000);
 
   if (items.length === 0) {
     return null;
   }
 
   const Map = {
-    tree: TreeMap,
-    grid: GridMap,
-    tree_mixed: TreeMapMixed,
+    "tree": TreeMap,
+    "grid": GridMap,
+    "tree_mixed": TreeMapMixed,
   }[mode];
 
   return (
@@ -65,25 +92,44 @@ function Edition ({
           showGradient={showGradient}
           colours={colours}
           newTab={newTab}
-          { ...props }
+          onClick={e => onArticleClick(props.item, e)}
+          {...props}
         />
       )}
     />
   );
 }
 
-const weightByTime = a => 1/(Date.now() - +new Date(a.publishedAt));
+const weightByTime = a => 1 / (Date.now() - +new Date(a.publishedAt));
+const weightBySources = (a, i) => a.sources.length;
 const weightBySourcesPosition = (a, i) => a.sources.length / (i + 1);
 const weightByPosition = (a, i) => 1 / (i + 1);
 
 export default Edition;
 
 /**
+ * Forces re-render every `timeout` milliseconds
+ * @param {boolean} enable
+ */
+function useFastVisualRefresh(enable, timeout = 10 * 1000) {
+  const [, setCounter] = useState(0);
+
+  useEffect(() => {
+    if (enable) {
+      const interval = setInterval(() => {
+        setCounter(counter => counter + 1);
+      }, timeout);
+      return () => clearInterval(interval);
+    }
+  }, [enable, timeout]);
+}
+
+/**
  * @param {string[]} categories
  * @param {number} refreshTime
  * @param {string} edition
  * @param {number} itemsPerCategory
- * @param {"time"|"sources"|"position"} weightMode
+ * @param {"time"|"sourceCount"|"sources"|"position"} weightMode
  */
 function useCategoryItems(categories, refreshTime, edition, itemsPerCategory, weightMode = "time") {
   const [categoryData, setCategoryData] = useState(/** @type {{ [id: string]: Category }} */({}));
@@ -95,7 +141,7 @@ function useCategoryItems(categories, refreshTime, edition, itemsPerCategory, we
   /**
    * @param {{ current: boolean; }} [cancellable]
    */
-  async function loadStaleCategories (cancellable) {
+  async function loadStaleCategories(cancellable) {
     const now = Date.now();
 
     const todoList = categories.filter(id => {
@@ -169,20 +215,24 @@ function useCategoryItems(categories, refreshTime, edition, itemsPerCategory, we
 
   /** @type {Category[]} */
   const loadedCategories = categories.map(categoryID => categoryData[categoryID] ||
-    // Dummy category while it loads
-    {
-      id: categoryID,
-      key: `${edition}_${categoryID}`,
-      name: ucfirst(categoryID),
-      articles: [],
-      loadedAt: 0,
-    }
+  // Dummy category while it loads
+  {
+    id: categoryID,
+    key: `${edition}_${categoryID}`,
+    name: ucfirst(categoryID),
+    articles: [],
+    loadedAt: 0,
+  }
   );
 
-  const weight = weightMode === "time" ? weightByTime : (
-    weightMode === "sources" ? weightBySourcesPosition :
-    weightByPosition
-  );
+  const weightingFns = {
+    "time": weightByTime,
+    "sourceCount": weightBySources,
+    "sources": weightBySourcesPosition,
+    "position": weightByPosition,
+  };
+
+  const weight = weightingFns[weightMode] || weightByTime;
 
   const searchValue = useContext(SearchContext);
 

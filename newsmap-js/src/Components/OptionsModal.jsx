@@ -11,6 +11,7 @@ export function OptionsModal({
   headerTop,
   itemsPerCategory,
   newTab,
+  enableSourcesModal,
   selectedPalette,
   onClose,
   onEditionChange,
@@ -56,6 +57,7 @@ export function OptionsModal({
             </label>
             <select id="sel-weighting-mode" value={weightingMode} onChange={e => setSavedState({ weightingMode: e.target.value })}>
               <option value="time">Time based</option>
+              {/* <option value="sourceCount">By source count alone</option> */}
               <option value="sources">By source count and Google News position</option>
               <option value="position">By Google News position</option>
             </select>
@@ -96,10 +98,16 @@ export function OptionsModal({
             </label>
             <input id="chk-new-tab" type="checkbox" checked={newTab} onChange={e => setSavedState({ newTab: e.target.checked })} />
           </div>
+          <div className="App-formgroup">
+            <label htmlFor="chk-sources-modal">
+              Show sources before following link
+            </label>
+            <input id="chk-sources-modal" type="checkbox" checked={enableSourcesModal} onChange={e => setSavedState({ enableSourcesModal: e.target.checked })} />
+          </div>
         </div>
         <div style={{ display: "flex", justifyContent: "end" }}>
           {
-            typeof window['env']['DONATION_LINK'] === "string" && <DonationLink />
+            window['env'] && typeof window['env']['DONATION_LINK'] === "string" && <DonationLink />
           }
           <p style={{ textAlign: "right", marginBottom: 0 }}>
             <button onClick={onClose}>Dismiss</button>

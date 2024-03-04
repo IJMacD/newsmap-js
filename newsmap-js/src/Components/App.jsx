@@ -12,6 +12,7 @@ import './App.css';
 import { OptionsModal } from './OptionsModal.jsx';
 import { SearchContext, defaultSearchContextValue } from '../SearchContext.js';
 import { SearchOptionsModal } from './SearchOptionsModal.jsx';
+import { SourcesModal } from './SourcesModal.jsx';
 
 /**
  * @typedef Category
@@ -37,15 +38,17 @@ import { SearchOptionsModal } from './SearchOptionsModal.jsx';
  * @prop {number} itemsPerCategory
  * @prop {number} refreshTime
  * @prop {boolean} newTab
+ * @prop {boolean} enableSourcesModal
  * @prop {boolean} wakeLock
  * @prop {import('../SearchContext.js').SearchContextValue} searchValue
+ * @prop {import('./Edition.jsx').Article?} selectedArticle
  */
 
 /**
  * @augments Component<{}, AppState>
  */
 class App extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     /** @type {AppState} */
@@ -63,9 +66,11 @@ class App extends Component {
       itemsPerCategory: 10,
       refreshTime: 10 * 60 * 1000,
       newTab: true,
+      enableSourcesModal: false,
       wakeLock: false,
       weightingMode: "time",
       searchValue: defaultSearchContextValue,
+      selectedArticle: null,
     };
 
     /** @type {AppState} */
@@ -85,13 +90,19 @@ class App extends Component {
     };
 
     this.wakeLockRef = null;
+
+    this.keyupListener = (/** @type {KeyboardEvent} */ e) => {
+      if (e.key === "Escape") {
+        this.cancelModals();
+      }
+    }
   }
 
-  onResize () {
+  onResize() {
     this.forceUpdate();
   }
 
-  onCategoryChange (e) {
+  onCategoryChange(e) {
     let { selectedCategories } = this.state;
     const { checked, value } = e.target;
 
@@ -99,18 +110,18 @@ class App extends Component {
       if (selectedCategories.length === 1 && selectedCategories[0] === value) {
         selectedCategories = availableCategories;
       } else {
-        selectedCategories = [ value ];
+        selectedCategories = [value];
       }
     } else if (checked) {
-      selectedCategories = [ ...selectedCategories, value ];
+      selectedCategories = [...selectedCategories, value];
     } else {
-      selectedCategories = selectedCategories.filter(c => c !== value );
+      selectedCategories = selectedCategories.filter(c => c !== value);
     }
 
     this.setSavedState({ selectedCategories });
   }
 
-  handleEditionChange (e) {
+  handleEditionChange(e) {
     const { options } = e.target;
 
     const selectedEditions = Array.from(options).filter(o => o.selected).map(o => o.value);
@@ -120,29 +131,29 @@ class App extends Component {
     this.setState({ categories: [] });
   }
 
-  setSavedState (newState) {
+  setSavedState(newState) {
     localStorage["state"] = JSON.stringify({ ...getSavedState(), ...newState });
 
     this.setState(newState);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     window.addEventListener("resize", this.onResize);
 
-    // this.refreshInterval = setInterval(() => {
-    //   this.forceUpdate();
-    // }, 5 * 60 * 1000);
     document.addEventListener("visibilitychange", this.visibilityChangeCallback);
+
+    document.addEventListener("keyup", this.keyupListener);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     window.removeEventListener("resize", this.onResize);
 
-    // clearInterval(this.refreshInterval);
     document.removeEventListener("visibilitychange", this.visibilityChangeCallback);
+
+    document.removeEventListener("keyup", this.keyupListener);
   }
 
-  getWakeLock () {
+  getWakeLock() {
     navigator.wakeLock.request("screen").then(sentinel => {
       this.wakeLockRef = sentinel;
     }, err => {
@@ -151,7 +162,7 @@ class App extends Component {
     });
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     if (this.state.wakeLock) {
       if (!this.wakeLockRef) {
         this.getWakeLock();
@@ -165,18 +176,37 @@ class App extends Component {
     }
   }
 
+  /**
+   * @param {import('./Edition.jsx').Article} article
+   * @param {import('react').MouseEvent} e
+   */
+  handleArticleClick(article, e) {
+    if (this.state.enableSourcesModal) {
+      e.preventDefault();
+      this.setState({ selectedArticle: article });
+    }
+  }
+
+  cancelModals() {
+    this.setState({
+      showOptions: false,
+      showSearchOptions: false,
+      selectedArticle: null,
+    });
+  }
+
   renderHeader(colours) {
     const { selectedCategories, wakeLock, searchValue } = this.state;
 
     return (
       <header className="App-header">
         <div className="App-header-config">
-          <div  className="App-header-config-topline">
-            <h1 className="App-title" style={{flex:1}}><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
+          <div className="App-header-config-topline">
+            <h1 className="App-title" style={{ flex: 1 }}><a href="https://newsmap.ijmacd.com">NewsMap.JS</a></h1>
             <div className="App-header-controls">
               <button style={{ margin: 4 }} onClick={() => this.setState({ showOptions: true })}>Options</button>
               <button style={{ margin: 4 }} onClick={() => this.ref && requestFullscreen(this.ref)}>Fullscreen</button>
-              <button style={{ margin: 4, outline: searchValue.enabled ? "2px solid red" : void 0 }} onClick={() => this.setState({ showSearchOptions: true })}>{ searchValue.enabled ? "Search Active" : "Search"}</button>
+              <button style={{ margin: 4, outline: searchValue.enabled ? "2px solid red" : void 0 }} onClick={() => this.setState({ showSearchOptions: true })}>{searchValue.enabled ? "Search Active" : "Search"}</button>
             </div>
             {
               "wakeLock" in navigator &&
@@ -190,28 +220,28 @@ class App extends Component {
           </p>
         </div>
         <div className="App-category-chooser">
-        {
-          availableCategories.map(cat => {
-            const active = selectedCategories.includes(cat);
-            const backgroundColor = active ? colours[cat] : "#777";
-            const color = active ? (luminance(backgroundColor) > 128 ? "#111" : "#FFF") : "#555";
+          {
+            availableCategories.map(cat => {
+              const active = selectedCategories.includes(cat);
+              const backgroundColor = active ? colours[cat] : "#777";
+              const color = active ? (luminance(backgroundColor) > 128 ? "#111" : "#FFF") : "#555";
 
-            return (
-              <label
-                key={cat}
-                className="App-category-key"
-                style={{ backgroundColor, color }}
-              >
-                <input
-                  type="checkbox"
-                  checked={active}
-                  onChange={this.onCategoryChange}
-                  value={cat} />
-                {ucfirst(cat)}
-              </label>
-            )
-          })
-        }
+              return (
+                <label
+                  key={cat}
+                  className="App-category-key"
+                  style={{ backgroundColor, color }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={this.onCategoryChange}
+                    value={cat} />
+                  {ucfirst(cat)}
+                </label>
+              )
+            })
+          }
         </div>
       </header>
     );
@@ -230,7 +260,9 @@ class App extends Component {
       itemsPerCategory,
       refreshTime,
       newTab,
+      enableSourcesModal,
       weightingMode,
+      selectedArticle,
     } = this.state;
 
     const showImages = false;
@@ -240,17 +272,17 @@ class App extends Component {
     const showEditionName = selectedEditions.length > 1;
 
     return (
-      <div className={`App ${headerTop?"App-header-top":"App-header-bottom"}`}>
-        { headerTop && this.renderHeader(colours) }
+      <div className={`App ${headerTop ? "App-header-top" : "App-header-bottom"}`}>
+        {headerTop && this.renderHeader(colours)}
         <SearchContext.Provider value={this.state.searchValue}>
           <div className="App-EditionContainer" ref={r => this.ref = r}>
-            { selectedEditions.map(ed => (
+            {selectedEditions.map(ed => (
               <div
                 key={ed}
                 style={{ height: showEditionName ? "calc(100% - 1rem)" : "100%", flex: 1 }}
                 className="App-Edition"
               >
-                { showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1rem", fontSize: "0.8rem" }}>{(findEdition(ed)||{}).name}</p> }
+                {showEditionName && <p style={{ color: "white", margin: 0, fontWeight: "bold", height: "1rem", fontSize: "0.8rem" }}>{(findEdition(ed) || {}).name}</p>}
                 <Edition
                   edition={ed}
                   mode={mode}
@@ -262,14 +294,15 @@ class App extends Component {
                   refreshTime={refreshTime}
                   newTab={newTab}
                   weightingMode={weightingMode}
+                  onArticleClick={this.handleArticleClick.bind(this)}
                 />
               </div>
             ))
             }
           </div>
         </SearchContext.Provider>
-        { !headerTop && this.renderHeader(colours) }
-        { showOptions &&
+        {!headerTop && this.renderHeader(colours)}
+        {showOptions &&
           <OptionsModal
             selectedEditions={this.state.selectedEditions}
             mode={this.state.mode}
@@ -278,17 +311,25 @@ class App extends Component {
             showGradient={this.state.showGradient}
             itemsPerCategory={this.state.itemsPerCategory}
             newTab={this.state.newTab}
+            enableSourcesModal={this.state.enableSourcesModal}
             selectedPalette={this.state.palette}
             onClose={() => this.setState({ showOptions: false })}
             onEditionChange={this.handleEditionChange.bind(this)}
             setSavedState={this.setSavedState.bind(this)}
           />
         }
-        { showSearchOptions &&
+        {showSearchOptions &&
           <SearchOptionsModal
             searchValue={this.state.searchValue}
             setSearchValue={searchValue => this.setSavedState({ searchValue })}
             onClose={() => this.setState({ showSearchOptions: false })}
+          />
+        }
+        {enableSourcesModal && selectedArticle &&
+          <SourcesModal
+            article={selectedArticle}
+            newTab={newTab}
+            onClose={() => this.setState({ selectedArticle: null })}
           />
         }
       </div>
@@ -298,27 +339,27 @@ class App extends Component {
 
 export default App;
 
-function getSavedState () {
+function getSavedState() {
   return typeof localStorage["state"] !== "undefined" ? JSON.parse(localStorage["state"]) : {};
 }
 
-function findEdition (id) {
+function findEdition(id) {
   return editions.find(e => e.value === id);
 }
 
 /**
  * @param {HTMLElement} el
  */
-function requestFullscreen (el) {
+function requestFullscreen(el) {
   if (el.requestFullscreen) {
-		el.requestFullscreen();
-	// @ts-ignore
-	} else if (el.mozRequestFullScreen) {
-		// @ts-ignore
-		el.mozRequestFullScreen();
-	// @ts-ignore
-	} else if (el.webkitRequestFullScreen) {
-		// @ts-ignore
-		el.webkitRequestFullScreen();
-	}
+    el.requestFullscreen();
+    // @ts-ignore
+  } else if (el.mozRequestFullScreen) {
+    // @ts-ignore
+    el.mozRequestFullScreen();
+    // @ts-ignore
+  } else if (el.webkitRequestFullScreen) {
+    // @ts-ignore
+    el.webkitRequestFullScreen();
+  }
 }

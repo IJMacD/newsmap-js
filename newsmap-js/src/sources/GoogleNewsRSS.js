@@ -3,7 +3,9 @@ import { ucfirst, urlize } from '../util';
 import editions from '../data/editions.json';
 import oldEditions from '../data/oldEditions.json';
 
-const API_ROOT = window['env']['API_ROOT'] || (window.location.origin + "/api");
+const API_ROOT = (window['env'] && window['env']['API_ROOT']) ||
+    import.meta.env.VITE_API_ROOT ||
+    (window.location.origin + "/api");
 
 /**
  *
