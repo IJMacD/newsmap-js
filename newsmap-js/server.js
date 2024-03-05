@@ -27,7 +27,7 @@ app.get('/', function (req, res) {
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', '${process.env.GA_TRACKING}');
+      gtag('config', '${process.env.GA_TRACKING}', {send_page_view: false});
     </script>`;
     $('head').append(gtag);
   }

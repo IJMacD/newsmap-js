@@ -77,7 +77,13 @@ class App extends Component {
     this.state = {
       ...defaultState,
       ...getSavedState(),
+      ...getQueryState(),
     };
+
+    // Save selected Edition in case it has come from the query params
+    // Will cause "Can't call setState on a component that is not yet mounted"
+    // error.
+    this.setSavedState({ selectedEditions: this.state.selectedEditions });
 
     this.onResize = this.onResize.bind(this);
     this.onCategoryChange = this.onCategoryChange.bind(this);
@@ -95,7 +101,14 @@ class App extends Component {
       if (e.key === "Escape") {
         this.cancelModals();
       }
-    }
+    };
+
+    this.historyListener = (/** @type {PopStateEvent} */ e) => {
+      this.setState({
+        ...this.state,
+        ...e.state,
+      });
+    };
   }
 
   onResize() {
@@ -143,6 +156,10 @@ class App extends Component {
     document.addEventListener("visibilitychange", this.visibilityChangeCallback);
 
     document.addEventListener("keyup", this.keyupListener);
+
+    window.addEventListener("popstate", this.historyListener);
+
+    this.updatePage(true);
   }
 
   componentWillUnmount() {
@@ -151,6 +168,8 @@ class App extends Component {
     document.removeEventListener("visibilitychange", this.visibilityChangeCallback);
 
     document.removeEventListener("keyup", this.keyupListener);
+
+    window.removeEventListener("popstate", this.historyListener);
   }
 
   getWakeLock() {
@@ -174,6 +193,8 @@ class App extends Component {
         this.wakeLockRef = null;
       }
     }
+
+    this.updatePage();
   }
 
   /**
@@ -193,6 +214,56 @@ class App extends Component {
       showSearchOptions: false,
       selectedArticle: null,
     });
+  }
+
+  updatePage(replace = false) {
+    // const searchParams = new URLSearchParams();
+
+    // searchParams.set("edition", this.state.selectedEditions.join(","));
+
+    const searchParams = "edition=" + this.state.selectedEditions.join(",");
+
+    // if (this.state.searchValue.enabled) {
+    //   searchParams.set("q", this.state.searchValue.text);
+    // }
+
+    // // If options are open, don't update URL as we type. Instead, retain the
+    // // current value
+    // if (this.state.showSearchOptions) {
+    //   const currentParams = new URLSearchParams(window.location.search);
+    //   const q = currentParams.get("q");
+    //   if (q) {
+    //     searchParams.set("q", q);
+    //   }
+    //   else {
+    //     searchParams.delete("q");
+    //   }
+    // }
+
+    const url = `?${searchParams}`;
+
+    const historyState = {
+      selectedEditions: this.state.selectedEditions,
+      // searchValue: this.state.searchValue,
+    };
+
+    if (window.location.search === url || replace) {
+      history.replaceState(historyState, "", url);
+    }
+    else {
+      history.pushState(historyState, "", url);
+    }
+
+    const titleParts = [
+      "NewsMap.JS",
+      editions.filter(ed => this.state.selectedEditions.includes(ed.value)).map(ed => ed.name).join(", "),
+    ];
+
+    if (this.state.searchValue.enabled) {
+      titleParts.push(this.state.searchValue.text);
+    }
+
+    document.title = titleParts.join(" - ");
   }
 
   renderHeader(colours) {
@@ -362,4 +433,29 @@ function requestFullscreen(el) {
     // @ts-ignore
     el.webkitRequestFullScreen();
   }
+}
+
+function getQueryState() {
+  const queryState = {};
+
+  const queryParams = new URLSearchParams(location.search);
+
+  const edition = queryParams.get("edition");
+  if (edition) {
+    const queryEditions = edition.split(",").filter(e => editions.some(ed => ed.value === e));
+    if (queryEditions.length) {
+      queryState.selectedEditions = queryEditions;
+    }
+  }
+
+  const searchValue = defaultSearchContextValue;
+  const q = queryParams.get("q");
+  if (q) {
+    searchValue.text = q;
+    searchValue.enabled = true;
+
+    queryState.searchValue = searchValue;
+  }
+
+  return queryState;
 }
