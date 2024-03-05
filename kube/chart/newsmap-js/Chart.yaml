@@ -1,5 +1,4 @@
 apiVersion: v2
-appVersion: 1.1.2
 description: A helm chart for newsmap-js
 name: newsmap-js
 type: application
