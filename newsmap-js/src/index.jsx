@@ -10,7 +10,6 @@ import 'core-js/fn/string/pad-start';
 import ErrorHandler from './Components/ErrorHandler.jsx';
 import App from './Components/App.jsx';
 import './index.css';
-import './googleAnalytics.js'
 
 // @ts-ignore
 const root = createRoot(document.getElementById('root'));

@@ -11,13 +11,27 @@ const port = process.env.PORT || 8000;
 app.get('/', function (req, res) {
   var html = fs.readFileSync(__dirname + '/static/index.html', 'utf8');
   var $ = cheerio.load(html);
+
   const env = {
     API_ROOT: process.env.API_ROOT,
     DONATION_LINK: process.env.DONATION_LINK,
-    GA_TRACKING: process.env.GA_TRACKING,
   };
   var scriptNode = `<script>window['env'] = ${JSON.stringify(env)};</script>`;
   $('body').append(scriptNode);
+
+  if (process.env.GA_TRACKING) {
+    const gtag = `
+    <script async src="https://www.googletagmanager.com/gtag/js?id=${process.env.GA_TRACKING}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '${process.env.GA_TRACKING}');
+    </script>`;
+    $('head').append(gtag);
+  }
+
   res.send($.html());
 });
 
