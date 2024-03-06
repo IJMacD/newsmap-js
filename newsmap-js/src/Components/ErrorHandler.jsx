@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 export default class ErrorHandler extends Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -10,11 +10,18 @@ export default class ErrorHandler extends Component {
         };
     }
 
-    componentDidCatch (error) {
+    /**
+     * @param {Error} error
+     */
+    componentDidCatch(error) {
         this.setState({ error });
+
+        if (window['gtag']) {
+            window['gtag']('event', 'exception', { description: error.message, fatal: true });
+        }
     }
 
-    render () {
+    render() {
         if (this.state.error) {
             return (
                 <div style={{ color: "white", margin: 32 }}>

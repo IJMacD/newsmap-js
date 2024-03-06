@@ -14,12 +14,20 @@ import { SearchContext, defaultSearchContextValue } from '../SearchContext.js';
 import { SearchOptionsModal } from './SearchOptionsModal.jsx';
 import { SourcesModal } from './SourcesModal.jsx';
 
+const defaultRefreshTime = 10 * 60 * 1000;
+
 /**
  * @typedef Category
  * @prop {string} id
  * @prop {string} name
  * @prop {any[]} articles
  * @prop {number} weight
+ */
+
+/**
+ * @typedef AppProps
+ * @property {number} [refreshTime]
+ * @property {string} [donationLink]
  */
 
 /**
@@ -36,7 +44,6 @@ import { SourcesModal } from './SourcesModal.jsx';
  * @prop {boolean} headerTop
  * @prop {string} palette
  * @prop {number} itemsPerCategory
- * @prop {number} refreshTime
  * @prop {boolean} newTab
  * @prop {boolean} enableSourcesModal
  * @prop {boolean} wakeLock
@@ -45,9 +52,12 @@ import { SourcesModal } from './SourcesModal.jsx';
  */
 
 /**
- * @augments Component<{}, AppState>
+ * @augments Component<AppProps, AppState>
  */
 class App extends Component {
+  /**
+   * @param {AppProps} props
+   */
   constructor(props) {
     super(props);
 
@@ -64,7 +74,6 @@ class App extends Component {
       showSearchOptions: false,
       headerTop: false,
       itemsPerCategory: 10,
-      refreshTime: 10 * 60 * 1000,
       newTab: true,
       enableSourcesModal: false,
       wakeLock: false,
@@ -134,12 +143,8 @@ class App extends Component {
     this.setSavedState({ selectedCategories });
   }
 
-  handleEditionChange(e) {
-    const { options } = e.target;
-
-    const selectedEditions = Array.from(options).filter(o => o.selected).map(o => o.value);
-
-    this.setSavedState({ selectedEditions });
+  handleEditionChange(editions) {
+    this.setSavedState({ selectedEditions: editions });
 
     this.setState({ categories: [] });
   }
@@ -159,6 +164,12 @@ class App extends Component {
 
     window.addEventListener("popstate", this.historyListener);
 
+    if (window['gtag']) {
+      this.trackingTimeout = setInterval(() => {
+        window['gtag']('event', 'refresh');
+      }, this.props.refreshTime || defaultRefreshTime);
+    }
+
     this.updatePage(true);
   }
 
@@ -170,6 +181,8 @@ class App extends Component {
     document.removeEventListener("keyup", this.keyupListener);
 
     window.removeEventListener("popstate", this.historyListener);
+
+    clearInterval(this.trackingTimeout);
   }
 
   getWakeLock() {
@@ -320,6 +333,10 @@ class App extends Component {
 
   render() {
     const {
+      refreshTime
+    } = this.props;
+
+    const {
       selectedCategories,
       mode,
       showGradient,
@@ -329,7 +346,6 @@ class App extends Component {
       selectedEditions,
       headerTop,
       itemsPerCategory,
-      refreshTime,
       newTab,
       enableSourcesModal,
       weightingMode,
@@ -362,7 +378,7 @@ class App extends Component {
                   colours={colours}
                   categories={selectedCategories}
                   itemsPerCategory={itemsPerCategory}
-                  refreshTime={refreshTime}
+                  refreshTime={refreshTime || defaultRefreshTime}
                   newTab={newTab}
                   weightingMode={weightingMode}
                   onArticleClick={this.handleArticleClick.bind(this)}
@@ -394,6 +410,7 @@ class App extends Component {
             onClose={() => this.setState({ showOptions: false })}
             onEditionChange={this.handleEditionChange.bind(this)}
             setSavedState={this.setSavedState.bind(this)}
+            donationLink={this.props.donationLink}
           />
         }
         {showSearchOptions &&

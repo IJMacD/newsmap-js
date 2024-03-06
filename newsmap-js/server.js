@@ -15,6 +15,7 @@ app.get('/', function (req, res) {
   const env = {
     API_ROOT: process.env.API_ROOT,
     DONATION_LINK: process.env.DONATION_LINK,
+    UPDATE_FREQUENCY: process.env.UPDATE_FREQUENCY,
   };
   var scriptNode = `<script>window['env'] = ${JSON.stringify(env)};</script>`;
   $('body').append(scriptNode);

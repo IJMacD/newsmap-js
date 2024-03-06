@@ -2,6 +2,11 @@ web:
   replicaCount: 1
   hostname: newsmap.ijmacd.com
   path: /
+  env:
+    API_ROOT: /api
+    DONATION_LINK: "https://www.paypal.me/ijmacd"
+    GA_TRACKING: "G-N5XM8ZC4Z9"
+    UPDATE_FREQUENCY: 600000
   local:
     enabled: false
   repository:

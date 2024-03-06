@@ -16,7 +16,7 @@ export function SearchOptionsModal({
   setSearchValue,
   onClose,
 }) {
-  function setSearchOption (newOptions) {
+  function setSearchOption(newOptions) {
     // Auto-enable/disable if we're setting text
     const enabled = typeof newOptions.text === "undefined" ?
       searchValue.enabled : (!!newOptions.text);
@@ -50,12 +50,12 @@ export function SearchOptionsModal({
             <label>
               Mode
             </label>
-            <div style={{display:"flex",flexDirection:"column"}}>
-              <label style={{flexBasis:28}}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <label style={{ flexBasis: 28 }}>
                 <input name="radio-search-mode" type="radio" value="highlight" checked={searchValue.mode === "highlight"} onChange={e => setSearchOption({ mode: e.target.checked ? "highlight" : "filter" })} />
                 Highlight
               </label>
-              <label style={{flexBasis:28}}>
+              <label style={{ flexBasis: 28 }}>
                 <input name="radio-search-mode" type="radio" value="filter" checked={searchValue.mode === "filter"} onChange={e => setSearchOption({ mode: e.target.checked ? "filter" : "highlight" })} />
                 Filter
               </label>
@@ -67,7 +67,7 @@ export function SearchOptionsModal({
             </label>
             <div>
               <input id="text-search-input" value={searchValue.text} onChange={e => setSearchOption({ text: e.target.value })} />
-              { isInvalidRegex && <p style={{color: "#FF4444", fontSize: "0.8em", fontStyle: "italic", margin: "8px 0"}}>Invalid Regex</p> }
+              {isInvalidRegex && <p style={{ color: "#FF4444", fontSize: "0.8em", fontStyle: "italic", margin: "8px 0" }}>Invalid Regex</p>}
             </div>
           </div>
           <div className="App-formgroup">
@@ -87,11 +87,11 @@ export function SearchOptionsModal({
               Search in
             </label>
             <div>
-              <label htmlFor="chk-headlines" style={{display:"block",marginBottom:8}}>
+              <label htmlFor="chk-headlines" style={{ display: "block", marginBottom: 8 }}>
                 <input id="chk-headlines" type="checkbox" checked={searchValue.includeHeadline} onChange={e => setSearchOption({ includeHeadline: e.target.checked })} />
                 Headline
               </label>
-              <label htmlFor="chk-sources" style={{display:"block",marginBottom:8}}>
+              <label htmlFor="chk-sources" style={{ display: "block", marginBottom: 8 }}>
                 <input id="chk-sources" type="checkbox" checked={searchValue.includeSource} onChange={e => setSearchOption({ includeSource: e.target.checked })} />
                 Source Name
               </label>

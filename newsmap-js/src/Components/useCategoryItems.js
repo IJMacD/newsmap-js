@@ -89,12 +89,12 @@ export function useCategoryItems(categories, refreshTime, edition, itemsPerCateg
     useEffect(() => {
         let cancellable = { current: true };
 
-        // Every minute check for stale categories with current function
+        // Every 10 seconds check for stale categories with current function
         const id = setInterval(() => {
             if (loaderRef.current) {
                 loaderRef.current(cancellable);
             }
-        }, 60 * 1000);
+        }, 10 * 1000);
 
         return () => { clearInterval(id); cancellable.current = false; };
     }, []);

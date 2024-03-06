@@ -1,6 +1,10 @@
 web:
   replicaCount: 1
   hostname: newsmap-js.localhost
+  env:
+    GA_TRACKING: G-XDGC6VZ5MZ
+    DONATION_LINK: ""
+    UPDATE_FREQUENCY: 90000
   local:
     enabled: false
   repository:

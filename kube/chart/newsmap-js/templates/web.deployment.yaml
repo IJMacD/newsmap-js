@@ -27,11 +27,13 @@ spec:
               containerPort: 8000
           env:
             - name: API_ROOT
-              value: "/api"
+              value: {{ .Values.web.env.API_ROOT }}
             - name: GA_TRACKING
-              value: "G-N5XM8ZC4Z9"
+              value: {{ .Values.web.env.GA_TRACKING }}
             - name: DONATION_LINK
-              value: "https://www.paypal.me/ijmacd"
+              value: {{ .Values.web.env.DONATION_LINK }}
+            - name: UPDATE_FREQUENCY
+              value: {{ quote .Values.web.env.UPDATE_FREQUENCY  }}
           volumeMounts:
             {{- if .Values.web.local.enabled }}
             - mountPath: /var/www/html

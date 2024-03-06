@@ -17,7 +17,10 @@ const root = createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ErrorHandler>
-      <App />
+      <App
+        refreshTime={+window['env']['UPDATE_FREQUENCY']}
+        donationLink={window['env']['DONATION_LINK']}
+      />
     </ErrorHandler>
   </React.StrictMode>
 );

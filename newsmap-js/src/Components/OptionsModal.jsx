@@ -3,6 +3,24 @@ import { ucfirst } from '../util.js';
 import * as palettes from '../colours.js';
 import editions from '../data/editions.json';
 
+/**
+ *
+ * @param {object} props
+ * @param {string[]} props.selectedEditions
+ * @param {"tree"|"tree_mixed"|"grid"} props.mode
+ * @param {"time"|"source_count"|"sources"|"position"} props.weightingMode
+ * @param {boolean} props.showGradient
+ * @param {boolean} props.headerTop
+ * @param {number} props.itemsPerCategory
+ * @param {boolean} props.newTab
+ * @param {boolean} props.enableSourcesModal
+ * @param {string} props.selectedPalette
+ * @param {() => void} props.onClose
+ * @param {(ed: string[]) => void} props.onEditionChange
+ * @param {(state: any) => void} props.setSavedState
+ * @param {string} [props.donationLink]
+ * @returns
+ */
 export function OptionsModal({
   selectedEditions,
   mode,
@@ -15,8 +33,20 @@ export function OptionsModal({
   selectedPalette,
   onClose,
   onEditionChange,
-  setSavedState
+  setSavedState,
+  donationLink,
 }) {
+  /**
+   * @param {import('react').FormEvent<HTMLSelectElement>} e
+   */
+  function handleEditionChange(e) {
+    const { options } = e.currentTarget;
+
+    const selectedEditions = Array.from(options).filter(o => o.selected).map(o => o.value);
+
+    onEditionChange(selectedEditions);
+  }
+
   return (
     <div className="App-shade" onClick={onClose}>
       <div className="App-modal App-Options" onClick={e => e.stopPropagation()}>
@@ -29,7 +59,7 @@ export function OptionsModal({
             <select
               id="sel-editions"
               multiple
-              onChange={onEditionChange}
+              onChange={handleEditionChange}
               value={selectedEditions}
             >
               {editions.map(ed => <option key={ed.value} value={ed.value}>{ed.name}</option>)}
@@ -107,7 +137,7 @@ export function OptionsModal({
         </div>
         <div style={{ display: "flex", justifyContent: "end" }}>
           {
-            window['env'] && typeof window['env']['DONATION_LINK'] === "string" && <DonationLink />
+            donationLink && <DonationLink link={donationLink} />
           }
           <p style={{ textAlign: "right", marginBottom: 0 }}>
             <button onClick={onClose}>Dismiss</button>
@@ -142,10 +172,8 @@ function PaletteSelect({ selectedPalette, setPalette }) {
   });
 }
 
-function DonationLink() {
+function DonationLink({ link }) {
   const [showDonationLink, setShowDonationLink] = useState(false);
-
-  const link = window['env']['DONATION_LINK'];
 
   return (
     <div style={{ flex: 1 }}>
