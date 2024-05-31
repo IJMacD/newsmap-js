@@ -40,12 +40,7 @@ spec:
               name: src
             {{- end }}
           resources:
-            requests:
-              memory: 100Mi
-              cpu: 20m
-            limits:
-              memory: 250Mi
-              cpu: 100m
+            {{- toYaml .Values.web.resources | nindent 12 }}
       {{ if not .Values.web.local.enabled }}
       imagePullSecrets:
       - name: regcred

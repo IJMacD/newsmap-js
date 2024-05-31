@@ -12,3 +12,9 @@ web:
   repository:
     image: docker.io/ijmacd/newsmap-js
     tag: ""
+  resources:
+    requests:
+      memory: 59Mi
+      cpu: 27m
+    limits:
+      memory: 59Mi
