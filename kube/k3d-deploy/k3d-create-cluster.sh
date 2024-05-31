@@ -30,7 +30,9 @@ k3d cluster create ${APPNAME} --config ${SCRIPT_DIR}/k3d-config.yml \
   --volume ${SCRIPT_DIR}/../../newsmap-js:/ijmacd/newsmap-js@all
 
 mkdir -p ~/.kube
-k3d kubeconfig merge ${APPNAME} --output ${KUBECONFIG}
+k3d kubeconfig merge ${APPNAME} --output ${LOCAL_KUBECONFIG}
+
+export KUBECONFIG=$LOCAL_KUBECONFIG
 
 # Create local secrets
 
