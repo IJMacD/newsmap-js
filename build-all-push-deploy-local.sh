@@ -20,8 +20,10 @@ export KUBECONFIG=$LOCAL_KUBECONFIG
 docker exec k3d-${APPNAME}-server-0 sh -c 'ctr image rm $(ctr image list -q)'
 
 for project in "${PROJECTS}"; do
-  docker build ${SCRIPT_DIR}/${project} -f ${SCRIPT_DIR}/${project}/Dockerfile \
-    -t ${REGISTRY_NAME}/${REPO}/${project}:${GIT_TAG} -t ${LOCAL_REGISTRY}/${REPO}/${project}:${GIT_TAG}
+  docker build ${SCRIPT_DIR}/${project} \
+    -f ${SCRIPT_DIR}/${project}/Dockerfile \
+    -t ${REGISTRY_NAME}/${REPO}/${project}:${GIT_TAG} \
+    -t ${LOCAL_REGISTRY}/${REPO}/${project}:${GIT_TAG}
   docker push ${LOCAL_REGISTRY}/${REPO}/${project}:${GIT_TAG}
 done
 

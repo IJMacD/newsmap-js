@@ -41,10 +41,6 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
-      {{ if not .Values.web.local.enabled }}
-      imagePullSecrets:
-      - name: regcred
-      {{ end }}
       volumes:
         {{- if .Values.web.local.enabled }}
         - name: src
