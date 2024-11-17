@@ -1,17 +1,16 @@
-FROM node:16 AS build
+FROM node:22-alpine AS base
 WORKDIR /app
 COPY package.json yarn.lock ./
+
+FROM base AS build
 RUN [ "yarn", "install", "--frozen-lockfile" ]
 COPY index.html ./
 COPY public ./public
 COPY src ./src
 RUN ["yarn", "run", "build"]
 
-FROM node:16-alpine
-WORKDIR /app
-ENV NODE_ENV=production
-COPY package.json yarn.lock ./
-RUN [ "yarn", "install", "--frozen-lockfile" ]
+FROM base AS final
+RUN [ "yarn", "install", "--frozen-lockfile", "--production" ]
 COPY --from=build /app/dist/ ./static
 COPY server.js ./
 CMD [ "node", "server.js" ]
