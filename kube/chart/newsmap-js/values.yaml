@@ -18,3 +18,8 @@ web:
       cpu: 27m
     limits:
       memory: 59Mi
+  ingress:
+    tls:
+      enabled: false
+    annotations: {}
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
