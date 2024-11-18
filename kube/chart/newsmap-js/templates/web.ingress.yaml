@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: "{{ .Release.Name }}-web"
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    {{- .Values.web.ingress.annotations | toYaml | nindent 4 }}
 spec:
   rules:
     - host: "{{ .Values.web.hostname }}"
@@ -16,7 +16,9 @@ spec:
                 name: "{{ .Release.Name }}-web"
                 port:
                   name: http
+  {{- if .Values.web.ingress.tls.enabled }}
   tls:
     - secretName: newsmap-js-cert
       hosts:
         - "{{ .Values.web.hostname }}"
+  {{- end }}
