@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -7,7 +7,15 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'https://news.google.com',
-    }
-  }
-})
+      "/api": {
+        target: "https://news.google.com/",
+        changeOrigin: true,
+        headers: {
+          referer: "https://news.google.com/",
+        },
+        autoRewrite: true,
+        rewrite: (s) => s.replace(/^\/api/, ""),
+      },
+    },
+  },
+});
