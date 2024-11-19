@@ -2,36 +2,46 @@
  *
  * @param {number[]} values
  * @param {{ width: number, height: number }} dimensions
- */
-export function layoutTreeMap(values, { width, height }) {
+*/
+export function layoutTreeMap(values, { width, height }, totalValue = values.reduce(sum, 0), horizontalBias = 1, log = []) {
+  /** @type {{top: number, left: number, width: number, height: number}[]} */
   const dimensions = [];
 
   const ratio = height / width;
-  const totalValue = values.reduce(sum, 0);
 
   let valueWidth = Math.sqrt(totalValue / ratio);
   let valueHeight = valueWidth * ratio;
 
   const scale = width / valueWidth;
 
-  let horizontal = width < height;
+  // Will start working in the direction of the smaller dimension
+  let isHorizontal = width < height;
+
+  log.push(`Total Value: ${totalValue}`);
+  log.push(`Value Dimensions: (${isHorizontal ? "horizontal" : "vertical"}) ${valueWidth.toFixed(2)} x ${valueHeight.toFixed(2)}`);
+
   /** @type {number[]} */
   const row = []; // currentRow
 
   let currentX = 0;
   let currentY = 0;
 
+  let cumlVal = 0
+
   values.forEach((value, i, a) => {
-    const rowFixedDimension = horizontal ? valueWidth : valueHeight; // valueLength
+    const rowFixedDimension = isHorizontal ? valueWidth : valueHeight * horizontalBias;
     let worst_currentValues;
     let worst_withAddition;
+    let worst_newRowValues;
+
+    const isLast = value + cumlVal >= totalValue;
 
     // Special case for last item
     // Compare how it would be with last item in a new row by itself vs. adding
     // to current row.
-    if (i == a.length - 1) {
+    if (isLast) {
       let remaining;
-      if (horizontal) {
+      if (isHorizontal) {
         const rowWidth = value / valueHeight;
         remaining = valueWidth - rowWidth;
       }
@@ -39,19 +49,30 @@ export function layoutTreeMap(values, { width, height }) {
         const rowHeight = value / valueWidth;
         remaining = valueHeight - rowHeight;
       }
-      worst_currentValues = worstAspectRatio([value], remaining);
+      worst_currentValues = worstAspectRatio(row, remaining);
+      worst_newRowValues = worstAspectRatio([value], remaining);
       worst_withAddition = worstAspectRatio([...row, value], rowFixedDimension);
+
+      log.push(`Item ${i} value=${value} fixed=${rowFixedDimension.toFixed(2)} size=${(value / rowFixedDimension).toFixed(2)} ratio=${worst_withAddition.toFixed(2)} current=${worst_currentValues.toFixed(2)} newRow=${worst_newRowValues.toFixed(2)}`)
+      worst_currentValues = worst_newRowValues;
+      // worst_currentValues = Math.max(worst_newRowValues, worst_currentValues);
     }
     else {
       worst_currentValues = worstAspectRatio(row, rowFixedDimension);
       worst_withAddition = worstAspectRatio([...row, value], rowFixedDimension);
+
+      log.push(`Item ${i} value=${value} fixed=${rowFixedDimension.toFixed(2)} size=${(value / rowFixedDimension).toFixed(2)} ratio=${worst_withAddition.toFixed(2)} current=${worst_currentValues.toFixed(2)}`)
     }
+
 
     if (worst_withAddition > worst_currentValues) {
       finalizeRow(row);
+      log.push(`New ratio is worse. Switching dimension (${isHorizontal ? "horizontal" : "vertical"}) ${valueWidth.toFixed(2)} x ${valueHeight.toFixed(2)}`);
     }
 
     row.push(value);
+
+    cumlVal += value;
   });
 
   if (row.length) {
@@ -70,30 +91,30 @@ export function layoutTreeMap(values, { width, height }) {
     let x = currentX;
     let y = currentY;
 
-    if (!horizontal) {
-      rowWidth = rowValue / valueHeight;
-      rowHeight = valueHeight;
-      valueWidth -= rowWidth;
-      currentX += rowWidth;
-    }
-    else {
+    if (isHorizontal) {
       rowWidth = valueWidth;
       rowHeight = rowValue / valueWidth;
       valueHeight -= rowHeight;
       currentY += rowHeight;
+    }
+    else {
+      rowWidth = rowValue / valueHeight;
+      rowHeight = valueHeight;
+      valueWidth -= rowWidth;
+      currentX += rowWidth;
     }
 
     for (const value of row) {
       let valueWidth;
       let valueHeight;
 
-      if (!horizontal) {
-        valueWidth = rowWidth;
-        valueHeight = value / rowWidth;
-      }
-      else {
+      if (isHorizontal) {
         valueWidth = value / rowHeight;
         valueHeight = rowHeight;
+      }
+      else {
+        valueWidth = rowWidth;
+        valueHeight = value / rowWidth;
       }
 
       dimensions.push({
@@ -103,15 +124,15 @@ export function layoutTreeMap(values, { width, height }) {
         height: valueHeight * scale,
       });
 
-      if (!horizontal) {
-        y += valueHeight;
+      if (isHorizontal) {
+        x += valueWidth;
       }
       else {
-        x += valueWidth;
+        y += valueHeight;
       }
     }
 
-    horizontal = !horizontal;
+    isHorizontal = !isHorizontal;
 
     row.length = 0;
   }
