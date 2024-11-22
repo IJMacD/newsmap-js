@@ -7,6 +7,11 @@ const app = express();
 
 const port = process.env.PORT || 8000;
 
+app.use((req, res, next) => {
+  console.log(req.ip, req.method, req.path);
+  next();
+});
+
 // Inject ENV variables
 app.get("/", function (req, res) {
   var html = fs.readFileSync(__dirname + "/static/index.html", "utf8");

@@ -3,20 +3,21 @@ kind: Deployment
 metadata:
   name: '{{ .Release.Name }}-web'
   labels:
-    katenary.io/component: web
-    katenary.io/project: '{{ .Chart.Name }}'
-    katenary.io/release: '{{ .Release.Name }}'
+    app.kubernetes.io/name: "{{ .Chart.Name }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.Version }}"
+    app.kubernetes.io/component: web
 spec:
   replicas: {{ .Values.web.replicaCount }}
   selector:
     matchLabels:
-      katenary.io/component: web
-      katenary.io/release: '{{ .Release.Name }}'
+      app.kubernetes.io/instance: "{{ .Release.Name }}"
+      app.kubernetes.io/component: web
   template:
     metadata:
       labels:
-        katenary.io/component: web
-        katenary.io/release: '{{ .Release.Name }}'
+        app.kubernetes.io/instance: "{{ .Release.Name }}"
+        app.kubernetes.io/component: web
     spec:
       containers:
         - name: web

@@ -3,13 +3,13 @@ kind: Service
 metadata:
   name: "{{ .Release.Name }}-web"
   labels:
-    katenary.io/component: web
-    katenary.io/project: "{{ .Chart.Name }}"
-    katenary.io/release: "{{ .Release.Name }}"
+    app.kubernetes.io/component: web
+    app.kubernetes.io/name: "{{ .Chart.Name }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
 spec:
   selector:
-    katenary.io/component: web
-    katenary.io/release: "{{ .Release.Name }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/component: web
   ports:
     - protocol: TCP
       name: http
